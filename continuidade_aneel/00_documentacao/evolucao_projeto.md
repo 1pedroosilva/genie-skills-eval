@@ -1,6 +1,13 @@
 # Evolução do Projeto: Continuidade ANEEL
 
-## 2026-09-06 -- Sessão
+## 2026-09-06 -- Sessão 2
+
+**Feito:** Implementado segundo notebook de ingestão bronze (102_indicadores_continuidade). Notebook baixa arquivos ZIP da ANEEL via HTTP, extrai CSVs, padroniza colunas para snake_case, adiciona metadados de rastreabilidade (_fonte_url, _ingest_ts, _ingest_date, _run_id) e grava com estratégia DELETE+APPEND por ano. Inclui guardrails de validação de forma (schema, volume) e sumário de execução. Registrada DEC-004 sobre estratégia DELETE+APPEND.
+**Estado atual:** Dois notebooks bronze construídos (101 e 102). Notebooks prontos para execução após ajustar URLs reais da ANEEL.
+**Próximo passo:** Implementar notebooks silver (201_interrupcoes_distribuicao e 202_indicadores_continuidade).
+**Pendências:** [PENDENTE] consumidor do resultado; [PENDENTE] exclusões de escopo; [PENDENTE] registro do projeto no índice de projetos do .assistant_instructions.md; [PENDENTE] ajustar URLs reais do portal ANEEL nos notebooks 101 e 102.
+
+## 2026-09-06 -- Sessão 1
 
 **Feito:** Implementado primeiro notebook de ingestão bronze (101_ingestao_aneel_interrupcoes). Notebook lê arquivos Parquet anuais do portal de dados abertos da ANEEL, adiciona metadados de rastreabilidade (_ingest_timestamp, _source_url, _source_last_modified, _ano_fonte) e grava em tabela bronze com estratégia APPEND idempotente via tabela de controle. Registrada DEC-003 sobre estratégia de gravação bronze.
 **Estado atual:** Um notebook bronze construído (101). Notebook pronto para execução após ajustar URL real do portal da ANEEL.
