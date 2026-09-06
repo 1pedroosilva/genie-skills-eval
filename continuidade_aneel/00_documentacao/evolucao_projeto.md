@@ -1,5 +1,12 @@
 # Evolução do Projeto: Continuidade ANEEL
 
+## 2026-09-06 -- Sessão 5
+
+**Feito:** Implementado notebook de transformação silver dos indicadores de continuidade (202_indicadores_continuidade). Notebook consome dados de `workspace.proj_aneel_cont_01_bronze.indicadores_continuidade`, aplica conformação técnica (casting de tipos, padronização de identificadores, conversão de ano_referencia para período_apuracao no formato date), cria chave composta (distribuidora + período), executa deduplicação determinística por timestamp de ingestão, valida nulos em campos críticos e unicidade de chave. Gravação com estratégia DELETE+APPEND por ano (conforme DEC-004). Notebook segue estrutura padronizada (documentação, configurações, anos a processar, imports, parâmetros, transformações, guardrails, gravação, sumário) e garante idempotência.
+**Estado atual:** Notebooks bronze (101 e 102) construídos. Notebook silver dos indicadores (202) construído. Notebook silver das interrupções (201) planejado.
+**Próximo passo:** Implementar notebook 201_interrupcoes_distribuicao ou executar ciclo de EDA/validação dos dados bronze das interrupções antes de implementar a transformação silver.
+**Pendências:** [PENDENTE] consumidor do resultado; [PENDENTE] exclusões de escopo; [PENDENTE] registro do projeto no índice de projetos do .assistant_instructions.md; [PENDENTE] ajustar URLs reais do portal ANEEL nos notebooks 101 e 102; [PENDENTE] executar EDA e validações da qualidade bronze; [PENDENTE] implementar notebook 201_interrupcoes_distribuicao.
+
 ## 2026-09-06 -- Sessão 4
 
 **Feito:** Planejamento do ciclo de qualidade de dados para bronze das interrupções. Carregadas skills de contexto de projeto, EDA-validação, guardrails de qualidade, convenções de nomenclatura e estrutura de notebooks. Definido protocolo de investigação: (1) EDA inicial em "04_investigacoes/" para descobrir perfil dos dados bronze, identificar anomalias, valores fora do esperado e completude de campos; (2) decisões técnicas de tratamento documentadas; (3) notebooks de validação (VAL_) em "05_validacoes/" para provar as regras de tratamento escolhidas; (4) rastreabilidade do fluxo achado → decisão → código → validação registrada em evolucao_projeto.md. Estabelecidos critérios de guardrails aplicáveis ao bronze: reconciliação quantitativa, completude estrutural, logging granular, tratamento de erros e validação de pré-requisitos. Estrutura de trabalho e checklist de qualidade absorvidos. Sessão interrompida antes da execução prática da investigação.
