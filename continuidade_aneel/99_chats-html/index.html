@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>genie-skills-eval — índice de sessões</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#F2F3F0;
+  --panel:#FBFBF9;
+  --ink:#1B2021;
+  --muted:#6B7270;
+  --rule:#D3D6D0;
+  --done:#2F5D50;
+  --done-soft:#E3EBE7;
+  --pending:#A8ADA5;
+  --flag:#8C3B2E;
+  --flag-soft:#F1E4E1;
+  --focus:#2F5D50;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#14181A;
+    --panel:#1B2124;
+    --ink:#E6E9E5;
+    --muted:#939A96;
+    --rule:#2E3639;
+    --done:#7FB8A4;
+    --done-soft:#1E2C29;
+    --pending:#4A5254;
+    --flag:#D68A7A;
+    --flag-soft:#2E211E;
+    --focus:#7FB8A4;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#14181A;
+  --panel:#1B2124;
+  --ink:#E6E9E5;
+  --muted:#939A96;
+  --rule:#2E3639;
+  --done:#7FB8A4;
+  --done-soft:#1E2C29;
+  --pending:#4A5254;
+  --flag:#D68A7A;
+  --flag-soft:#2E211E;
+  --focus:#7FB8A4;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.55;
+}
+.wrap{max-width:980px;margin:0 auto;padding:40px 24px 80px}
+
+/* ---------- cabeçalho ---------- */
+.head{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:baseline;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid var(--rule)}
+.head h1{font-size:20px;font-weight:600;margin:0;letter-spacing:-.01em}
+.head p{margin:6px 0 0;color:var(--muted);max-width:56ch}
+.env{font-family:var(--mono);font-size:12.5px;color:var(--muted);text-align:right;line-height:1.9}
+.env b{font-weight:500;color:var(--ink)}
+
+/* ---------- matriz ---------- */
+.matrix{margin:36px 0 0}
+.mhead{display:grid;grid-template-columns:46px 1fr 1fr;gap:2px;padding-bottom:8px}
+.mhead span{font-size:13px;color:var(--muted)}
+.mhead span:nth-child(3){padding-left:14px}
+.mrow{display:grid;grid-template-columns:46px 1fr 1fr;gap:2px;margin-bottom:2px}
+.pnum{
+  font-family:var(--mono);font-size:12.5px;color:var(--muted);
+  display:flex;align-items:center;justify-content:flex-end;padding-right:12px;
+}
+.cell{
+  appearance:none;-webkit-appearance:none;text-align:left;width:100%;font:inherit;
+  background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--pending);
+  padding:11px 14px;cursor:default;color:var(--muted);
+  display:block;
+}
+.cell.filled{border-left-color:var(--done);color:var(--ink);cursor:pointer}
+.cell.filled:hover{background:var(--done-soft)}
+.cell:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.cell .t{display:block;font-size:14px}
+.cell .m{display:block;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:3px}
+.cell.flagged{border-left-color:var(--flag)}
+.cell.lit{background:var(--flag-soft);border-color:var(--flag)}
+.cell[aria-expanded="true"]{background:var(--done-soft)}
+.empty-note{font-size:13px;color:var(--muted);font-style:normal}
+
+/* ---------- detalhe ---------- */
+.detail{
+  grid-column:1/-1;background:var(--panel);border:1px solid var(--rule);
+  border-top:none;padding:20px 22px 22px;margin-bottom:2px;
+}
+.detail h3{margin:0 0 4px;font-size:15px;font-weight:600}
+.detail .when{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 16px}
+.prompt{
+  margin:0 0 18px;padding:12px 14px;background:var(--ground);
+  border-left:2px solid var(--rule);font-size:14px;color:var(--ink);
+}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px 28px}
+.dgrid h4{margin:0 0 6px;font-size:12.5px;font-weight:500;color:var(--muted)}
+.dgrid ul{margin:0;padding:0;list-style:none}
+.dgrid li{font-family:var(--mono);font-size:12.5px;padding:1px 0}
+.dgrid li.plain{font-family:var(--sans);font-size:13.5px;line-height:1.5;padding:2px 0}
+.dgrid li a.art{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
+.dgrid li a.art:hover{border-bottom-color:var(--done);color:var(--done)}
+.dgrid li a.art:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.sha{color:var(--muted);margin-left:7px}
+.manual{
+  font-family:var(--sans);font-size:11px;color:var(--flag);
+  border:1px solid var(--flag);padding:0 5px;margin-left:7px;white-space:nowrap;
+}
+.open{
+  appearance:none;-webkit-appearance:none;font:inherit;
+  display:inline-block;margin-top:18px;font-size:13.5px;color:var(--done);
+  background:transparent;border:none;border-bottom:1px solid var(--done);
+  padding:0 0 2px;cursor:pointer;
+}
+.open:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+
+/* ---------- achados ---------- */
+.findings{margin-top:56px;padding-top:28px;border-top:1px solid var(--rule)}
+.findings h2{font-size:16px;font-weight:600;margin:0 0 4px}
+.findings > p{margin:0 0 22px;color:var(--muted);max-width:64ch}
+.finding{
+  appearance:none;-webkit-appearance:none;text-align:left;width:100%;font:inherit;
+  background:transparent;border:none;border-top:1px solid var(--rule);
+  padding:16px 0;cursor:pointer;color:var(--ink);display:block;
+}
+.finding:last-of-type{border-bottom:1px solid var(--rule)}
+.finding:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.finding .fl{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between}
+.finding strong{font-weight:500;font-size:14.5px}
+.finding .refs{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.finding p{margin:6px 0 0;color:var(--muted);font-size:13.5px;max-width:70ch}
+.finding[aria-pressed="true"] strong{color:var(--flag)}
+.finding[aria-pressed="true"] .refs{color:var(--flag)}
+
+/* ---------- leitor ---------- */
+.reader[hidden]{display:none}
+.reader{
+  position:fixed;inset:0;z-index:50;background:rgba(20,24,26,.55);
+  display:flex;align-items:center;justify-content:center;padding:28px;
+}
+.rbox{
+  background:var(--panel);border:1px solid var(--rule);
+  width:100%;max-width:1120px;height:100%;max-height:900px;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.rbar{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:12px 16px;border-bottom:1px solid var(--rule);background:var(--panel);
+}
+.rtitle{font-size:14px;font-weight:500;margin:0;flex:1;min-width:0}
+.rtitle span{display:block;font-family:var(--mono);font-size:11.5px;color:var(--muted);font-weight:400}
+.rbtn{
+  appearance:none;-webkit-appearance:none;font:inherit;font-size:13px;
+  background:transparent;color:var(--ink);border:1px solid var(--rule);
+  padding:5px 11px;cursor:pointer;text-decoration:none;line-height:1.4;
+}
+.rbtn:hover:not(:disabled){border-color:var(--done);color:var(--done)}
+.rbtn:disabled{color:var(--pending);cursor:default}
+.rbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.rframe{flex:1;width:100%;border:none;background:#fff}
+.rbtn.primary{border-color:var(--done);color:var(--done);font-weight:500}
+.rnav{font-family:var(--mono)}
+@media (max-width:620px){
+  .reader{padding:0}
+  .rbox{max-height:none;border:none}
+  .rbar{padding:8px 10px;gap:8px}
+  .rbtn{min-height:44px;display:flex;align-items:center;padding:0 12px}
+  #rclose{order:-2;font-size:14px}
+  .rtitle{order:-1;flex:1;font-size:13px}
+  .rtitle span{font-size:11px}
+  #rprev,#rnext{padding:0 14px;font-size:17px}
+  #rtab{order:1}
+}
+/* ---------- rodapé ---------- */
+.foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted);max-width:66ch}
+.foot code{font-family:var(--mono);font-size:12.5px}
+
+@media (max-width:620px){
+  .wrap{padding:28px 16px 60px}
+  .env{text-align:left}
+  .mhead,.mrow{grid-template-columns:34px 1fr}
+  .mhead span:nth-child(3){display:none}
+  .mrow .cell:nth-of-type(2){display:none}
+  .pnum{padding-right:8px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <div>
+      <h1>genie-skills-eval</h1>
+      <p>Onze prompts, dois braços. Cada célula preenchida é uma sessão registrada com transcrição completa.</p>
+    </div>
+    <div class="env">
+      skills <b>4b9d307</b><br>
+      instructions <b>6c7933e</b><br>
+      <span id="progresso"></span>
+    </div>
+  </header>
+
+  <main class="matrix" id="matrix">
+    <div class="mhead"><span></span><span>com skills</span><span>sem skills</span></div>
+  </main>
+
+  <section class="findings">
+    <h2>Achados</h2>
+    <p>Selecione um achado para destacar as sessões que o evidenciam.</p>
+    <div id="findings"></div>
+  </section>
+
+  <footer class="foot">
+    Transcrições em <code>./</code>, uma por sessão, com painel de raciocínio e rodapé de metadados.
+    O braço sem skills roda os mesmos prompts na mesma ordem, com as skills desligadas em Personalizações.
+  </footer>
+
+  <div class="reader" id="reader" hidden role="dialog" aria-modal="true" aria-labelledby="rtitle">
+    <div class="rbox">
+      <div class="rbar">
+        <button class="rbtn primary" id="rclose" type="button">← Voltar</button>
+        <h2 class="rtitle" id="rtitle"></h2>
+        <button class="rbtn rnav" id="rprev" type="button" aria-label="Sessão anterior">‹</button>
+        <button class="rbtn rnav" id="rnext" type="button" aria-label="Próxima sessão">›</button>
+        <a class="rbtn" id="rtab" href="#" target="_blank" rel="noopener">Abrir em aba</a>
+      </div>
+      <iframe class="rframe" id="rframe" title="Transcrição da sessão"></iframe>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   DADOS — editar apenas este bloco ao registrar uma sessão nova.
+   arm: "com" | "sem"   ·   file: caminho relativo da transcrição
+------------------------------------------------------------------ */
+const PASSOS = [
+  { n:1,  titulo:"Estrutura inicial do projeto" },
+  { n:2,  titulo:"Ingestão bronze — interrupções" },
+  { n:3,  titulo:"Ingestão bronze — indicadores" },
+  { n:4,  titulo:"Transformação silver — interrupções" },
+  { n:5,  titulo:"Investigação de qualidade do bronze" },
+  { n:6,  titulo:"Transformação silver — indicadores" },
+  { n:7,  titulo:"Tabela gold — tempo de interrupção" },
+  { n:8,  titulo:"Revisão de código do notebook 101" },
+  { n:9,  titulo:"Documentação do notebook gold" },
+  { n:10, titulo:"— a definir" },
+  { n:11, titulo:"— a definir" }
+];
+
+const REPO = "https://github.com/1pedroosilva/genie-skills-eval";
+const RAIZ = "continuidade_aneel/";
+
+/* artefato: { nome, sha, path? , manual?:true }
+   com path  → abre o arquivo exatamente como estava naquele commit
+   sem path  → abre o commit                                        */
+const SESSOES = [
+  { passo:1, arm:"com", file:"01_inicio-projeto-continuidade-aneel.html",
+    quando:"05/09/2026 21:50",
+    prompt:"Iniciar um projeto de dados sobre continuidade de fornecimento de energia no Brasil, com fonte na ANEEL.",
+    skills:["project-context","asset-placement","naming-conventions","unity-catalog-naming","technical-writing"],
+    artefatos:[
+      { nome:"00_documentacao/ — quatro documentos de gestão", sha:"2c66e3d" },
+      { nome:"schemas proj_aneel_cont_01..03 no Unity Catalog", sha:"2c66e3d" }
+    ],
+    achados:[] },
+
+  { passo:2, arm:"com", file:"02_ingestao_aneel_interrupcoes_bronze.html",
+    quando:"06/09/2026 00:44",
+    prompt:"Gerar o notebook completo de ingestão bronze das interrupções.",
+    skills:["project-context","asset-placement","naming-conventions","notebook-structure","medallion-architecture"],
+    artefatos:[
+      { nome:"101_ingestao_aneel_interrupcoes.py", sha:"d6c0cfc", path:"01_bronze/101_ingestao_aneel_interrupcoes.py.py" }
+    ],
+    achados:["catalogo"] },
+
+  { passo:3, arm:"com", file:"03_ingestao_aneel_indicadores_bronze.html",
+    quando:"06/09/2026 01:05",
+    prompt:"Gerar o notebook completo de ingestão bronze dos indicadores de continuidade.",
+    skills:["project-context","asset-placement","naming-conventions","notebook-structure","medallion-architecture"],
+    artefatos:[
+      { nome:"102_indicadores_continuidade.py", sha:"ca01a26", path:"01_bronze/102_indicadores_continuidade.py.py" }
+    ],
+    achados:["catalogo"] },
+
+  { passo:4, arm:"com", file:"04_transformacao_silver_interrupcoes.html",
+    quando:"06/09/2026 01:47",
+    prompt:"Gerar o notebook completo de transformação silver das interrupções.",
+    skills:["project-context","notebook-structure","naming-conventions","medallion-architecture","technical-writing","data-quality-guardrails"],
+    artefatos:[
+      { nome:"201_interrupcoes_distribuicao.py", sha:"0f3f320", path:"02_silver/201_interrupcoes_distribuicao.py.py" }
+    ],
+    achados:["catalogo","estado-falso"] },
+
+  { passo:5, arm:"com", file:"05_investigacao_qualidade_bronze.html",
+    quando:"06/09/2026 09:42",
+    prompt:"Investigar a qualidade do dado no bronze e provar que as regras de tratamento escolhidas valem. Conduzir dentro do projeto, sem pedir confirmação.",
+    skills:["project-context","eda-and-validation","data-quality-guardrails","naming-conventions","notebook-structure"],
+    artefatos:[
+      { nome:"VAL_001_regras_silver_interrupcoes.py", sha:"a08464a", path:"05_validacoes/VAL_001_regras_silver_interrupcoes.py.py" },
+      { nome:"EDA_001_qualidade_interrupcoes_bronze.py", sha:"e42cb8a", path:"04_investigacoes/EDA_001_qualidade_interrupcoes_bronze.py.py", manual:true }
+    ],
+    achados:["catalogo","estado-falso","roteamento"] },
+
+  { passo:6, arm:"com", file:"06_transformacao_silver_indicadores.html",
+    quando:"06/09/2026",
+    prompt:"Gerar o notebook completo de transformação silver dos indicadores.",
+    skills:["project-context","notebook-structure","naming-conventions","medallion-architecture","data-quality-guardrails"],
+    artefatos:[
+      { nome:"202_indicadores_continuidade.py", sha:"fdf97f8", path:"02_silver/202_indicadores_continuidade.py.py" }
+    ],
+    achados:["catalogo"] },
+
+  { passo:7, arm:"com", file:"07_tabela_gold_tempo_interrupcao.html",
+    quando:"06/09/2026",
+    prompt:"Construir a tabela analítica gold de tempo total de interrupção por distribuidora e mês.",
+    skills:["project-context","naming-conventions","notebook-structure","asset-placement","medallion-architecture","data-quality-guardrails","technical-writing","unity-catalog-naming"],
+    artefatos:[
+      { nome:"301_tempo_interrupcao_distribuidora_mes.py", sha:"bbd9a90", path:"03_gold/301_tempo_interrupcao_distribuidora_mes.py.py" }
+    ],
+    achados:["catalogo","estado-falso"] },
+
+  { passo:8, arm:"com", file:"08_revisao_notebook_ingestao_interrupcoes.html",
+    quando:"06/09/2026",
+    prompt:"Revisar o notebook 101 de ingestão com protocolo de produção.",
+    skills:["code-review","data-quality-guardrails","notebook-structure"],
+    artefatos:[
+      { nome:"16 problemas identificados; nenhuma correção aplicada", sha:"3c3233d" }
+    ],
+    achados:["escopo-revisao","estado-falso"] },
+
+  { passo:9, arm:"com", file:"09_documentacao_notebook_gold.html",
+    quando:"06/09/2026 19:03",
+    prompt:"Documentar o notebook gold 301.",
+    skills:["artifact-documentation","technical-writing"],
+    artefatos:[
+      { nome:"registro em evolucao_projeto.md; notebook 301 sem alteração", sha:"cb4be1e" }
+    ],
+    achados:["estado-falso"] }
+];
+
+const ACHADOS = [
+  { id:"catalogo", titulo:"Documentação não propaga; contato empírico propaga",
+    texto:"A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em nove sessões. Os notebooks que consultaram o Unity Catalog ou leram o artefato real usam o destino correto; os que nunca tocaram o ambiente apontam para um catálogo inexistente." },
+  { id:"estado-falso", titulo:"O fechamento registra intenção, não estado",
+    texto:"Em cinco sessões o log de evolução afirmou um estado que o disco não confirmava. O fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e o log é o insumo da sessão seguinte." },
+  { id:"escopo-revisao", titulo:"A revisão de código não olha para fora do arquivo",
+    texto:"Dezesseis problemas reais identificados no notebook 101, nenhum deles o catálogo inexistente que impede a primeira escrita. O código foi avaliado contra si mesmo, não contra o ambiente nem contra as decisões do projeto." },
+  { id:"roteamento", titulo:"Roteamento falha quando o asset é meio, não fim",
+    texto:"Único erro de roteamento em nove sessões. A skill de localização não carregou quando criar o notebook era subobjetivo do pedido: o arquivo nasceu fora da estrutura, quatro remediações automáticas foram bloqueadas e a correção precisou ser manual." }
+];
+
+/* ------------------------------------------------------------------ */
+
+const idx = (p,a) => SESSOES.find(s => s.passo===p && s.arm===a);
+
+function artefato(a){
+  const url = a.path
+    ? `${REPO}/blob/${a.sha}/${RAIZ}${a.path}`
+    : `${REPO}/commit/${a.sha}`;
+  const marca = a.manual ? `<span class="manual" title="Correção manual: o agente não conseguiu gravar no lugar certo">correção manual</span>` : "";
+  return `<li><a class="art" href="${url}" target="_blank" rel="noopener">${a.nome}</a>
+    <span class="sha">${a.sha}</span>${marca}</li>`;
+}
+const matrix = document.getElementById("matrix");
+let aberto = null;
+
+function celula(p, arm){
+  const s = idx(p, arm);
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "cell" + (s ? " filled" : "");
+  if(s){
+    b.setAttribute("aria-expanded","false");
+    b.dataset.key = p + "-" + arm;
+    b.innerHTML = `<span class="t">${PASSOS[p-1].titulo}</span><span class="m">${s.skills.length} skills · ${s.quando}</span>`;
+    b.addEventListener("click", () => alternar(b, s, p));
+  } else {
+    b.disabled = true;
+    b.innerHTML = `<span class="t empty-note">não executado</span>`;
+  }
+  return b;
+}
+
+function alternar(botao, s, p){
+  const existente = document.getElementById("detalhe");
+  const mesmo = aberto === botao;
+  if(existente) existente.remove();
+  document.querySelectorAll('.cell[aria-expanded="true"]').forEach(c => c.setAttribute("aria-expanded","false"));
+  if(mesmo){ aberto = null; return; }
+
+  const d = document.createElement("div");
+  d.className = "detail";
+  d.id = "detalhe";
+  const tags = s.achados.map(a => ACHADOS.find(x => x.id===a)).filter(Boolean);
+  d.innerHTML = `
+    <h3>Passo ${String(p).padStart(2,"0")} — ${PASSOS[p-1].titulo}</h3>
+    <p class="when">${s.quando} · skills ${s.arm === "com" ? "ativas" : "desligadas"}</p>
+    <p class="prompt">${s.prompt}</p>
+    <div class="dgrid">
+      <div><h4>Skills carregadas</h4><ul>${s.skills.map(k=>`<li>${k}</li>`).join("")}</ul></div>
+      <div><h4>Produziu</h4><ul>${s.artefatos.map(artefato).join("")}</ul></div>
+      ${tags.length ? `<div><h4>Evidencia</h4><ul>${tags.map(t=>`<li class="plain">${t.titulo}</li>`).join("")}</ul></div>` : ""}
+    </div>
+    <button class="open" type="button" data-abrir="${SESSOES.indexOf(s)}">Ler transcrição</button>`;
+  botao.closest(".mrow").after(d);
+  d.querySelector("[data-abrir]").addEventListener("click", e =>
+    abrirLeitor(Number(e.currentTarget.dataset.abrir)));
+  botao.setAttribute("aria-expanded","true");
+  aberto = botao;
+}
+
+/* ---------- leitor ---------- */
+const leitor  = document.getElementById("reader");
+const frame   = document.getElementById("rframe");
+const rtitulo = document.getElementById("rtitle");
+const rtab    = document.getElementById("rtab");
+const rprev   = document.getElementById("rprev");
+const rnext   = document.getElementById("rnext");
+let atual = -1, focoAnterior = null;
+
+function abrirLeitor(i){
+  if(i < 0 || i >= SESSOES.length) return;
+  atual = i;
+  const s = SESSOES[i];
+  rtitulo.innerHTML = `Passo ${String(s.passo).padStart(2,"0")} — ${PASSOS[s.passo-1].titulo}
+    <span>${s.quando} · skills ${s.arm === "com" ? "ativas" : "desligadas"}</span>`;
+  frame.src = s.file;
+  rtab.href = s.file;
+  rprev.disabled = i === 0;
+  rnext.disabled = i === SESSOES.length - 1;
+  if(leitor.hidden){
+    focoAnterior = document.activeElement;
+    leitor.hidden = false;
+    document.body.style.overflow = "hidden";
+    history.pushState({ leitor:true }, "");
+  }
+  document.getElementById("rclose").focus();
+}
+
+function fecharLeitor(viaHistorico){
+  if(leitor.hidden) return;
+  leitor.hidden = true;
+  frame.src = "about:blank";
+  document.body.style.overflow = "";
+  if(!viaHistorico && history.state && history.state.leitor) history.back();
+  if(focoAnterior) focoAnterior.focus();
+}
+
+window.addEventListener("popstate", () => fecharLeitor(true));
+
+rprev.addEventListener("click", () => abrirLeitor(atual - 1));
+rnext.addEventListener("click", () => abrirLeitor(atual + 1));
+document.getElementById("rclose").addEventListener("click", () => fecharLeitor());
+leitor.addEventListener("click", e => { if(e.target === leitor) fecharLeitor(); });
+document.addEventListener("keydown", e => {
+  if(leitor.hidden) return;
+  if(e.key === "Escape") fecharLeitor();
+  if(e.key === "ArrowLeft"  && !rprev.disabled) abrirLeitor(atual - 1);
+  if(e.key === "ArrowRight" && !rnext.disabled) abrirLeitor(atual + 1);
+});
+
+PASSOS.forEach(p => {
+  const row = document.createElement("div");
+  row.className = "mrow";
+  const n = document.createElement("div");
+  n.className = "pnum";
+  n.textContent = String(p.n).padStart(2,"0");
+  row.append(n, celula(p.n,"com"), celula(p.n,"sem"));
+  matrix.append(row);
+});
+
+document.getElementById("progresso").textContent =
+  SESSOES.length + " de " + (PASSOS.length * 2) + " sessões";
+
+const cont = document.getElementById("findings");
+ACHADOS.forEach(a => {
+  const refs = SESSOES.filter(s => s.achados.includes(a.id));
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "finding";
+  b.setAttribute("aria-pressed","false");
+  b.innerHTML = `<span class="fl"><strong>${a.titulo}</strong>
+    <span class="refs">passos ${refs.map(r=>String(r.passo).padStart(2,"0")).join(", ")}</span></span>
+    <p>${a.texto}</p>`;
+  b.addEventListener("click", () => {
+    const ativo = b.getAttribute("aria-pressed") === "true";
+    document.querySelectorAll(".finding").forEach(f => f.setAttribute("aria-pressed","false"));
+    document.querySelectorAll(".cell").forEach(c => c.classList.remove("lit","flagged"));
+    if(!ativo){
+      b.setAttribute("aria-pressed","true");
+      refs.forEach(r => {
+        const c = document.querySelector(`[data-key="${r.passo}-${r.arm}"]`);
+        if(c) c.classList.add("lit","flagged");
+      });
+    }
+  });
+  cont.append(b);
+});
+</script>
+</body>
+</html>
