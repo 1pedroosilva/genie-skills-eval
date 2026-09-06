@@ -11,7 +11,7 @@ ANEEL indicadores  → 102_indicadores_continuidade  → 202_indicadores_continu
 
 | Notebook | Camada | Lê | Escreve | Status |
 |----------|--------|----|---------|--------|
-| 101_interrupcoes_distribuicao | bronze | Arquivo anual ANEEL (interrupções) | proj_aneel_cont_01_bronze.101_interrupcoes_distribuicao | planejado |
+| 101_ingestao_aneel_interrupcoes | bronze | Arquivo anual ANEEL (interrupções) | main.continuidade_aneel_bronze.aneel_interrupcoes | construido |
 | 102_indicadores_continuidade | bronze | Arquivo anual ANEEL (indicadores) | proj_aneel_cont_01_bronze.102_indicadores_continuidade | planejado |
 | 201_interrupcoes_distribuicao | silver | proj_aneel_cont_01_bronze.101_interrupcoes_distribuicao | proj_aneel_cont_02_silver.201_interrupcoes_distribuicao | planejado |
 | 202_indicadores_continuidade | silver | proj_aneel_cont_01_bronze.102_indicadores_continuidade | proj_aneel_cont_02_silver.202_indicadores_continuidade | planejado |

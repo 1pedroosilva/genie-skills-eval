@@ -15,3 +15,11 @@
 **Decisão:** Pipeline com 7 notebooks em duas linhagens que convergem no gold: linhagem de interrupções (101 → 201 → 301) e linhagem de indicadores (102 → 202 → 302), convergindo no notebook 303_comparativo_dec.
 **Alternativas consideradas:** Notebook único de comparação lendo diretamente do bronze; separação em mais etapas intermediárias.
 **Justificativa:** Duas linhagens independentes até o gold permitem processamento paralelo e rastreabilidade. A convergência no gold isola a lógica de comparação dos dados de cada fonte.
+
+### DEC-003 -- Estratégia de gravação bronze idempotente
+
+**Data:** 2026-09-06
+**Contexto:** Bronze em arquitetura medalhão é tradicionalmente append-only para preservar histórico completo de ingestão, mas isso não é idempotente por design. Para garantir que reprocessamentos não dupliquem dados, é necessário adicionar verificação prévia.
+**Decisão:** Implementar APPEND com verificação prévia via tabela de controle de ingestão. Antes de processar cada ano, verificar na tabela de controle se já foi processado com o mesmo Last-Modified HTTP da fonte. Se sim, pular. Se não, processar e registrar na tabela de controle.
+**Alternativas consideradas:** APPEND puro sem controle (não idempotente), MERGE por chave natural (adiciona complexidade desnecessária no bronze), replaceWhere por ano (perde histórico de versões da fonte).
+**Justificativa:** Verificação prévia garante idempotência sem perder histórico completo. Tabela de controle rastreia quando cada versão da fonte foi ingerida, detecta quando a ANEEL atualiza arquivo histórico, e previne duplicação em reprocessamentos. Alinha com o princípio de bronze como camada de captura fiel da fonte.
