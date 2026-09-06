@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<!-- chat-html-export template v1.1.0 — nao remover esta linha -->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisão do notebook de ingestão de interrupções</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                         "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            font-size: 13px;
+            line-height: 18px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #161616;
+        }
+
+        .header {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content { flex: 1; }
+
+        .databricks-icon { width: 32px; height: 32px; }
+
+        h1 {
+            font-size: 22px;
+            line-height: 28px;
+            font-weight: 600;
+            color: #161616;
+            margin: 0 0 8px 0;
+        }
+
+        .date {
+            font-size: 13px;
+            line-height: 18px;
+            color: #6F6F6F;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-bottom: 40px;
+        }
+
+        .message { display: flex; margin-bottom: 16px; }
+        .message.user { justify-content: flex-end; }
+        .message.assistant { justify-content: flex-start; }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 13px;
+            line-height: 18px;
+            font-weight: 400;
+        }
+
+        .message.user .message-bubble {
+            max-width: 60%;
+            background-color: #d4e7f7;
+            color: #161616;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .message-bubble {
+            max-width: 95%;
+            background-color: #ffffff;
+            color: #161616;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .thoughts {
+            background-color: #fafafa;
+            border-left: 2px solid #ddd;
+            padding: 10px 14px;
+            margin: 12px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 18px;
+            font-weight: 400;
+            color: #6F6F6F;
+        }
+
+        .thoughts p { margin: 4px 0; }
+
+        .thoughts-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            line-height: 18px;
+            font-weight: 400;
+            color: #6F6F6F;
+        }
+
+        .context-note {
+            font-size: 13px;
+            line-height: 18px;
+            color: #6F6F6F;
+            margin-top: 6px;
+        }
+
+        strong, b { font-weight: 700; }
+
+        code {
+            font-family: monospace;
+            font-size: 0.85em;
+            font-weight: 400;
+        }
+
+        ol, ul { margin: 8px 0; padding-left: 20px; }
+        li { margin: 3px 0; font-size: 13px; line-height: 18px; }
+
+        hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin: 24px 0;
+        }
+
+
+        h2 {
+            font-size: 16px;
+            line-height: 22px;
+            font-weight: 600;
+            color: #161616;
+            margin: 16px 0 8px 0;
+        }
+        h3 {
+            font-size: 13px;
+            line-height: 18px;
+            font-weight: 700;
+            color: #161616;
+            margin: 12px 0 4px 0;
+        }
+
+        pre {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 10px 12px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 18px;
+            margin: 8px 0;
+        }
+        pre code { font-size: 1em; }
+
+        @keyframes genie-sparkle-spin {
+            0%   { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .genie-sparkle {
+            transform-box: view-box;
+            transform-origin: 8px 5px;
+            animation: 2.4s linear 0s infinite normal none running genie-sparkle-spin;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .genie-sparkle { animation: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>Revisão do notebook de ingestão de interrupções</h1>
+            <div class="date">Data: 2026-09-06</div>
+        </div>
+        <svg class="databricks-icon" viewBox="0 0 104.26 112.97" xmlns="http://www.w3.org/2000/svg">
+            <polygon fill="#ff3621" points="0 29.44 0 32.84 52.13 62.25 98.69 35.96 98.7 46.58 52.13 73.04 2.62 44.91 0 46.37 0 66.72 52.13 96.06 98.69 69.86 98.7 80.4 52.13 106.86 2.62 78.73 0 80.19 0 83.64 52.13 112.97 104.26 83.64 104.26 63.27 101.63 61.82 52.13 89.95 5.56 63.49 5.56 53 52.13 79.17 104.26 49.83 104.26 29.76 101.63 28.3 52.13 56.44 7.95 31.33 52.13 6.38 88.52 26.94 91.7 25.15 91.7 22.35 52.13 0 0 29.44"/>
+        </svg>
+    </div>
+
+    <div class="chat-container">
+
+        <!-- ===== BLOCO USUARIO ===== -->
+        <div class="message user">
+            <div class="message-bubble">
+                <p style="margin-top: 0;">06/09/2026 15:23</p>
+                <p>Revise o notebook de ingestão de interrupções do projeto de continuidade de fornecimento e me diga o que precisa ser corrigido antes de subir para produção.</p>
+                <p style="margin-bottom: 0;">Faça a revisão completa, sem me pedir confirmação.</p>
+            </div>
+        </div>
+
+        <!-- ===== BLOCO ASSISTANT ===== -->
+        <div class="message assistant">
+            <div class="message-bubble">
+                <div class="thoughts">
+                    <span class="thoughts-label">
+<!--
+  Icone do estado "Pensando" do Genie Code (Databricks).
+  Extraido do DOM da interface em 30/08/2026, do elemento
+  [data-testid="assistant-thinking-state"].
+  Copia literal: paths, gradiente e animacao nao foram redesenhados.
+  NAO substituir por emoji nem por SVG gerado.
+  Databricks e nomes de produto sao marcas da Databricks, Inc.
+  Uso descritivo. Diretrizes:
+  brandguides.brandfolder.com/databricks-extended-brand-guidelines
+-->
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="genie-code-ai-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="20.5%" stop-color="#4299E0"/>
+                                    <stop offset="46.91%" stop-color="#CA42E0"/>
+                                    <stop offset="79.5%" stop-color="#FF5F46"/>
+                                </linearGradient>
+                            </defs>
+                            <path fill="url(#genie-code-ai-gradient)" d="M0 8.5V7.75586C0.000200565 6.78621 0.786214 6.0002 1.75586 6H2.85645C3.22823 6 3.56811 6.21043 3.73438 6.54297L4.3291 7.73145C5.02432 9.1218 6.44551 10 8 10C9.55449 10 10.9757 9.1218 11.6709 7.73145L12.2656 6.54297L12.335 6.42383C12.5165 6.16072 12.8182 6 13.1436 6H16V7.5H13.4639L13.0127 8.40234C12.0634 10.3009 10.1226 11.5 8 11.5C5.87735 11.5 3.93661 10.3009 2.9873 8.40234L2.53613 7.5H1.75586C1.61464 7.5002 1.5002 7.61464 1.5 7.75586V8.5C1.5 8.77614 1.72386 9 2 9V10.5C0.89543 10.5 0 9.60457 0 8.5Z"/>
+                            <path fill="url(#genie-code-ai-gradient)" d="M10.5 12.5V14H5.5V12.5H10.5Z"/>
+                            <path class="genie-sparkle" fill="url(#genie-code-ai-gradient)" d="M7.77345 3.55265L8 2.25L8.22655 3.55265C8.33504 4.17646 8.82354 4.66496 9.44735 4.77345L10.75 5L9.44735 5.22655C8.82354 5.33504 8.33504 5.82354 8.22655 6.44735L8 7.75L7.77345 6.44735C7.66496 5.82354 7.17646 5.33504 6.55265 5.22655L5.25 5L6.55265 4.77345C7.17646 4.66496 7.66496 4.17646 7.77345 3.55265Z"/>
+                            <path class="genie-sparkle" fill="url(#genie-code-ai-gradient)" d="M8 1.5C8.36452 1.5 8.67665 1.76202 8.73926 2.12109L8.96582 3.42383C9.02006 3.73573 9.26427 3.97994 9.57617 4.03418L10.8789 4.26074C11.238 4.32335 11.5 4.63548 11.5 5C11.5 5.36452 11.238 5.67665 10.8789 5.73926L9.57617 5.96582C9.26427 6.02006 9.02006 6.26427 8.96582 6.57617L8.73926 7.87891C8.67665 8.23798 8.36452 8.5 8 8.5C7.63548 8.5 7.32335 8.23798 7.26074 7.87891L7.03418 6.57617C6.97994 6.26427 6.73573 6.02006 6.42383 5.96582L5.12109 5.73926C4.76202 5.67665 4.5 5.36452 4.5 5C4.5 4.63548 4.76202 4.32335 5.12109 4.26074L6.42383 4.03418C6.73573 3.97994 6.97994 3.73573 7.03418 3.42383L7.26074 2.12109L7.2959 1.99121C7.40253 1.70057 7.6811 1.5 8 1.5ZM8 4.76367C7.92717 4.8482 7.8482 4.92717 7.76367 5C7.84802 5.07267 7.9273 5.15103 8 5.23535C8.07254 5.15122 8.15122 5.07254 8.23535 5C8.15103 4.9273 8.07267 4.84802 8 4.76367Z"/>
+                        </svg>
+                        Pensando...
+                    </span>
+                    <p>O usuário quer que eu revise o notebook de ingestão de interrupções do projeto de continuidade de fornecimento e identifique o que precisa ser corrigido antes de ir para produção. Ele pede revisão completa sem pedir confirmação.</p>
+                    <p>Primeiro, preciso validar o timestamp na primeira mensagem:</p>
+                    <p>Mensagem: &quot;06/09/2026 15:23&quot;</p>
+                    <p>Padrão regex: <code>\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}</code></p>
+                    <p>&quot;06/09/2026 15:23&quot; corresponde ao padrão ✓</p>
+                    <p>Validação passou, posso prosseguir.</p>
+                    <p>Agora, preciso:</p>
+                    <p>Encontrar o projeto de continuidade de fornecimento</p>
+                    <p>Localizar o notebook de ingestão de interrupções</p>
+                    <p>Ler o notebook</p>
+                    <p>Revisar o código com foco em problemas que impediriam produção</p>
+                    <p>Capturar timestamp (ÚLTIMA AÇÃO antes de responder)</p>
+                    <p>Escrever resposta ao usuário</p>
+                    <p>Vou procurar pelo projeto. O usuário mencionou &quot;projeto de continuidade de fornecimento&quot; e &quot;notebook de ingestão de interrupções&quot;.</p>
+                    <p>Primeiro vou procurar por assets relacionados ao projeto de continuidade de fornecimento.</p>
+                    <p>Vou revisar o notebook de ingestão de interrupções do projeto de continuidade de fornecimento. Deixe-me localizar e analisar o código.</p>
+                    <p>Encontrei o notebook: <code>101_ingestao_aneel_interrupcoes.py</code> no path <code>/Users/[e-mail redigido]/genie-skills-eval/continuidade_aneel/01_bronze/101_ingestao_aneel_interrupcoes.py</code></p>
+                    <p>Este é claramente o notebook de ingestão de interrupções. Vou ler seu conteúdo completo para revisar o código.</p>
+                    <p>Ler notebook 101_ingestao_aneel_interrupcoes</p>
+                    <p>Agora vou revisar o código. Preciso carregar as skills apropriadas para fazer uma revisão completa. Baseado no que vi, preciso:</p>
+                    <p>code-review - para revisar bugs de lógica, premissas ocultas, código morto e custos</p>
+                    <p>data-quality-guardrails - para verificar se há validações apropriadas</p>
+                    <p>notebook-structure - para verificar estrutura do notebook</p>
+                    <p>Vou carregar essas skills e fazer a revisão.</p>
+                    <p>Read code-review skill</p>
+                    <p>Read data-quality-guardrails skill</p>
+                    <p>Read notebook-structure skill</p>
+                    <p>Ótimo, carreguei as três skills relevantes. Agora vou revisar o notebook de ingestão de interrupções aplicando os critérios das skills.</p>
+                    <p>Vou analisar o código em quatro frentes:</p>
+                    <p>CORREÇÃO SEMÂNTICA - bugs de lógica, alucinação de API, divergência comentário/código</p>
+                    <p>PREMISSAS OCULTAS - unicidade não validada, cardinalidade de join assumida, nulos não tratados, não-determinismo, atomicidade não garantida</p>
+                    <p>CÓDIGO MORTO - passos redundantes, abstractions prematuras</p>
+                    <p>CUSTO EVITÁVEL - quebra de lazy evaluation, UDFs evitáveis, shuffles desnecessários</p>
+                    <p>Também verificarei a estrutura do notebook segundo notebook-structure e os guardrails necessários segundo data-quality-guardrails.</p>
+                    <p>Vou revisar cada célula:</p>
+                    <p>Célula 1 - Documentação (Markdown)</p>
+                    <p>✓ Documentação presente</p>
+                    <p>⚠️ Menciona &quot;arquivo Parquet anual&quot; mas célula 5 lista anos manualmente - não está buscando arquivos reais</p>
+                    <p>Célula 2 - Imports</p>
+                    <p>✓ Imports corretos</p>
+                    <p>⚠️ Falta <code>import urllib</code> se for usar <code>requests.head()</code> - na verdade <code>requests</code> já está importado</p>
+                    <p>Célula 3 - CONFIGURAR PARÂMETROS</p>
+                    <p>⚠️ <code>URL_BASE_ANEEL</code> é um placeholder que precisa ser atualizado</p>
+                    <p>⚠️ <code>CHECKPOINT_PATH</code> usa <code>/tmp/</code> que não é adequado para produção</p>
+                    <p>⚠️ Comentário menciona &quot;Auto Loader (se usado)&quot; mas Auto Loader não é usado no código</p>
+                    <p>A célula 4 cria schema e tabela de controle, mas a tabela não possui chave primária ou constraint de unicidade. Na célula 5, há um problema crítico: os anos estão hardcoded como <code>[2020, 2021, 2022, 2023, 2024]</code> em vez de descobrir dinamicamente quais arquivos existem no portal ANEEL.</p>
+                    <p>Além disso, não há validação se as URLs são realmente acessíveis antes de tentar processá-las. Na célula 6, o <code>requests.head(url_arquivo)</code> pode falhar silenciosamente se a URL não existir, e o campo <code>last_modified</code> pode estar vazio se o header não for retornado. A comparação de <code>last_modified</code> como string é frágil e não confiável. Há também um problema de performance: <code>df_raw.count()</code> dispara a ação antes do <code>.write()</code>, quebrando a lazy evaluation do Spark. Faltam retry logic para falhas transitórias, validação de schema antes de gravar os dados, e reconciliação de contagem/soma para garantir integridade.</p>
+                    <p>O código usa <code>mode(&quot;append&quot;)</code> sem verificar duplicatas, e a exceção genérica captura tudo sem diferenciar um erro 404 de um problema de rede. Há uma gambiarra com <code>url_arquivo if &#x27;url_arquivo&#x27; in locals() else &#x27;&#x27;</code> para tentar tratar a exceção no bloco except. A célula 7 exibe um resumo, mas depende de <code>display()</code> que só funciona em ambientes interativos. Estruturalmente, faltam células para carregar configurações via <code>%run</code> e para inicializar a lista de anos a processar.</p>
+                    <p>A sequência das células não segue a estrutura esperada do notebook.</p>
+                    <p>Vou revisar o notebook completo aplicando os critérios de código pronto para produção.</p>
+                    <p>Capturar timestamp de conclusão</p>
+                    <p>Agora posso escrever a resposta com o timestamp correto.</p>
+                </div>
+
+                <p style="margin-top: 0;">06/set/2026 15:24</p>
+                <p>Revisei o notebook de ingestão de interrupções do projeto de continuidade de fornecimento. Identifiquei <strong>16 problemas críticos</strong> que impedem produção, organizados por gravidade:</p>
+                <hr>
+                <h2>🔴 FRENTE 1 — CORREÇÃO (5 problemas críticos)</h2>
+                <h3>1.1 Lista hardcoded de anos não verifica arquivos reais</h3>
+                <p><strong>Célula 5, linhas 2-3</strong></p>
+                <pre><code># ERRADO — anos hardcoded, não verifica se arquivos existemanos_disponiveis = [2020, 2021, 2022, 2023, 2024]</code></pre>
+                <p><strong>Impacto</strong>: O loop tentará processar anos que podem não ter arquivo disponível, gerando falhas em runtime.</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code># Listar arquivos realmente disponíveis via API ou scraping do portal ANEEL# Exemplo: requests.get(url_catalogo) e parsear JSON/HTML com lista de anos</code></pre>
+                <h3>1.2 URL base é placeholder não funcional</h3>
+                <p><strong>Célula 3, linha 8</strong></p>
+                <pre><code>URL_BASE_ANEEL = &quot;https://dadosabertos.aneel.gov.br/dataset&quot;</code></pre>
+                <p><strong>Impacto</strong>: URL incompleta impedirá download dos arquivos.</p>
+                <p><strong>Correção</strong>: Substituir por URL completa testada (ex: <code>https://dadosabertos.aneel.gov.br/dataset/interrupcoes-de-energia/{ano}/resource/{resource_id}</code>)</p>
+                <h3>1.3 Comparação de <code>last_modified</code> como string não é confiável</h3>
+                <p><strong>Célula 6, linha 26</strong></p>
+                <pre><code># ERRADO — compara strings de data sem parsingWHERE last_modified = &#x27;{last_modified}&#x27;</code></pre>
+                <p><strong>Impacto</strong>: Formato de data HTTP pode variar, causando falsos negativos (reprocessamento desnecessário) ou falsos positivos (skip indevido).</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code>from email.utils import parsedate_to_datetimelast_modified_dt = parsedate_to_datetime(last_modified)# Gravar e comparar como TIMESTAMP</code></pre>
+                <h3>1.4 Quebra de lazy evaluation — <code>count()</code> antes de <code>write()</code></h3>
+                <p><strong>Célula 6, linha 38</strong></p>
+                <pre><code># ERRADO — força computação completa 2xnum_registros = df_raw.count()  # 1ª computaçãodf_bronze.write.mode(&quot;append&quot;).saveAsTable(...)  # 2ª computação (recomputa DAG do zero)</code></pre>
+                <p><strong>Impacto</strong>: Dobra o custo de processamento. Para 1M de linhas, processa 2M.</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code>df_bronze = df_bronze.cache()  # Cacheia antes do countnum_registros = df_bronze.count()df_bronze.write.mode(&quot;append&quot;).saveAsTable(...)df_bronze.unpersist()</code></pre>
+                <h3>1.5 Exceção genérica captura erros diferentes como iguais</h3>
+                <p><strong>Célula 6, linha 66</strong></p>
+                <pre><code># ERRADO — timeout de rede, 404 e parsing error viram &quot;erro ao processar ano&quot;except Exception as e:</code></pre>
+                <p><strong>Impacto</strong>: Impossível diagnosticar causa raiz. Um 404 (arquivo não existe) é esperado, timeout de rede não é.</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code>except requests.exceptions.HTTPError as e:    if e.response.status_code == 404:        logger.info(f&quot;Arquivo não disponível para {ano}&quot;)        continue    raiseexcept requests.exceptions.Timeout:    logger.error(f&quot;Timeout ao acessar {url_arquivo}&quot;)    raise</code></pre>
+                <hr>
+                <h2>🟠 FRENTE 2 — PREMISSAS OCULTAS (7 problemas críticos)</h2>
+                <h3>2.1 Status SUCCESS gravado sem validar volume processado</h3>
+                <p><strong>Célula 6, linhas 53-59</strong></p>
+                <pre><code># ERRADO — grava SUCCESS mesmo se num_registros = 0df_controle = spark.createDataFrame([    (..., num_registros, &quot;Ingestão concluída com sucesso&quot;)])</code></pre>
+                <p><strong>Impacto</strong>: Pipeline reporta sucesso para ingestões vazias. Falha silenciosa detectada em auditoria real (skill code-review § 2.4).</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code>if num_registros == 0:    raise ValueError(f&quot;Ano {ano}: 0 registros lidos — fonte vazia ou URL incorreta&quot;)</code></pre>
+                <h3>2.2 Sem retry logic para falhas transitórias</h3>
+                <p><strong>Célula 6, linha 21</strong></p>
+                <pre><code># ERRADO — timeout de rede quebra todo o anoresponse = requests.head(url_arquivo, allow_redirects=True)</code></pre>
+                <p><strong>Impacto</strong>: Falha transitória impede ingestão de ano inteiro, sem segunda chance.</p>
+                <p><strong>Correção</strong>: Aplicar <code>retry_com_backoff()</code> (padrão skill data-quality-guardrails § 3.1)</p>
+                <h3>2.3 Sem validação de schema antes de gravar</h3>
+                <p><strong>Célula 6, linha 50</strong></p>
+                <pre><code># ERRADO — grava sem checar se schema mudoudf_bronze.write.mode(&quot;append&quot;).saveAsTable(...)</code></pre>
+                <p><strong>Impacto</strong>: Mudança não documentada na fonte ANEEL quebra o pipeline silenciosamente ou grava dados incorretos.</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code>validar_schema(df_raw, SCHEMA_ESPERADO)  # Skill data-quality-guardrails § 4.1</code></pre>
+                <h3>2.4 Sem reconciliação de contagem/soma</h3>
+                <p><strong>Célula 6, linha 50</strong></p>
+                <pre><code># ERRADO — grava sem conferir se perdeu registrosdf_bronze.write.mode(&quot;append&quot;).saveAsTable(...)</code></pre>
+                <p><strong>Impacto</strong>: Perda de dados passa despercebida.</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code># Antes de gravarcount_entrada = df_raw.count()count_saida = df_bronze.count()assert count_entrada == count_saida, f&quot;Perda detectada: {count_entrada} → {count_saida}&quot;</code></pre>
+                <h3>2.5 Atomicidade não garantida — APPEND sem dedup</h3>
+                <p><strong>Célula 6, linha 50</strong></p>
+                <pre><code># ERRADO — reprocessamento duplica dadosdf_bronze.write.mode(&quot;append&quot;).saveAsTable(...)</code></pre>
+                <p><strong>Impacto</strong>: Reprocessar um ano grava dados duplicados sem idempotência.</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code># Opção 1: DELETE + APPEND com checkpoint atômico# Opção 2: MERGE com chave natural# Opção 3: replaceWhere se tabela particionada por ano</code></pre>
+                <h3>2.6 Checkpoint path em <code>/tmp/</code> não persiste</h3>
+                <p><strong>Célula 3, linha 12</strong></p>
+                <pre><code>CHECKPOINT_PATH = &quot;/tmp/checkpoints/aneel_interrupcoes&quot;</code></pre>
+                <p><strong>Impacto</strong>: <code>/tmp/</code> é efêmero — reinício de cluster perde estado.</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code>CHECKPOINT_PATH = f&quot;/Volumes/{CATALOG}/checkpoints/aneel_interrupcoes&quot;</code></pre>
+                <h3>2.7 Tabela de controle sem constraint de unicidade</h3>
+                <p><strong>Célula 4, linha 5</strong></p>
+                <pre><code># ERRADO — permite duplicatas em (fonte, ano)CREATE TABLE IF NOT EXISTS ... (fonte STRING, ano INT, ...)</code></pre>
+                <p><strong>Impacto</strong>: Múltiplas execuções concorrentes podem gravar controle duplicado.</p>
+                <p><strong>Correção</strong>:</p>
+                <pre><code>CREATE TABLE IF NOT EXISTS ... (    fonte STRING NOT NULL,    ano INT NOT NULL,    ...,    CONSTRAINT pk_controle PRIMARY KEY (fonte, ano))</code></pre>
+                <hr>
+                <h2>🟡 FRENTE 3 — NECESSIDADE (2 problemas)</h2>
+                <h3>3.1 Comentário sobre Auto Loader sem uso</h3>
+                <p><strong>Célula 3, linha 12</strong></p>
+                <pre><code># Caminho de checkpoint para Auto Loader (se usado)</code></pre>
+                <p><strong>Impacto</strong>: Confusão — sugere feature não implementada.</p>
+                <p><strong>Correção</strong>: Remover comentário ou implementar Auto Loader de fato.</p>
+                <h3>3.2 Código morto: <code>&#x27;url_arquivo&#x27; in locals()</code></h3>
+                <p><strong>Célula 6, linha 69</strong></p>
+                <pre><code>url_arquivo if &#x27;url_arquivo&#x27; in locals() else &#x27;&#x27;</code></pre>
+                <p><strong>Impacto</strong>: Gambiarra para contornar <code>NameError</code> no except — sinal de design ruim.</p>
+                <p><strong>Correção</strong>: Definir <code>url_arquivo = None</code> antes do try.</p>
+                <hr>
+                <h2>🟢 FRENTE 4 — CUSTO (1 problema)</h2>
+                <h3>4.1 Já coberto em 1.4 (count antes de write)</h3>
+                <hr>
+                <h2>📐 ESTRUTURA DO NOTEBOOK (2 problemas)</h2>
+                <h3>E.1 Falta célula &quot;Carregar configurações&quot;</h3>
+                <p><strong>Esperado</strong>: Célula 2 com <code>%run ../05_apoio/config_parametros</code></p>
+                <p><strong>Impacto</strong>: Constantes como <code>CATALOG</code>, <code>SCHEMA_BRONZE</code> estão hardcoded em vez de centralizadas.</p>
+                <h3>E.2 Ordem incorreta de células iniciais</h3>
+                <p><strong>Ordem atual</strong>: Documentação → Imports → Configurações <strong>Ordem correta</strong>: Documentação → Carregar Configurações → Inicializar Anos → Imports</p>
+                <hr>
+                <h2>🎯 RESUMO EXECUTIVO</h2>
+                <p><strong>16 problemas impedem produção:</strong></p>
+                <ul>
+                    <li><strong>5 críticos de correção</strong> (falhas em runtime)</li>
+                    <li><strong>7 críticos de premissas ocultas</strong> (falhas silenciosas)</li>
+                    <li><strong>2 de necessidade</strong> (código morto)</li>
+                    <li><strong>1 de custo</strong> (dobra processamento)</li>
+                    <li><strong>2 de estrutura</strong> (não segue padrão do projeto)</li>
+                </ul>
+                <p><strong>Prioridade de correção:</strong></p>
+                <ol>
+                    <li>⚠️ <strong>Antes de testar</strong>: Corrigir URL base e descoberta de arquivos (§1.1, §1.2)</li>
+                    <li>⚠️ <strong>Antes de produção</strong>: Adicionar validação de volume (§2.1), retry logic (§2.2), idempotência (§2.5)</li>
+                    <li>⚠️ <strong>Para diagnóstico</strong>: Diferenciar exceções (§1.5), logging estruturado</li>
+                    <li>⚠️ <strong>Para performance</strong>: Cachear antes de count (§1.4)</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- ===== BLOCO USUARIO ===== -->
+        <div class="message user">
+            <div class="message-bubble">
+                <p style="margin-top: 0;">06/09/2026 15:29</p>
+                <p style="margin-bottom: 0;">Terminamos por aqui. Atualize a documentação do projeto com o que foi feito nesta sessão.</p>
+            </div>
+        </div>
+
+        <!-- ===== BLOCO ASSISTANT ===== -->
+        <div class="message assistant">
+            <div class="message-bubble">
+                <div class="thoughts">
+                    <span class="thoughts-label">
+<!--
+  Icone do estado "Pensando" do Genie Code (Databricks).
+  Extraido do DOM da interface em 30/08/2026, do elemento
+  [data-testid="assistant-thinking-state"].
+  Copia literal: paths, gradiente e animacao nao foram redesenhados.
+  NAO substituir por emoji nem por SVG gerado.
+  Databricks e nomes de produto sao marcas da Databricks, Inc.
+  Uso descritivo. Diretrizes:
+  brandguides.brandfolder.com/databricks-extended-brand-guidelines
+-->
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="genie-code-ai-gradient-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="20.5%" stop-color="#4299E0"/>
+                                    <stop offset="46.91%" stop-color="#CA42E0"/>
+                                    <stop offset="79.5%" stop-color="#FF5F46"/>
+                                </linearGradient>
+                            </defs>
+                            <path fill="url(#genie-code-ai-gradient-2)" d="M0 8.5V7.75586C0.000200565 6.78621 0.786214 6.0002 1.75586 6H2.85645C3.22823 6 3.56811 6.21043 3.73438 6.54297L4.3291 7.73145C5.02432 9.1218 6.44551 10 8 10C9.55449 10 10.9757 9.1218 11.6709 7.73145L12.2656 6.54297L12.335 6.42383C12.5165 6.16072 12.8182 6 13.1436 6H16V7.5H13.4639L13.0127 8.40234C12.0634 10.3009 10.1226 11.5 8 11.5C5.87735 11.5 3.93661 10.3009 2.9873 8.40234L2.53613 7.5H1.75586C1.61464 7.5002 1.5002 7.61464 1.5 7.75586V8.5C1.5 8.77614 1.72386 9 2 9V10.5C0.89543 10.5 0 9.60457 0 8.5Z"/>
+                            <path fill="url(#genie-code-ai-gradient-2)" d="M10.5 12.5V14H5.5V12.5H10.5Z"/>
+                            <path class="genie-sparkle" fill="url(#genie-code-ai-gradient-2)" d="M7.77345 3.55265L8 2.25L8.22655 3.55265C8.33504 4.17646 8.82354 4.66496 9.44735 4.77345L10.75 5L9.44735 5.22655C8.82354 5.33504 8.33504 5.82354 8.22655 6.44735L8 7.75L7.77345 6.44735C7.66496 5.82354 7.17646 5.33504 6.55265 5.22655L5.25 5L6.55265 4.77345C7.17646 4.66496 7.66496 4.17646 7.77345 3.55265Z"/>
+                            <path class="genie-sparkle" fill="url(#genie-code-ai-gradient-2)" d="M8 1.5C8.36452 1.5 8.67665 1.76202 8.73926 2.12109L8.96582 3.42383C9.02006 3.73573 9.26427 3.97994 9.57617 4.03418L10.8789 4.26074C11.238 4.32335 11.5 4.63548 11.5 5C11.5 5.36452 11.238 5.67665 10.8789 5.73926L9.57617 5.96582C9.26427 6.02006 9.02006 6.26427 8.96582 6.57617L8.73926 7.87891C8.67665 8.23798 8.36452 8.5 8 8.5C7.63548 8.5 7.32335 8.23798 7.26074 7.87891L7.03418 6.57617C6.97994 6.26427 6.73573 6.02006 6.42383 5.96582L5.12109 5.73926C4.76202 5.67665 4.5 5.36452 4.5 5C4.5 4.63548 4.76202 4.32335 5.12109 4.26074L6.42383 4.03418C6.73573 3.97994 6.97994 3.73573 7.03418 3.42383L7.26074 2.12109L7.2959 1.99121C7.40253 1.70057 7.6811 1.5 8 1.5ZM8 4.76367C7.92717 4.8482 7.8482 4.92717 7.76367 5C7.84802 5.07267 7.9273 5.15103 8 5.23535C8.07254 5.15122 8.15122 5.07254 8.23535 5C8.15103 4.9273 8.07267 4.84802 8 4.76367Z"/>
+                        </svg>
+                        Pensando...
+                    </span>
+                    <p>O usuário pediu para atualizar a documentação do projeto com o que foi feito nesta sessão. Vou precisar:</p>
+                    <p>Identificar qual projeto estamos trabalhando (continuidade de fornecimento / continuidade_aneel)</p>
+                    <p>Localizar os documentos de documentação do projeto</p>
+                    <p>Registrar a revisão do notebook de ingestão de interrupções realizada nesta sessão</p>
+                    <p>Seguir o protocolo de timestamp (executar APÓS concluir todo o trabalho)</p>
+                    <p>Deixa eu buscar os documentos do projeto primeiro.</p>
+                    <p>Vou localizar e atualizar a documentação do projeto de continuidade de fornecimento com a revisão realizada.</p>
+                    <p>Não encontrei arquivos de documentação na busca. Vou procurar pela estrutura de pastas do projeto para localizar onde devem estar os documentos.</p>
+                    <p>Ler folder continuidade_aneel</p>
+                    <p>Encontrei a estrutura do projeto. Há uma pasta 00_documentacao e um README.md na raiz. Vou ler a pasta de documentação para ver o que tem lá.</p>
+                    <p>Ler folder 00_documentacao</p>
+                    <p>Perfeito! Encontrei o arquivo evolucao_projeto.md. Vou ler ele para ver o formato e adicionar o registro da sessão de hoje.</p>
+                    <p>Ler file evolucao_projeto.md</p>
+                    <p>Perfeito! Agora vou adicionar o registro da sessão 7 (hoje, 06/09/2026) com a revisão de código realizada do notebook 101_ingestao_aneel_interrupcoes.py. Vou seguir o formato já estabelecido no documento.</p>
+                    <p>Editado evolucao_projeto.md</p>
+                    <p>Agora vou capturar o timestamp antes de escrever a resposta final ao usuário.</p>
+                    <p>Capturar timestamp de conclusão</p>
+                    <p>Perfeito! Agora vou escrever a resposta final ao usuário informando que a documentação foi atualizada.</p>
+                </div>
+
+                <p style="margin-top: 0;">06/set/2026 15:30</p>
+                <p>Documentação atualizada com sucesso. Registrei no <code>evolucao_projeto.md</code> a <strong>Sessão 7</strong> com:</p>
+                <ul>
+                    <li><strong>Feito</strong>: Revisão completa do notebook 101 (16 problemas críticos identificados em 4 frentes: correção, premissas ocultas, necessidade e custo)</li>
+                    <li><strong>Estado atual</strong>: Notebook 101 construído mas não pronto para produção</li>
+                    <li><strong>Próximo passo</strong>: Aplicar correções prioritárias (URL base, validações, retry, idempotência) ou prosseguir com gold conforme sua decisão</li>
+                    <li><strong>Pendências</strong>: Adicionada nova pendência &quot;aplicar correções de código-revisão no notebook 101&quot;</li>
+                </ul>
+                <p>A sessão está documentada seguindo o padrão estabelecido nas sessões anteriores.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="font-size: 12px; line-height: 16px; color: #6F6F6F; padding: 20px 0; margin-top: 40px; border-top: 1px solid #e0e0e0;">
+        <strong>Metadados:</strong><br>
+        passo: 08<br>
+        data/hora: 06/09/2026 15:36<br>
+        skills_repo_sha: 6c7933e<br>
+        skills_carregadas: code-review, data-quality-guardrails, notebook-structure
+    </div>
+
+</body>
+</html>
