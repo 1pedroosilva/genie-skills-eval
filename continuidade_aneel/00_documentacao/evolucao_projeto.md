@@ -1,5 +1,12 @@
 # Evolução do Projeto: Continuidade ANEEL
 
+## 2026-09-06 -- Sessão 3
+
+**Feito:** Planejamento da transformação silver das interrupções. Consultadas skills de contexto de projeto, estrutura de notebooks, convenções de nomenclatura, arquitetura medalhão, padrão de escrita técnica e guardrails. Lida documentação do projeto (definições, mapa do pipeline, decisões arquiteturais). Analisado notebook bronze 101_ingestao_aneel_interrupcoes. Definida estrutura do notebook 201_interrupcoes_distribuicao: conformação técnica (casting, deduplicação por chave natural, tratamento de nulos, padronização), validações de integridade (schema validation, unicidade, completude referencial), reconciliação quantitativa (contagem e soma), gravação silver com estratégia idempotente (delete where ou replaceWhere por partição de ano). Sessão interrompida antes da criação do notebook.
+**Estado atual:** Notebooks bronze (101 e 102) construídos. Transformação silver das interrupções (201) planejada mas não implementada.
+**Próximo passo:** Implementar notebook 201_interrupcoes_distribuicao conforme planejamento desta sessão.
+**Pendências:** [PENDENTE] consumidor do resultado; [PENDENTE] exclusões de escopo; [PENDENTE] registro do projeto no índice de projetos do .assistant_instructions.md; [PENDENTE] ajustar URLs reais do portal ANEEL nos notebooks 101 e 102; [PENDENTE] implementar notebook 201_interrupcoes_distribuicao.
+
 ## 2026-09-06 -- Sessão 2
 
 **Feito:** Implementado segundo notebook de ingestão bronze (102_indicadores_continuidade). Notebook baixa arquivos ZIP da ANEEL via HTTP, extrai CSVs, padroniza colunas para snake_case, adiciona metadados de rastreabilidade (_fonte_url, _ingest_ts, _ingest_date, _run_id) e grava com estratégia DELETE+APPEND por ano. Inclui guardrails de validação de forma (schema, volume) e sumário de execução. Registrada DEC-004 sobre estratégia DELETE+APPEND.
