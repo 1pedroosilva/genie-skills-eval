@@ -139,10 +139,19 @@ body{
 .objetivo{margin:0 0 20px;font-size:14px;max-width:70ch}
 .detail .when{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 16px}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px 28px}
+.dgrid > div{min-width:0}
+.dgrid li{overflow-wrap:anywhere}
 .dgrid h4{margin:0 0 6px;font-size:12.5px;font-weight:500;color:var(--muted)}
 .dgrid ul{margin:0;padding:0;list-style:none}
 .dgrid li{font-family:var(--mono);font-size:12.5px;padding:1px 0}
 .dgrid li.plain{font-family:var(--sans);font-size:13.5px;line-height:1.5;padding:2px 0}
+.dgrid .wide{grid-column:1/-1}
+.dgrid ul.skills{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:2px 24px}
+.dgrid ul.skills li{padding-bottom:4px;min-width:0}
+.dgrid li a.skl{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
+.dgrid li a.skl:hover{border-bottom-color:var(--done);color:var(--done)}
+.dgrid li a.skl:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.glosa{display:block;font-family:var(--sans);font-size:12px;color:var(--muted);margin:1px 0 0;line-height:1.35}
 .dgrid li a.art{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
 .dgrid li a.art:hover{border-bottom-color:var(--done);color:var(--done)}
 .dgrid li a.art:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -449,6 +458,31 @@ const ACHADOS = [
 
 const faixa = w => w < 1500 ? "curta" : w < 2600 ? "média" : "longa";
 
+const SKILLS = {
+  "artifact-documentation":"documentar artefato técnico existente",
+  "asset-placement":"onde criar cada arquivo no workspace",
+  "code-review":"revisar código em quatro frentes",
+  "data-quality-guardrails":"validações que interrompem o pipeline",
+  "docs-sync":"sincronizar documentos após mudança",
+  "eda-and-validation":"ciclo de descoberta e verificação",
+  "git-workflow":"escopo e mensagem de commit",
+  "medallion-architecture":"estratégia entre bronze, silver e gold",
+  "naming-conventions":"nomes de notebooks, tabelas e variáveis",
+  "notebook-structure":"ordem fixa das células iniciais",
+  "project-context":"abrir, retomar e fechar projeto",
+  "skill-patterns":"escrever e auditar skills",
+  "technical-writing":"redação técnica versionada",
+  "unity-catalog-naming":"nomes de schema, tabela e volume"
+};
+const SKILLS_SHA = "6c7933e";
+const SKILLS_REPO = "https://github.com/1pedroosilva/databricks-genie-skills";
+
+function skillItem(k){
+  const g = SKILLS[k] ? `<span class="glosa">${SKILLS[k]}</span>` : "";
+  return `<li><a class="skl" href="${SKILLS_REPO}/blob/${SKILLS_SHA}/${k}/SKILL.md"
+    target="_blank" rel="noopener">${k}</a>${g}</li>`;
+}
+
 const idx = (p,a) => SESSOES.find(s => s.passo===p && s.arm===a);
 
 function artefato(a){
@@ -496,7 +530,7 @@ function alternar(botao, s, p){
     <h4 class="dlabel">Objetivo do teste</h4>
     <p class="objetivo">${s.objetivo || ""}</p>
     <div class="dgrid">
-      <div><h4>Skills carregadas</h4><ul>${s.skills.map(k=>`<li>${k}</li>`).join("")}</ul></div>
+      <div class="wide"><h4>Skills carregadas</h4><ul class="skills">${s.skills.map(skillItem).join("")}</ul></div>
       <div><h4>Produziu</h4><ul>${s.artefatos.map(artefato).join("")}</ul></div>
       ${tags.length ? `<div><h4>Evidencia</h4><ul>${tags.map(t=>`<li class="plain">${t.titulo}</li>`).join("")}</ul></div>` : ""}
     </div>
