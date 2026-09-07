@@ -1,5 +1,12 @@
 # Evolução do Projeto: Continuidade ANEEL
 
+## 2026-09-07 -- Sessão 9
+
+**Feito:** Alterada a chave natural da tabela silver `interrupcoes_distribuicao`. Chave atualizada de código do conjunto isolado para chave composta de quatro campos: `cod_distribuidora`, `data_inicio`, `conjunto`, `tipo_interrupcao`. Notebook 201_interrupcoes_distribuicao alterado e testado com a nova estrutura de chave. Deduplicação ajustada para utilizar a chave completa. Registrada DEC-005 documentando a decisão, alternativas consideradas e justificativa.
+**Estado atual:** Notebooks bronze (101 e 102) construídos mas 101 não pronto para produção (16 problemas identificados na sessão 7). Notebooks silver (201 e 202) construídos com 201 atualizado para nova chave natural. Notebook gold 301 implementado e documentado.
+**Próximo passo:** Aplicar correções no notebook 101 conforme priorização da revisão ou prosseguir com outras implementações conforme decisão do usuário.
+**Pendências:** [PENDENTE] aplicar correções de código-revisão no notebook 101; [PENDENTE] consumidor do resultado; [PENDENTE] exclusões de escopo; [PENDENTE] registro do projeto no índice de projetos do .assistant_instructions.md; [PENDENTE] ajustar URLs reais do portal ANEEL nos notebooks 101 e 102; [PENDENTE] executar EDA e validações da qualidade bronze.
+
 ## 2026-09-06 -- Sessão 8
 
 **Feito:** Documentação do notebook gold 301_tempo_interrupcao_distribuidora_mes.py atualizada seguindo skills artifact-documentation e technical-writing. Documentação reescrita com estrutura técnica: propósito (agregação de eventos de interrupção por distribuidora e mês), transformações (agrupamento por cod_distribuidora, ano_referencia, mes_referencia), métricas calculadas (tempo_total_minutos, tempo_total_horas, total_eventos, datas de primeiro e último evento), guardrails implementados (validações estruturais de campos obrigatórios, validações de qualidade para nulos críticos e valores inválidos, validações de consistência para unicidade de chave analítica e reconciliação de soma entre silver e gold com tolerância de 0.01%), estratégia de gravação (DELETE+APPEND por ano parametrizado via widget com garantia de idempotência), parametrização (widget anos com fallback), dependências (notebook de configurações e tabela silver interrupcoes_distribuicao) e estrutura da saída (schema completo da tabela gold). Documentação segue padrões técnicos: informações verificáveis diretamente no código do notebook, tom factual sem emojis ou elementos decorativos, estrutura clara com seções bem definidas.

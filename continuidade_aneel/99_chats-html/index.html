@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Avaliação de skills do Genie Code — 9 sessões registradas | genie-skills-eval</title>
-<meta name="description" content="Avaliação empírica de skills do Genie Code (Databricks): 9 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
+<title>Avaliação de skills do Genie Code — 10 sessões registradas | genie-skills-eval</title>
+<meta name="description" content="Avaliação empírica de skills do Genie Code (Databricks): 10 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
 <meta name="author" content="Pedro Silva">
 <link rel="canonical" href="https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
@@ -14,17 +14,17 @@
 <meta property="og:site_name" content="genie-skills-eval">
 <meta property="og:url" content="https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/">
 <meta property="og:title" content="Avaliação empírica de skills do Genie Code (Databricks)">
-<meta property="og:description" content="Avaliação empírica de skills do Genie Code (Databricks): 9 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
+<meta property="og:description" content="Avaliação empírica de skills do Genie Code (Databricks): 10 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Avaliação empírica de skills do Genie Code (Databricks)">
-<meta name="twitter:description" content="Avaliação empírica de skills do Genie Code (Databricks): 9 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
+<meta name="twitter:description" content="Avaliação empírica de skills do Genie Code (Databricks): 10 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
 
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
   "@type":"Dataset",
   "name":"genie-skills-eval — sessões registradas do Genie Code",
-  "description":"Avaliação empírica de skills do Genie Code (Databricks): 9 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.",
+  "description":"Avaliação empírica de skills do Genie Code (Databricks): 10 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.",
   "url":"https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/",
   "inLanguage":"pt-BR",
   "license":"https://opensource.org/licenses/MIT",
@@ -33,7 +33,7 @@
   "distribution":{"@type":"DataDownload","encodingFormat":"text/html",
     "contentUrl":"https://github.com/1pedroosilva/genie-skills-eval"},
   "keywords":["Databricks","Genie Code","Agent Skills","engenharia de dados","arquitetura medalhão","avaliação de agentes","Unity Catalog"],
-  "temporalCoverage":"2026-09-05/2026-09-06",
+  "temporalCoverage":"2026-09-05/2026-09-07",
   "measurementTechnique":"Sessões pareadas com e sem skills ativas, mesmos prompts na mesma sequência"
 }
 </script>
@@ -300,7 +300,7 @@ body{
   <noscript>
     <section style="margin:36px 0;padding:20px;border:1px solid var(--rule);background:var(--panel)">
       <h2 style="font-size:16px;margin:0 0 10px">Sessões registradas</h2>
-      <p style="margin:0 0 14px;color:var(--muted)">Braço com skills ativas, 05 e 06 de setembro de 2026. Cada link abre a transcrição completa da sessão, com painel de raciocínio do agente.</p>
+      <p style="margin:0 0 14px;color:var(--muted)">Braço com skills ativas, de 05 a 07 de setembro de 2026. Cada link abre a transcrição completa da sessão, com painel de raciocínio do agente.</p>
       <ol style="margin:0;padding-left:20px;line-height:1.9">
         <li><a href="01_inicio-projeto-continuidade-aneel.html">Estrutura inicial do projeto</a> — protocolo de abertura: entrevista, esqueleto de pastas, documentos de gestão e schemas no Unity Catalog</li>
         <li><a href="02_ingestao_aneel_interrupcoes_bronze.html">Ingestão bronze das interrupções</a> — primeiro notebook do projeto, convenções de estrutura e nomenclatura</li>
@@ -311,12 +311,14 @@ body{
         <li><a href="07_tabela_gold_tempo_interrupcao.html">Tabela gold de tempo de interrupção</a> — agregação por distribuidora e mês</li>
         <li><a href="08_revisao_notebook_ingestao_interrupcoes.html">Revisão de código do notebook de ingestão</a> — 16 problemas identificados contra protocolo de produção</li>
         <li><a href="09_documentacao_notebook_gold.html">Documentação do notebook gold</a> — documentação verificável no próprio código</li>
+        <li><a href="10_mudanca_chave_silver_docs.html">Mudança de chave da tabela silver</a> — sincronização da documentação a partir de uma premissa do usuário que o código não confirmava</li>
       </ol>
       <h2 style="font-size:16px;margin:22px 0 10px">Achados</h2>
-      <p style="margin:0 0 8px">Documentação não propaga; contato empírico propaga. A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em nove sessões, enquanto os notebooks que consultaram o Unity Catalog usam o destino correto.</p>
+      <p style="margin:0 0 8px">Documentação não propaga; contato empírico propaga. A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em dez sessões, enquanto os notebooks que consultaram o Unity Catalog usam o destino correto.</p>
       <p style="margin:0 0 8px">O protocolo de fechamento registra intenção, não estado. Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava.</p>
       <p style="margin:0 0 8px">A revisão de código não olha para fora do arquivo: dezesseis problemas identificados, nenhum deles o catálogo inexistente que impede a primeira escrita.</p>
-      <p style="margin:0">O roteamento de skills falha quando o asset é meio, não fim do pedido — único erro em nove sessões.</p>
+      <p style="margin:0 0 8px">O roteamento de skills falha quando o asset é meio, não fim do pedido — único erro em dez sessões.</p>
+      <p style="margin:0">A premissa do pedido não é verificada contra o código: o agente registrou a divergência no raciocínio, atribuiu-a a uma simplificação do usuário e documentou a mudança como fato.</p>
     </section>
   </noscript>
 
@@ -376,7 +378,7 @@ const PASSOS = [
   { n:7,  titulo:"Tabela gold — tempo de interrupção" },
   { n:8,  titulo:"Revisão de código do notebook 101" },
   { n:9,  titulo:"Documentação do notebook gold" },
-  { n:10, titulo:"— a definir" },
+  { n:10, titulo:"Mudança de chave da tabela silver" },
   { n:11, titulo:"— a definir" }
 ];
 
@@ -460,7 +462,16 @@ const SESSOES = [
       { nome:"301_tempo_interrupcao_distribuidora_mes.py — documentação reescrita", sha:"c6f718b", path:"03_gold/301_tempo_interrupcao_distribuidora_mes.py.py", marca:"reaplicado após rejeição" },
       { nome:"registro da sessão em evolucao_projeto.md", sha:"cb4be1e" }
     ],
-    achados:[] }
+    achados:[] },
+
+  { passo:10, arm:"com", duracao:5, palavras:1420, objetivo:"Verificar o que o agente faz com uma premissa do usuário que o código não confirma: se checa o artefato antes de propagar a mudança pela documentação do projeto.", file:"10_mudanca_chave_silver_docs.html",
+    quando:"07/09/2026 02:49",
+    skills:["docs-sync"],
+    artefatos:[
+      { nome:"decisoes_arquiteturais.md — DEC-005 sobre a nova chave natural", sha:"SHA_PENDENTE" },
+      { nome:"registro da sessão em evolucao_projeto.md", sha:"SHA_PENDENTE" }
+    ],
+    achados:["premissa"] }
 ];
 
 const COMPLEMENTAR = {
@@ -477,13 +488,15 @@ const COMPLEMENTAR = {
 
 const ACHADOS = [
   { id:"catalogo", titulo:"Documentação não propaga; contato empírico propaga",
-    texto:"A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em nove sessões. Os notebooks que consultaram o Unity Catalog ou leram o artefato real usam o destino correto; os que nunca tocaram o ambiente apontam para um catálogo inexistente." },
+    texto:"A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em dez sessões. Os notebooks que consultaram o Unity Catalog ou leram o artefato real usam o destino correto; os que nunca tocaram o ambiente apontam para um catálogo inexistente." },
   { id:"estado-falso", titulo:"O fechamento registra intenção, não estado",
     texto:"Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava. O fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e o log é o insumo da sessão seguinte." },
   { id:"escopo-revisao", titulo:"A revisão de código não olha para fora do arquivo",
     texto:"Dezesseis problemas reais identificados no notebook 101, nenhum deles o catálogo inexistente que impede a primeira escrita. O código foi avaliado contra si mesmo, não contra o ambiente nem contra as decisões do projeto." },
+  { id:"premissa", titulo:"A premissa do pedido não é verificada contra o código",
+    texto:"O pedido afirmava uma mudança de chave já aplicada e testada. O agente abriu o notebook, registrou no raciocínio que a chave do código não correspondia ao que fora dito, atribuiu a divergência a uma simplificação do usuário e seguiu — documentando a mudança como fato consumado e repetindo a afirmação de teste no fechamento." },
   { id:"roteamento", titulo:"Roteamento falha quando o asset é meio, não fim",
-    texto:"Único erro de roteamento em nove sessões. A skill de localização não carregou quando criar o notebook era subobjetivo do pedido: o arquivo nasceu fora da estrutura, quatro remediações automáticas foram bloqueadas e a correção precisou ser manual." }
+    texto:"Único erro de roteamento em dez sessões. A skill de localização não carregou quando criar o notebook era subobjetivo do pedido: o arquivo nasceu fora da estrutura, quatro remediações automáticas foram bloqueadas e a correção precisou ser manual." }
 ];
 
 /* ------------------------------------------------------------------ */

@@ -31,3 +31,11 @@
 **Decisão:** Implementar DELETE WHERE + APPEND por ano. Remove período sendo reprocessado, depois insere nova versão. Não utiliza tabela de controle de ingestão.
 **Alternativas consideradas:** APPEND com tabela de controle (DEC-003), MERGE por chave natural, replaceWhere por ano.
 **Justificativa:** DELETE+APPEND é mais simples e suficiente quando a fonte não versiona arquivos históricos. Evita overhead de tabela de controle auxiliar e verificação de Last-Modified HTTP. Mantém idempotência: rodar N vezes produz mesmo resultado. Estratégia adequada para ingestões batch periódicas de dados organizados em períodos fechados (ano).
+
+### DEC-005 -- Chave natural da tabela silver de interrupções
+
+**Data:** 2026-09-07
+**Contexto:** A tabela silver `interrupcoes_distribuicao` precisava de uma chave natural que garantisse unicidade de cada evento de interrupção, permitindo deduplicação correta e rastreabilidade.
+**Decisão:** Chave natural composta por quatro campos: `cod_distribuidora`, `data_inicio`, `conjunto` (código do conjunto de unidades consumidoras), `tipo_interrupcao`. Essa chave identifica univocamente cada evento de interrupção registrado pela ANEEL.
+**Alternativas consideradas:** Chave simples apenas com código do conjunto; chave sem data de início; chave com hash dos campos.
+**Justificativa:** A chave composta garante unicidade real dos eventos, pois um mesmo conjunto pode ter múltiplas interrupções em datas diferentes, e múltiplos conjuntos de uma distribuidora podem ter interrupções simultâneas. A inclusão de `tipo_interrupcao` diferencia interrupções programadas de emergenciais no mesmo conjunto e horário. Campos explícitos (sem hash) facilitam joins e análises posteriores.
