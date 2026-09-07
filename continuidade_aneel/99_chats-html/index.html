@@ -378,7 +378,7 @@ const SESSOES = [
     achados:[] },
 
   { passo:2, arm:"com", duracao:5, palavras:1336, objetivo:"Verificar se o primeiro notebook do projeto sai conforme as convenções de estrutura, nomenclatura e camada bronze, sem o contexto do projeto ser repetido no pedido.", file:"02_ingestao_aneel_interrupcoes_bronze.html",
-    quando:"06/09/2026 00:44",
+    quando:"06/09/2026 00:39",
     skills:["project-context","asset-placement","naming-conventions","notebook-structure","medallion-architecture"],
     artefatos:[
       { nome:"101_ingestao_aneel_interrupcoes.py", sha:"d6c0cfc", path:"01_bronze/101_ingestao_aneel_interrupcoes.py.py" }
@@ -386,7 +386,7 @@ const SESSOES = [
     achados:["catalogo"] },
 
   { passo:3, arm:"com", duracao:5, palavras:1415, objetivo:"Verificar se o segundo notebook da mesma camada sai consistente com o primeiro em nomes, metadados de rastreabilidade e estratégia de gravação.", file:"03_ingestao_aneel_indicadores_bronze.html",
-    quando:"06/09/2026 01:05",
+    quando:"06/09/2026 01:14",
     skills:["project-context","asset-placement","naming-conventions","notebook-structure","medallion-architecture"],
     artefatos:[
       { nome:"102_indicadores_continuidade.py", sha:"ca01a26", path:"01_bronze/102_indicadores_continuidade.py.py" }
@@ -394,7 +394,7 @@ const SESSOES = [
     achados:["catalogo"] },
 
   { passo:4, arm:"com", duracao:5, palavras:1563, objetivo:"Verificar se a fronteira entre camadas é respeitada na passagem de bronze para silver e se a estratégia de gravação escolhida garante idempotência.", file:"04_transformacao_silver_interrupcoes.html",
-    quando:"06/09/2026 01:47",
+    quando:"06/09/2026 01:42",
     skills:["project-context","notebook-structure","naming-conventions","medallion-architecture","technical-writing","data-quality-guardrails"],
     artefatos:[
       { nome:"201_interrupcoes_distribuicao.py", sha:"0f3f320", path:"02_silver/201_interrupcoes_distribuicao.py.py" }
@@ -411,7 +411,7 @@ const SESSOES = [
     achados:["catalogo","estado-falso","roteamento"] },
 
   { passo:6, arm:"com", duracao:5, palavras:1430, objetivo:"Verificar se a segunda transformação silver herda as decisões já registradas no projeto e o destino do bronze correspondente.", file:"06_transformacao_silver_indicadores.html",
-    quando:"06/09/2026",
+    quando:"06/09/2026 13:25",
     skills:["project-context","notebook-structure","naming-conventions","medallion-architecture","data-quality-guardrails"],
     artefatos:[
       { nome:"202_indicadores_continuidade.py", sha:"fdf97f8", path:"02_silver/202_indicadores_continuidade.py.py" }
@@ -419,7 +419,7 @@ const SESSOES = [
     achados:["catalogo"] },
 
   { passo:7, arm:"com", duracao:10, palavras:1527, objetivo:"Verificar se a camada gold é construída a partir da tabela silver correta, com agregação e guardrails declarados.", file:"07_tabela_gold_tempo_interrupcao.html",
-    quando:"06/09/2026",
+    quando:"06/09/2026 14:36",
     skills:["project-context","naming-conventions","notebook-structure","asset-placement","medallion-architecture","data-quality-guardrails","technical-writing","unity-catalog-naming"],
     artefatos:[
       { nome:"301_tempo_interrupcao_distribuidora_mes.py", sha:"bbd9a90", path:"03_gold/301_tempo_interrupcao_distribuidora_mes.py.py" }
@@ -427,7 +427,7 @@ const SESSOES = [
     achados:["catalogo","estado-falso"] },
 
   { passo:8, arm:"com", duracao:7, palavras:1972, objetivo:"Verificar o alcance da revisão de código: o que ela identifica quando avalia um notebook contra o protocolo de produção.", file:"08_revisao_notebook_ingestao_interrupcoes.html",
-    quando:"06/09/2026",
+    quando:"06/09/2026 15:23",
     skills:["code-review","data-quality-guardrails","notebook-structure"],
     artefatos:[
       { nome:"16 problemas identificados; nenhuma correção aplicada", sha:"3c3233d" }
@@ -435,7 +435,7 @@ const SESSOES = [
     achados:["escopo-revisao","estado-falso"] },
 
   { passo:9, arm:"com", duracao:4, palavras:1026, objetivo:"Verificar se a documentação gerada é verificável no próprio código e se o registro da sessão reflete o que de fato mudou.", file:"09_documentacao_notebook_gold.html",
-    quando:"06/09/2026 19:03",
+    quando:"06/09/2026 15:51",
     skills:["artifact-documentation","technical-writing"],
     artefatos:[
       { nome:"registro em evolucao_projeto.md; notebook 301 sem alteração", sha:"cb4be1e" }
@@ -526,7 +526,7 @@ function alternar(botao, s, p){
   const tags = s.achados.map(a => ACHADOS.find(x => x.id===a)).filter(Boolean);
   d.innerHTML = `
     <h3>Passo ${String(p).padStart(2,"0")} — ${PASSOS[p-1].titulo}</h3>
-    <p class="when">${s.quando} · skills ${s.arm === "com" ? "ativas" : "desligadas"} · sessão de ${s.duracao} min · transcrição ${faixa(s.palavras)}</p>
+    <p class="when">início ${s.quando} · skills ${s.arm === "com" ? "ativas" : "desligadas"} · sessão de ${s.duracao} min · transcrição ${faixa(s.palavras)}</p>
     <h4 class="dlabel">Objetivo do teste</h4>
     <p class="objetivo">${s.objetivo || ""}</p>
     <div class="dgrid">
