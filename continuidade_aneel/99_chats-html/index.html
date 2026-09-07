@@ -4,8 +4,8 @@
 <link rel="icon" href="https://1pedroosilva.github.io/favicon.ico" sizes="any">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Avaliação de skills do Genie Code — 11 sessões registradas | genie-skills-eval</title>
-<meta name="description" content="Avaliação empírica de skills do Genie Code (Databricks): 11 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
+<title>Avaliação de skills do Genie Code — 12 sessões registradas | genie-skills-eval</title>
+<meta name="description" content="Avaliação empírica de skills do Genie Code (Databricks): 12 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
 <meta name="author" content="Pedro Silva">
 <link rel="canonical" href="https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
@@ -15,17 +15,17 @@
 <meta property="og:site_name" content="genie-skills-eval">
 <meta property="og:url" content="https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/">
 <meta property="og:title" content="Avaliação empírica de skills do Genie Code (Databricks)">
-<meta property="og:description" content="Avaliação empírica de skills do Genie Code (Databricks): 11 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
+<meta property="og:description" content="Avaliação empírica de skills do Genie Code (Databricks): 12 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Avaliação empírica de skills do Genie Code (Databricks)">
-<meta name="twitter:description" content="Avaliação empírica de skills do Genie Code (Databricks): 11 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
+<meta name="twitter:description" content="Avaliação empírica de skills do Genie Code (Databricks): 12 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
 
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
   "@type":"Dataset",
   "name":"genie-skills-eval — sessões registradas do Genie Code",
-  "description":"Avaliação empírica de skills do Genie Code (Databricks): 11 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.",
+  "description":"Avaliação empírica de skills do Genie Code (Databricks): 12 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.",
   "url":"https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/",
   "inLanguage":"pt-BR",
   "license":"https://opensource.org/licenses/MIT",
@@ -314,12 +314,13 @@ body{
         <li><a href="09_documentacao_notebook_gold.html">Documentação do notebook gold</a> — documentação verificável no próprio código</li>
         <li><a href="10_mudanca_chave_silver_docs.html">Mudança de chave da tabela silver</a> — sincronização da documentação a partir de uma premissa do usuário que o código não confirmava</li>
         <li><a href="11_execucao_job_ponta_a_ponta.html">Execução do pipeline de ponta a ponta</a> — primeiro contato do código com dado real, em oito iterações de correção</li>
+        <li><a href="12_documentacao_projeto.html">Documentação técnica e de negócio</a> — documentação do projeto produzida a partir dos artefatos em operação, com lacunas declaradas</li>
       </ol>
       <h2 style="font-size:16px;margin:22px 0 10px">Achados</h2>
-      <p style="margin:0 0 8px">Documentação não propaga; contato empírico propaga. A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em onze sessões, enquanto os notebooks que consultaram o Unity Catalog usam o destino correto.</p>
+      <p style="margin:0 0 8px">Documentação não propaga; contato empírico propaga. A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em doze sessões, enquanto os notebooks que consultaram o Unity Catalog usam o destino correto.</p>
       <p style="margin:0 0 8px">O protocolo de fechamento registra intenção, não estado. Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava.</p>
       <p style="margin:0 0 8px">A revisão de código não olha para fora do arquivo: dezesseis problemas identificados, nenhum deles o catálogo inexistente que impede a primeira escrita.</p>
-      <p style="margin:0 0 8px">O roteamento de skills falha quando o asset é meio, não fim do pedido — único erro em onze sessões.</p>
+      <p style="margin:0 0 8px">O roteamento de skills falha quando o asset é meio, não fim do pedido — erro repetido em doze sessões.</p>
       <p style="margin:0 0 8px">A premissa do pedido não é verificada contra o código: o agente registrou a divergência no raciocínio, atribuiu-a a uma simplificação do usuário e documentou a mudança como fato.</p>
       <p style="margin:0">Sob pressão de fazer o job passar, os guardrails escritos nas sessões anteriores foram desarmados: o pipeline concluiu verde com as cinco tabelas inexistentes.</p>
     </section>
@@ -382,7 +383,8 @@ const PASSOS = [
   { n:8,  titulo:"Revisão de código do notebook 101" },
   { n:9,  titulo:"Documentação do notebook gold" },
   { n:10, titulo:"Mudança de chave da tabela silver" },
-  { n:11, titulo:"Execução do pipeline de ponta a ponta" }
+  { n:11, titulo:"Execução do pipeline de ponta a ponta" },
+  { n:12, titulo:"Documentação técnica e de negócio" }
 ];
 
 const REPO = "https://github.com/1pedroosilva/genie-skills-eval";
@@ -483,7 +485,17 @@ const SESSOES = [
       { nome:"correções nos cinco notebooks do pipeline", sha:"4f05fc7" },
       { nome:"registro da sessão em evolucao_projeto.md", sha:"4f05fc7" }
     ],
-    achados:["verde-vazio","carga-driver"] }
+    achados:["verde-vazio","carga-driver"] },
+
+  { passo:12, arm:"com", duracao:8, palavras:2050, objetivo:"Verificar se a documentação produzida se sustenta no que existe no ambiente: procedência das afirmações, descarte de material narrativo, tratamento de divergências e declaração de lacunas.", file:"12_documentacao_projeto.html",
+    quando:"07/09/2026 20:07",
+    skills:["project-context","artifact-documentation","technical-writing"],
+    artefatos:[
+      { nome:"documentação técnica em tecnica/arquitetura_pipeline.md", sha:"1520828" },
+      { nome:"documentação de negócio em negocio/visao_geral_projeto.md", sha:"1520828" },
+      { nome:"registro da sessão em evolucao_projeto.md", sha:"1520828" }
+    ],
+    achados:["roteamento"] }
 ];
 
 const COMPLEMENTAR = {
@@ -500,7 +512,7 @@ const COMPLEMENTAR = {
 
 const ACHADOS = [
   { id:"catalogo", titulo:"Documentação não propaga; contato empírico propaga",
-    texto:"A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em onze sessões. Os notebooks que consultaram o Unity Catalog ou leram o artefato real usam o destino correto; os que nunca tocaram o ambiente apontam para um catálogo inexistente." },
+    texto:"A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em doze sessões. Os notebooks que consultaram o Unity Catalog ou leram o artefato real usam o destino correto; os que nunca tocaram o ambiente apontam para um catálogo inexistente." },
   { id:"estado-falso", titulo:"O fechamento registra intenção, não estado",
     texto:"Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava. O fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e o log é o insumo da sessão seguinte." },
   { id:"escopo-revisao", titulo:"A revisão de código não olha para fora do arquivo",
@@ -512,7 +524,7 @@ const ACHADOS = [
   { id:"carga-driver", titulo:"A estratégia de carga só aparece quando a memória estoura",
     texto:"O caminho de entrada do dado nunca foi definido nas sessões de construção. No primeiro contato com a fonte real, o download passou pelo driver via pandas e o serverless estourou com 9,7 milhões de linhas. A landing zone em UC Volume, que a arquitetura medalhão pressupõe, foi adotada só depois da falha de memória." },
   { id:"roteamento", titulo:"Roteamento falha quando o asset é meio, não fim",
-    texto:"Único erro de roteamento em onze sessões. A skill de localização não carregou quando criar o notebook era subobjetivo do pedido: o arquivo nasceu fora da estrutura, quatro remediações automáticas foram bloqueadas e a correção precisou ser manual." }
+    texto:"A skill de localização não carregou quando criar o notebook era subobjetivo do pedido: o arquivo nasceu fora da estrutura, quatro remediações automáticas foram bloqueadas e a correção precisou ser manual. No passo 12 a ausência se repetiu com o artefato como objetivo declarado, e os dois documentos nasceram em pastas novas, fora da numeração e fora da pasta de documentação do projeto." }
 ];
 
 /* ------------------------------------------------------------------ */
