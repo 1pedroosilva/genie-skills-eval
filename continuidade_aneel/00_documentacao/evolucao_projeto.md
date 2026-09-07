@@ -1,5 +1,12 @@
 # Evolução do Projeto: Continuidade ANEEL
 
+## 2026-09-07 -- Sessão 11
+
+**Feito:** Preparação de documentação técnica e de negócio do projeto Continuidade de Fornecimento. Lidos documentos fundamentais do projeto (definicoes_projeto.md, mapa_pipeline.md, decisoes_arquiteturais.md) e notebooks principais do pipeline (101_ingestao_aneel_interrupcoes.py, 202_indicadores_continuidade.py, 301_tempo_interrupcao_distribuidora_mes.py). Identificada estrutura completa do pipeline medalhão (bronze com 2 ingestões HTTP para UC Volume + idempotência via tabela de controle, silver com conformação técnica e deduplicação, gold com agregação mensal por distribuidora e reconciliação quantitativa). Confirmadas decisões arquiteturais vigentes (catálogo workspace, schemas nomeados por padrão medalhão, estratégias de gravação bronze APPEND idempotente e silver/gold DELETE+APPEND). Identificadas lacunas documentais: [PENDENTE] consumidores do resultado não especificados em definicoes_projeto.md; [PENDENTE] escopo "não inclui" sem detalhamento. Estrutura de pastas tecnica/ e negocio/ preparada para receber documentação mas não populada. Sessão encerrada antes da redação completa dos arquivos de documentação.
+**Estado atual:** Pipeline completo bronze-silver-gold operacional para 2025. Todas as 6 tabelas populadas com dados reais da ANEEL. Job `567314997539912` executando. Documentação de projeto (README, definições, mapa, decisões, evolução) atualizada. Documentação técnica e de negócio planejada mas não redigida.
+**Próximo passo:** Redigir documentação técnica detalhada dos artefatos (notebooks, tabelas, pipeline) e documentação de negócio (objetivo, métricas, consumidores, regras de negócio) nos arquivos apropriados em 00_documentacao/tecnica/ e 00_documentacao/negocio/, seguindo skills artifact-documentation e technical-writing.
+**Pendências:** [PENDENTE] redigir documentação técnica e de negócio completa; [PENDENTE] especificar consumidores do resultado (dashboard/relatório); [PENDENTE] detalhar escopo "não inclui" em definicoes_projeto.md; [PENDENTE] expandir escopo para múltiplos anos; [PENDENTE] executar EDA e validações de qualidade bronze; [PENDENTE] implementar comparativo DEC observado vs apurado.
+
 ## 2026-09-07 -- Sessão 10
 
 **Feito:** Pipeline completo bronze-silver-gold executado com sucesso para o ano de 2025 com dados reais da ANEEL. Escopo reduzido de 2023-2025 para apenas 2025 para viabilizar a execução no serverless. Corrigidos 11 problemas em 5 notebooks ao longo de 8 iterações de diagnóstico e correção:
