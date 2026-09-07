@@ -8,30 +8,84 @@
 # MAGIC **Destino**: `main.continuidade_aneel_gold.tempo_interrupcao_distribuidora_mes`  
 # MAGIC **Estratégia de gravação**: DELETE+APPEND por ano (idempotente)
 # MAGIC
-# MAGIC ## Objetivo
+# MAGIC ## Propósito
 # MAGIC
-# MAGIC Gerar tabela analítica de tempo total de interrupção agregado por distribuidora e mês, permitindo comparação com o DEC apurado pela ANEEL e acompanhamento da evolução ao longo do ano.
+# MAGIC Agrega eventos de interrupção de distribuição de energia elétrica por distribuidora e mês, calculando tempo total de interrupção em minutos e horas. Permite análise temporal da continuidade do fornecimento e comparação com indicadores regulatórios (DEC).
 # MAGIC
-# MAGIC ## Transformações aplicadas
+# MAGIC ## Transformações
 # MAGIC
-# MAGIC * **Agregação temporal**: soma do tempo de interrupção por distribuidora e mês
-# MAGIC * **Cálculo de métricas**: tempo total em minutos e horas, contagem de eventos
-# MAGIC * **Período de referência**: ano e mês da ocorrência da interrupção
-# MAGIC * **Rastreabilidade**: mantém vínculo com os dados silver através de ano_fonte e mês_referencia
+# MAGIC ### Agregação
 # MAGIC
-# MAGIC ## Guardrails implementados
+# MAGIC Agrupa registros de `interrupcoes_distribuicao` por:
+# MAGIC * `cod_distribuidora`
+# MAGIC * `ano_referencia` (extraído de `data_inicio`)
+# MAGIC * `mes_referencia` (extraído de `data_inicio`)
 # MAGIC
-# MAGIC * Schema validation da camada silver
-# MAGIC * Validação de completude de campos obrigatórios (distribuidora, data)
-# MAGIC * Validação de valores positivos para tempo de interrupção
-# MAGIC * Reconciliação de soma de tempo entre silver e gold
-# MAGIC * Verificação de unicidade da chave analítica (distribuidora + ano + mês)
+# MAGIC ### Métricas calculadas
 # MAGIC
-# MAGIC ## Consumidores
+# MAGIC * `tempo_total_minutos`: soma de `tempo_interrupcao_minutos` (nulos tratados como 0)
+# MAGIC * `tempo_total_horas`: `tempo_total_minutos / 60` arredondado para 2 casas
+# MAGIC * `total_eventos`: contagem de registros
+# MAGIC * `data_primeiro_evento`: menor `data_inicio` do grupo
+# MAGIC * `data_ultimo_evento`: maior `data_inicio` do grupo
 # MAGIC
-# MAGIC * Dashboards de acompanhamento de continuidade
-# MAGIC * Comparação DEC observado vs DEC apurado
-# MAGIC * Análise de evolução temporal por distribuidora
+# MAGIC ### Metadados
+# MAGIC
+# MAGIC * `_gold_timestamp`: timestamp de processamento
+# MAGIC * `_ano_fonte`: cópia de `ano_referencia` para rastreabilidade
+# MAGIC
+# MAGIC ## Guardrails
+# MAGIC
+# MAGIC ### Validações estruturais
+# MAGIC
+# MAGIC * Campos obrigatórios presentes: `cod_distribuidora`, `data_inicio`, `tempo_interrupcao_minutos`, `_ano_fonte`
+# MAGIC * Execução interrompida se campos faltantes
+# MAGIC
+# MAGIC ### Validações de qualidade
+# MAGIC
+# MAGIC * Nulos críticos: `cod_distribuidora` e `data_inicio` não podem ser nulos
+# MAGIC * Valores inválidos: `tempo_interrupcao_minutos` nulo ou negativo tratado como 0 (com aviso)
+# MAGIC * Execução interrompida se nulos críticos detectados
+# MAGIC
+# MAGIC ### Validações de consistência
+# MAGIC
+# MAGIC * Unicidade: uma linha por `(cod_distribuidora, ano_referencia, mes_referencia)`
+# MAGIC * Reconciliação: soma de `tempo_total_minutos` (gold) deve corresponder à soma de `tempo_interrupcao_minutos` (silver) com tolerância de 0.01%
+# MAGIC * Execução interrompida se duplicatas ou divergência acima da tolerância
+# MAGIC
+# MAGIC ## Estratégia de gravação
+# MAGIC
+# MAGIC Para cada ano processado:
+# MAGIC 1. DELETE de registros do ano na tabela destino
+# MAGIC 2. APPEND dos novos registros do ano
+# MAGIC
+# MAGIC Garantia de idempotência: reprocessamento do mesmo ano produz resultado idêntico.
+# MAGIC
+# MAGIC ## Parametrização
+# MAGIC
+# MAGIC Widget `anos`: lista de anos a processar separados por vírgula (ex: "2023,2024,2025")  
+# MAGIC Fallback: `"2023,2024,2025"` se widget não configurado
+# MAGIC
+# MAGIC ## Dependências
+# MAGIC
+# MAGIC * Notebook de configuração: `../00_config/config`
+# MAGIC * Tabela silver: `main.continuidade_aneel_silver.interrupcoes_distribuicao`
+# MAGIC
+# MAGIC ## Saída
+# MAGIC
+# MAGIC Tabela: `main.continuidade_aneel_gold.tempo_interrupcao_distribuidora_mes`
+# MAGIC
+# MAGIC Estrutura:
+# MAGIC * `cod_distribuidora` (string)
+# MAGIC * `ano_referencia` (int)
+# MAGIC * `mes_referencia` (int)
+# MAGIC * `tempo_total_minutos` (double)
+# MAGIC * `tempo_total_horas` (double)
+# MAGIC * `total_eventos` (long)
+# MAGIC * `data_primeiro_evento` (timestamp)
+# MAGIC * `data_ultimo_evento` (timestamp)
+# MAGIC * `_gold_timestamp` (timestamp)
+# MAGIC * `_ano_fonte` (int)
 
 # COMMAND ----------
 
