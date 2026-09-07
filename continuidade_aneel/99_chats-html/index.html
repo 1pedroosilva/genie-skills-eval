@@ -270,7 +270,7 @@ body{
     </div>
     <div class="env">
       repositório de skills<br>
-      <a href="https://github.com/1pedroosilva/databricks-genie-skills/commit/6c7933e"
+      <a href="https://github.com/1pedroosilva/databricks-genie-skills/tree/6c7933e"
          target="_blank" rel="noopener"><b>6c7933e</b></a><br>
       <span id="progresso"></span>
     </div>
@@ -372,7 +372,7 @@ const SESSOES = [
     quando:"05/09/2026 21:50",
     skills:["project-context","asset-placement","naming-conventions","unity-catalog-naming","technical-writing"],
     artefatos:[
-      { nome:"00_documentacao/ — quatro documentos de gestão", sha:"2c66e3d" },
+      { nome:"00_documentacao/ — quatro documentos de gestão", sha:"2c66e3d", path:"00_documentacao", dir:true },
       { nome:"schemas proj_aneel_cont_01..03 no Unity Catalog", sha:"2c66e3d" }
     ],
     achados:[] },
@@ -487,7 +487,7 @@ const idx = (p,a) => SESSOES.find(s => s.passo===p && s.arm===a);
 
 function artefato(a){
   const url = a.path
-    ? `${REPO}/blob/${a.sha}/${RAIZ}${a.path}`
+    ? `${REPO}/${a.dir ? "tree" : "blob"}/${a.sha}/${RAIZ}${a.path}`
     : `${REPO}/commit/${a.sha}`;
   const marca = a.manual ? `<span class="manual" title="Correção manual: o agente não conseguiu gravar no lugar certo">correção manual</span>` : "";
   return `<li><a class="art" href="${url}" target="_blank" rel="noopener">${a.nome}</a>
