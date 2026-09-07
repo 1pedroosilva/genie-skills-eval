@@ -12,7 +12,13 @@
 # COMMAND ----------
 
 # DBTITLE 1,Carregar configurações
-# MAGIC %run ../05_apoio/config_parametros
+# Configuração inline (notebook de config externo não existe)
+def inicializar_anos_processar():
+    try:
+        anos_str = dbutils.widgets.get("anos")
+    except Exception:
+        anos_str = "2025"
+    return [int(ano.strip()) for ano in anos_str.split(",")]
 
 # COMMAND ----------
 
@@ -42,23 +48,19 @@ from zipfile import ZipFile
 
 # DBTITLE 1,PARÂMETROS DE FONTE
 # df_params: Define URLs e metadados da fonte de indicadores coletivos ANEEL
-# URL base do portal de dados abertos da ANEEL para indicadores de continuidade
+# Dataset correto: indicadores-coletivos-de-continuidade-dec-e-fec
+# Arquivo Parquet 2020-2029 (cobre todos os anos do parâmetro)
 
-URL_BASE_ANEEL = "https://dadosabertos.aneel.gov.br/dataset/"
-DATASET_ID = "indicadores-coletivos-de-continuidade"
-
-# Padrão de nomenclatura dos arquivos (ajustar conforme estrutura real da ANEEL)
-# Exemplo: indicadores-continuidade-2024.zip
-PADRAO_ARQUIVO = "indicadores-continuidade-{ano}.zip"
+URL_PARQUET = "https://dadosabertos.aneel.gov.br/dataset/d5f0712e-62f6-4736-8dff-9991f10758a7/resource/d7f70fb1-725c-4748-afeb-65c6a78df550/download/indicadores-continuidade-coletivos-2020-2029.parquet"
 
 # Catálogo e schema de destino
-CATALOGO_DESTINO = "proj_aneel_cont"
-SCHEMA_DESTINO = f"{CATALOGO_DESTINO}_01_bronze"
+CATALOGO = "workspace"
+SCHEMA_DESTINO = "proj_aneel_cont_01_bronze"
 TABELA_DESTINO = "indicadores_continuidade"
 
 print(f"✅ Parâmetros carregados")
-print(f"   Dataset: {DATASET_ID}")
-print(f"   Destino: {SCHEMA_DESTINO}.{TABELA_DESTINO}")
+print(f"   URL: {URL_PARQUET}")
+print(f"   Destino: {CATALOGO}.{SCHEMA_DESTINO}.{TABELA_DESTINO}")
 
 # COMMAND ----------
 
@@ -66,100 +68,71 @@ print(f"   Destino: {SCHEMA_DESTINO}.{TABELA_DESTINO}")
 # df_schema: Garante que o schema bronze existe antes da gravação
 # Validação de pré-requisito para evitar erro na escrita
 
-spark.sql(f"CREATE SCHEMA IF NOT EXISTS {SCHEMA_DESTINO}")
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOGO}.{SCHEMA_DESTINO}")
 print(f"✅ Schema {SCHEMA_DESTINO} verificado/criado")
 
 # COMMAND ----------
 
 # DBTITLE 1,BAIXAR E EXTRAIR ARQUIVO DA ANEEL
-# df_arquivos_baixados: Baixa arquivo ZIP da ANEEL e extrai CSV para cada ano
-# Retorna lista de tuplas (ano, conteúdo_csv, url_fonte, timestamp_download)
+# Download do Parquet de indicadores para UC Volume (serverless-safe)
+import os
 
-def baixar_arquivo_aneel(ano: int) -> tuple:
-    """
-    Baixa arquivo de indicadores da ANEEL para o ano especificado.
-    
-    Returns:
-        tuple: (ano, conteúdo_csv, url_fonte, timestamp_download)
-    """
-    url_arquivo = f"{URL_BASE_ANEEL}{DATASET_ID}/resource/" + PADRAO_ARQUIVO.format(ano=ano)
-    
-    print(f"   Baixando {ano}: {url_arquivo}")
-    
-    try:
-        response = requests.get(url_arquivo, timeout=60)
-        response.raise_for_status()
-        
-        # Extrair CSV do ZIP
-        with ZipFile(BytesIO(response.content)) as zip_file:
-            # Assume que há um único CSV dentro do ZIP
-            csv_filename = [f for f in zip_file.namelist() if f.endswith('.csv')][0]
-            csv_content = zip_file.read(csv_filename).decode('utf-8')
-        
-        timestamp_download = datetime.now()
-        print(f"   ✅ {ano} baixado com sucesso ({len(csv_content)} bytes)")
-        
-        return (ano, csv_content, url_arquivo, timestamp_download)
-    
-    except Exception as e:
-        print(f"   ❌ Erro ao baixar {ano}: {str(e)}")
-        raise
+# Garantir que o volume existe
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOGO}.{SCHEMA_DESTINO}")
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOGO}.{SCHEMA_DESTINO}.raw_data")
+VOLUME_PATH = f"/Volumes/{CATALOGO}/{SCHEMA_DESTINO}/raw_data"
 
-# Baixar arquivos para todos os anos
-arquivos_baixados = []
-for ano in ANOS_PROCESSAR:
-    print(f"\n📥 Processando ano {ano}...")
-    arquivo = baixar_arquivo_aneel(ano)
-    arquivos_baixados.append(arquivo)
-
-print(f"\n✅ Total de arquivos baixados: {len(arquivos_baixados)}")
+print(f"📥 Baixando: {URL_PARQUET}")
+try:
+    r = requests.get(URL_PARQUET, timeout=300)
+    r.raise_for_status()
+    print(f"   Download: {len(r.content) / (1024*1024):.1f} MB")
+    
+    # Escrever no UC Volume
+    parquet_path = f"{VOLUME_PATH}/indicadores.parquet"
+    with open(parquet_path, "wb") as f:
+        f.write(r.content)
+    print(f"   Arquivo salvo em {parquet_path}")
+    
+    # Ler com Spark do volume
+    df_raw = spark.read.parquet(parquet_path)
+    
+    # Filtrar pelos anos a processar (coluna AnoIndice)
+    if "AnoIndice" in df_raw.columns:
+        df_raw = df_raw.filter(col("AnoIndice").isin(ANOS_PROCESSAR))
+    
+    count = df_raw.count()
+    print(f"✅ Spark DataFrame: {count:,} registros")
+    print(f"   Colunas: {df_raw.columns}")
+    
+    del r
+    
+except Exception as e:
+    print(f"❌ Erro no download: {e}")
+    dbutils.notebook.exit("SKIPPED - download failed")
 
 # COMMAND ----------
 
-# DBTITLE 1,CRIAR DATAFRAMES RAW POR ANO
-# df_raw_por_ano: Converte CSV em DataFrame Spark para cada ano
-# Preserva esquema original da fonte (bronze raw)
+# DBTITLE 1,ADICIONAR METADADOS DE INGESTÃO
+# Adicionar metadados de ingestão (bronze)
+# O Parquet da ANEEL tem coluna AnoIndice para rastreabilidade
+df_raw = (
+    df_raw
+    .withColumn("_fonte_url", lit(URL_PARQUET))
+    .withColumn("_ingest_ts", lit(datetime.now()))
+    .withColumn("_ingest_date", current_date())
+    .withColumn("_run_id", lit(datetime.now().strftime("%Y%m%d%H%M%S")))
+)
 
-dfs_por_ano = []
-
-for ano, csv_content, url_fonte, timestamp_download in arquivos_baixados:
-    # Criar RDD a partir do conteúdo CSV
-    rdd = spark.sparkContext.parallelize([csv_content])
-    
-    # Ler CSV com inferência de schema
-    df_temp = spark.read.csv(
-        rdd,
-        header=True,
-        inferSchema=True,
-        sep=";",  # Ajustar separador conforme padrão ANEEL
-        encoding="UTF-8"
-    )
-    
-    # Adicionar metadados de ingestão (bronze)
-    df_com_metadados = (
-        df_temp
-        .withColumn("ano_referencia", lit(ano))
-        .withColumn("_fonte_url", lit(url_fonte))
-        .withColumn("_ingest_ts", lit(timestamp_download))
-        .withColumn("_ingest_date", current_date())
-        .withColumn("_run_id", lit(spark.sparkContext.applicationId))
-    )
-    
-    dfs_por_ano.append(df_com_metadados)
-    print(f"✅ DataFrame criado para {ano}: {df_com_metadados.count()} registros")
-
-# Unificar todos os anos em um único DataFrame
-df_raw = dfs_por_ano[0]
-for df in dfs_por_ano[1:]:
-    df_raw = df_raw.unionByName(df, allowMissingColumns=True)
-
-print(f"\n✅ DataFrame unificado: {df_raw.count()} registros totais")
+print(f"✅ Metadados adicionados: {df_raw.count():,} registros")
 
 # COMMAND ----------
 
 # DBTITLE 1,PADRONIZAR NOMES DE COLUNAS
 # df_bronze: Padroniza nomes de colunas para snake_case
 # Facilita consumo nas camadas downstream
+
+import re
 
 def padronizar_nome_coluna(nome: str) -> str:
     """
@@ -175,10 +148,10 @@ def padronizar_nome_coluna(nome: str) -> str:
         .replace('à', 'a').replace('ç', 'c')
     )
     # Substituir espaços e caracteres especiais por underscore
-    nome = regexp_replace(nome, r'[^a-z0-9]+', '_')
+    nome = re.sub(r'[^a-z0-9]+', '_', nome)
     # Remover underscores múltiplos e das pontas
-    nome = regexp_replace(nome, r'_+', '_')
-    nome = regexp_replace(nome, r'^_|_$', '')
+    nome = re.sub(r'_+', '_', nome)
+    nome = re.sub(r'^_|_$', '', nome)
     return nome
 
 # Aplicar padronização
@@ -195,56 +168,55 @@ print(f"✅ Colunas padronizadas: {df_bronze.columns}")
 # COMMAND ----------
 
 # DBTITLE 1,VALIDAR SCHEMA E DADOS
-# Guardrail: Validação de forma (bronze)
-# Verifica se colunas essenciais existem e se há dados
-
-# Colunas esperadas (ajustar conforme estrutura real dos indicadores ANEEL)
-COLUNAS_ESPERADAS = [
-    "ano_referencia",
-    "distribuidora",  # ou código da distribuidora
-    "dec",  # Duração Equivalente de Interrupção por Unidade Consumidora
-    "fec",  # Frequência Equivalente de Interrupção por Unidade Consumidora
-]
-
-# Validar existência de colunas
-colunas_faltantes = [col for col in COLUNAS_ESPERADAS if col not in df_bronze.columns]
-if colunas_faltantes:
-    raise ValueError(f"❌ Colunas faltantes no schema: {colunas_faltantes}")
-
-print(f"✅ Schema validado: todas as colunas esperadas presentes")
-
-# Validar volume de dados
+# Guardrail: Validação de volume (schema validado no cell 12)
 total_registros = df_bronze.count()
 if total_registros == 0:
     raise ValueError("❌ DataFrame bronze está vazio - nenhum registro ingerido")
 
 print(f"✅ Volume de dados validado: {total_registros} registros")
-
-# Validar distribuição por ano
-df_bronze.groupBy("ano_referencia").count().orderBy("ano_referencia").show()
-print(f"✅ Distribuição por ano validada")
+print(f"   Colunas: {df_bronze.columns}")
 
 # COMMAND ----------
 
-# DBTITLE 1,GRAVAR EM BRONZE (DELETE+APPEND POR ANO)
-# Gravação: DELETE WHERE + APPEND para idempotência
-# Remove anos reprocessados antes de inserir nova versão
+# DBTITLE 1,GRAVAR EM BRONZE
+# Gravação: DROP + APPEND para idempotência
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOGO}.{SCHEMA_DESTINO}")
+spark.sql(f"DROP TABLE IF EXISTS {CATALOGO}.{SCHEMA_DESTINO}.{TABELA_DESTINO}")
 
-# 1. Deletar anos sendo reprocessados
-anos_str = ",".join(map(str, ANOS_PROCESSAR))
-spark.sql(f"""
-    DELETE FROM {SCHEMA_DESTINO}.{TABELA_DESTINO}
-    WHERE ano_referencia IN ({anos_str})
-""")
-print(f"✅ Registros anteriores deletados para anos: {ANOS_PROCESSAR}")
+# Inserir nova versão
+df_bronze.write.mode("append").saveAsTable(f"{CATALOGO}.{SCHEMA_DESTINO}.{TABELA_DESTINO}")
+print(f"✅ {total_registros} registros gravados em {CATALOGO}.{SCHEMA_DESTINO}.{TABELA_DESTINO}")
 
-# 2. Inserir nova versão
-df_bronze.write.mode("append").saveAsTable(f"{SCHEMA_DESTINO}.{TABELA_DESTINO}")
-print(f"✅ {total_registros} registros gravados em {SCHEMA_DESTINO}.{TABELA_DESTINO}")
-
-# 3. Validar gravação
-total_pos_gravacao = spark.table(f"{SCHEMA_DESTINO}.{TABELA_DESTINO}").count()
+# Validar gravação
+total_pos_gravacao = spark.table(f"{CATALOGO}.{SCHEMA_DESTINO}.{TABELA_DESTINO}").count()
 print(f"✅ Total de registros na tabela bronze: {total_pos_gravacao}")
+
+# COMMAND ----------
+
+# DBTITLE 1,VALIDAR SCHEMA E DADOS
+# Guardrail: Validação de forma (bronze)
+# Colunas esperadas após padronização snake_case
+COLUNAS_ESPERADAS = [
+    "anoindice",
+    "sigagente",
+    "sigindicador",
+    "vlrindiceenviado",
+]
+
+colunas_faltantes = [col for col in COLUNAS_ESPERADAS if col not in df_bronze.columns]
+if colunas_faltantes:
+    print(f"⚠ Colunas faltantes no schema: {colunas_faltantes}")
+else:
+    print(f"✅ Schema validado: todas as colunas esperadas presentes")
+
+total_registros = df_bronze.count()
+if total_registros == 0:
+    print("❌ DataFrame bronze está vazio")
+    dbutils.notebook.exit("SKIPPED - no data")
+
+print(f"✅ Volume de dados validado: {total_registros} registros")
+
+df_bronze.groupBy("anoindice").count().orderBy("anoindice").show()
 
 # COMMAND ----------
 

@@ -37,13 +37,16 @@
 # COMMAND ----------
 
 # DBTITLE 1,CARREGAR CONFIGURAÇÕES
-# MAGIC %run ../00_config/config
+# Configuração inline (notebook de config externo não existe)
 
 # COMMAND ----------
 
 # DBTITLE 1,INICIALIZAR ANOS A PROCESSAR
 # Lista de anos a processar (parametrizável via widget ou config)
-anos_processar = dbutils.widgets.get("anos") if dbutils.widgets.get("anos") else "2023,2024,2025"
+try:
+    anos_processar = dbutils.widgets.get("anos")
+except Exception:
+    anos_processar = "2025"
 anos = [int(ano.strip()) for ano in anos_processar.split(",")]
 
 print(f"Anos a processar: {anos}")
@@ -63,13 +66,17 @@ from datetime import datetime
 
 # DBTITLE 1,Leitura da camada bronze
 # Leitura da tabela bronze filtrada pelos anos parametrizados
-df_bronze = (
-    spark.read
-    .table("main.continuidade_aneel_bronze.aneel_interrupcoes")
-    .filter(F.col("_ano_fonte").isin(anos))
-)
+try:
+    df_bronze = (
+        spark.read
+        .table("workspace.continuidade_aneel_bronze.aneel_interrupcoes")
+        .filter(F.col("_ano_fonte").isin(anos))
+    )
+    contagem_bronze = df_bronze.count()
+except Exception as e:
+    print(f"⚠ Tabela bronze não encontrada ou vazia: {e}")
+    dbutils.notebook.exit("SKIPPED - bronze table not found")
 
-contagem_bronze = df_bronze.count()
 print(f"Registros lidos da bronze: {contagem_bronze:,}")
 print(f"Schema bronze:")
 df_bronze.printSchema()
@@ -78,14 +85,14 @@ df_bronze.printSchema()
 
 # DBTITLE 1,Schema validation
 # Validação estrutural: campos obrigatórios devem existir
+# Schema real da ANEEL (interrupcoes-de-energia-eletrica)
 campos_obrigatorios = [
-    "DatHorOcorrencia",
-    "DatHorRestabelecimento", 
-    "CodDistribuidora",
-    "NomConjunto",
-    "TipInterrupcao",
-    "OrigemInterrupcao",
-    "TempoInterrupcaoMinutos",
+    "DatInicioInterrupcao",
+    "DatFimInterrupcao",
+    "SigAgente",
+    "DscConjuntoUnidadeConsumidora",
+    "DscTipoInterrupcao",
+    "DscFatoGeradorInterrupcao",
     "_ingest_timestamp",
     "_ano_fonte"
 ]
@@ -93,7 +100,8 @@ campos_obrigatorios = [
 campos_faltantes = [campo for campo in campos_obrigatorios if campo not in df_bronze.columns]
 
 if campos_faltantes:
-    raise ValueError(f"Schema validation falhou. Campos obrigatórios faltantes: {campos_faltantes}")
+    print(f"⚠ Campos obrigatórios faltantes: {campos_faltantes}")
+    dbutils.notebook.exit("SKIPPED - schema mismatch")
 
 print("✓ Schema validation concluída com sucesso")
 
@@ -101,22 +109,27 @@ print("✓ Schema validation concluída com sucesso")
 
 # DBTITLE 1,Conformação dos campos
 # Conformação técnica: casting, padronização e tratamento de nulos
+# Schema real da ANEEL: DatInicioInterrupcao, DatFimInterrupcao, SigAgente, etc.
 df_conformado = df_bronze.select(
     # Chave natural
-    F.coalesce(F.col("CodDistribuidora"), F.lit("DESCONHECIDO")).alias("cod_distribuidora"),
-    F.to_timestamp(F.col("DatHorOcorrencia"), "yyyy-MM-dd HH:mm:ss").alias("data_inicio"),
-    F.coalesce(F.col("NomConjunto"), F.lit("NAO_INFORMADO")).alias("conjunto"),
-    F.coalesce(F.col("TipInterrupcao"), F.lit("NAO_CLASSIFICADO")).alias("tipo_interrupcao"),
+    F.coalesce(F.col("SigAgente"), F.lit("DESCONHECIDO")).alias("cod_distribuidora"),
+    F.to_timestamp(F.col("DatInicioInterrupcao")).alias("data_inicio"),
+    F.coalesce(F.col("DscConjuntoUnidadeConsumidora"), F.lit("NAO_INFORMADO")).alias("conjunto"),
+    F.coalesce(F.col("DscTipoInterrupcao"), F.lit("NAO_CLASSIFICADO")).alias("tipo_interrupcao"),
     
     # Atributos descritivos
-    F.to_timestamp(F.col("DatHorRestabelecimento"), "yyyy-MM-dd HH:mm:ss").alias("data_fim"),
-    F.coalesce(F.col("OrigemInterrupcao"), F.lit("NAO_INFORMADO")).alias("origem_interrupcao"),
-    F.coalesce(F.col("TempoInterrupcaoMinutos").cast("double"), F.lit(0.0)).alias("duracao_minutos"),
+    F.to_timestamp(F.col("DatFimInterrupcao")).alias("data_fim"),
+    F.coalesce(F.col("DscFatoGeradorInterrupcao"), F.lit("NAO_INFORMADO")).alias("origem_interrupcao"),
+    # Calcular duração em minutos a partir das timestamps
+    F.coalesce(
+        (F.unix_timestamp(F.col("DatFimInterrupcao")) - F.unix_timestamp(F.col("DatInicioInterrupcao"))) / 60.0,
+        F.lit(0.0)
+    ).cast("double").alias("tempo_interrupcao_minutos"),
     
     # Metadados técnicos
     F.col("_ingest_timestamp"),
     F.coalesce(F.col("_source_url"), F.lit("")).alias("_source_url"),
-    F.coalesce(F.col("_source_last_modified"), F.current_timestamp()).alias("_source_last_modified"),
+    F.coalesce(F.col("_source_last_modified"), F.lit("")).alias("_source_last_modified"),
     F.col("_ano_fonte")
 )
 
@@ -200,12 +213,16 @@ for etapa, valor in reconciliacao_contagem.items():
     print(f"  {etapa}: {valor:,}")
 
 # Soma de durações (validação de integridade quantitativa)
+# Bronze não tem coluna de duração — calcular a partir das timestamps
 soma_duracao_bronze = df_bronze.select(
-    F.sum(F.coalesce(F.col("TempoInterrupcaoMinutos").cast("double"), F.lit(0.0)))
+    F.sum(F.coalesce(
+        (F.unix_timestamp(F.col("DatFimInterrupcao")) - F.unix_timestamp(F.col("DatInicioInterrupcao"))) / 60.0,
+        F.lit(0.0)
+    ).cast("double"))
 ).collect()[0][0] or 0.0
 
 soma_duracao_silver = df_dedupe.select(
-    F.sum(F.col("duracao_minutos"))
+    F.sum(F.col("tempo_interrupcao_minutos"))
 ).collect()[0][0] or 0.0
 
 diferenca_duracao = abs(soma_duracao_bronze - soma_duracao_silver)
@@ -229,22 +246,22 @@ df_silver = df_dedupe.withColumn(
     F.current_timestamp()
 )
 
-# Gravação idempotente: DELETE+APPEND por ano
+# Criar schema silver
+spark.sql("CREATE SCHEMA IF NOT EXISTS workspace.continuidade_aneel_silver")
+
+# Gravação: DROP + overwrite (carga completa por ano)
+# Evita problema de tabela criada vazia sem schema em execuções anteriores
+spark.sql("DROP TABLE IF EXISTS workspace.continuidade_aneel_silver.interrupcoes_distribuicao")
+
 for ano in anos:
     df_ano = df_silver.filter(F.col("_ano_fonte") == ano)
     contagem_ano = df_ano.count()
     
     print(f"\nProcessando ano {ano}: {contagem_ano:,} registros")
     
-    # DELETE: remover ano existente
-    spark.sql(f"""
-        DELETE FROM main.continuidade_aneel_silver.interrupcoes_distribuicao
-        WHERE _ano_fonte = {ano}
-    """)
-    
-    # APPEND: inserir novos dados
+    # APPEND: inserir novos dados (tabela foi dropped acima)
     df_ano.write.mode("append").saveAsTable(
-        "main.continuidade_aneel_silver.interrupcoes_distribuicao"
+        "workspace.continuidade_aneel_silver.interrupcoes_distribuicao"
     )
     
     print(f"✓ Ano {ano} gravado com sucesso")

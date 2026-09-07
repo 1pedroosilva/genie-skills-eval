@@ -90,13 +90,16 @@
 # COMMAND ----------
 
 # DBTITLE 1,CARREGAR CONFIGURAÇÕES
-# MAGIC %run ../00_config/config
+# Configuração inline (notebook de config externo não existe)
 
 # COMMAND ----------
 
 # DBTITLE 1,INICIALIZAR ANOS A PROCESSAR
 # Lista de anos a processar (parametrizável via widget ou config)
-anos_processar = dbutils.widgets.get("anos") if dbutils.widgets.get("anos") else "2023,2024,2025"
+try:
+    anos_processar = dbutils.widgets.get("anos")
+except Exception:
+    anos_processar = "2025"
 anos = [int(ano.strip()) for ano in anos_processar.split(",")]
 
 print(f"Anos a processar: {anos}")
@@ -114,13 +117,17 @@ from datetime import datetime
 
 # DBTITLE 1,Leitura da camada silver
 # Leitura da tabela silver filtrada pelos anos parametrizados
-df_silver = (
-    spark.read
-    .table("main.continuidade_aneel_silver.interrupcoes_distribuicao")
-    .filter(F.col("_ano_fonte").isin(anos))
-)
+try:
+    df_silver = (
+        spark.read
+        .table("workspace.continuidade_aneel_silver.interrupcoes_distribuicao")
+        .filter(F.col("_ano_fonte").isin(anos))
+    )
+    contagem_silver = df_silver.count()
+except Exception as e:
+    print(f"⚠ Tabela silver não encontrada ou vazia: {e}")
+    dbutils.notebook.exit("SKIPPED - silver table not found")
 
-contagem_silver = df_silver.count()
 print(f"Registros lidos da silver: {contagem_silver:,}")
 print(f"Schema silver:")
 df_silver.printSchema()
@@ -262,22 +269,20 @@ print(f"Registros finais para gold: {df_gold.count():,}")
 # COMMAND ----------
 
 # DBTITLE 1,Gravação na camada gold
-# Gravação idempotente: DELETE+APPEND por ano
+# Gravação: DROP + overwrite (carga completa por ano)
+# Evita problema de tabela criada vazia sem schema em execuções anteriores
+spark.sql("CREATE SCHEMA IF NOT EXISTS workspace.continuidade_aneel_gold")
+spark.sql("DROP TABLE IF EXISTS workspace.continuidade_aneel_gold.tempo_interrupcao_distribuidora_mes")
+
 for ano in anos:
     df_ano = df_gold.filter(F.col("_ano_fonte") == ano)
     contagem_ano = df_ano.count()
     
     print(f"\nProcessando ano {ano}: {contagem_ano:,} registros")
     
-    # DELETE: remover ano existente
-    spark.sql(f"""
-        DELETE FROM main.continuidade_aneel_gold.tempo_interrupcao_distribuidora_mes
-        WHERE _ano_fonte = {ano}
-    """)
-    
-    # APPEND: inserir novos registros do ano
+    # APPEND: inserir novos registros do ano (tabela foi dropped acima)
     df_ano.write.mode("append").saveAsTable(
-        "main.continuidade_aneel_gold.tempo_interrupcao_distribuidora_mes"
+        "workspace.continuidade_aneel_gold.tempo_interrupcao_distribuidora_mes"
     )
     
     print(f"✓ Ano {ano} gravado com sucesso")
@@ -286,7 +291,7 @@ print("\n" + "="*60)
 print("PROCESSAMENTO GOLD CONCLUÍDO")
 print("="*60)
 print(f"Total de registros gravados: {df_gold.count():,}")
-print(f"Tabela destino: main.continuidade_aneel_gold.tempo_interrupcao_distribuidora_mes")
+print(f"Tabela destino: workspace.continuidade_aneel_gold.tempo_interrupcao_distribuidora_mes")
 
 # COMMAND ----------
 

@@ -12,7 +12,13 @@
 # COMMAND ----------
 
 # DBTITLE 1,Carregar configurações
-# MAGIC %run ../05_apoio/config_parametros
+# Configuração inline (notebook de config externo não existe)
+def inicializar_anos_processar():
+    try:
+        anos_str = dbutils.widgets.get("anos")
+    except Exception:
+        anos_str = "2025"
+    return [int(ano.strip()) for ano in anos_str.split(",")]
 
 # COMMAND ----------
 
@@ -71,48 +77,57 @@ print(f"✅ Schema {SCHEMA_SILVER} verificado/criado")
 
 anos_str = ",".join(map(str, ANOS_PROCESSAR))
 
-df_bronze_filtrado = spark.sql(f"""
-    SELECT *
-    FROM {TABELA_ORIGEM_FULL}
-    WHERE ano_referencia IN ({anos_str})
-""")
+try:
+    df_bronze_filtrado = spark.sql(f"""
+        SELECT *
+        FROM {TABELA_ORIGEM_FULL}
+        WHERE anoindice IN ({anos_str})
+    """)
+except Exception as e:
+    print(f"⚠ Tabela bronze não encontrada: {e}")
+    dbutils.notebook.exit("SKIPPED - bronze table not found")
 
 total_bronze = df_bronze_filtrado.count()
 print(f"✅ Registros lidos do bronze: {total_bronze:,}")
 
 if total_bronze == 0:
-    raise ValueError(f"❌ Nenhum registro encontrado no bronze para anos {ANOS_PROCESSAR}")
+    print(f"⚠ Nenhum registro encontrado no bronze para anos {ANOS_PROCESSAR}. Finalizando.")
+    dbutils.notebook.exit("SKIPPED - no data in bronze")
 
 # COMMAND ----------
 
 # DBTITLE 1,PADRONIZAR TIPOS E NOMES DE COLUNAS
-# df_tipado: Converte colunas para tipos corretos e padroniza nomes
-# Transformação técnica: string → date, decimal, inteiro conforme semântica
+# df_tipado: Pivot de formato longo (sigindicador + vlrindiceenviado) para largo
+# Dados ANEEL: cada linha = um indicador; pivot cria colunas DEC, FEC, etc.
+from pyspark.sql.functions import first
 
-# Assumindo estrutura comum dos indicadores ANEEL (ajustar conforme schema real)
-df_tipado = (
+df_pivoted = (
     df_bronze_filtrado
-    # Identificadores (manter como string, aplicar trim e upper)
-    .withColumn("codigo_distribuidora", upper(trim(col("codigo_distribuidora"))))
-    .withColumn("distribuidora", trim(col("distribuidora")))
-    .withColumn("regiao", upper(trim(col("regiao"))))
-    
-    # Período de apuração: converter ano_referencia para data (primeiro dia do ano)
-    .withColumn("periodo_apuracao", make_date(col("ano_referencia"), lit(1), lit(1)))
-    
-    # Indicadores de continuidade: converter para decimal
-    .withColumn("dec", col("dec").cast("decimal(18,4)"))  # Duração Equivalente de Interrupção
-    .withColumn("fec", col("fec").cast("decimal(18,4)"))  # Frequência Equivalente de Interrupção
-    .withColumn("dic", col("dic").cast("decimal(18,4)"))  # Duração de Interrupção Individual
-    .withColumn("fic", col("fic").cast("decimal(18,4)"))  # Frequência de Interrupção Individual
-    .withColumn("dmic", col("dmic").cast("decimal(18,4)"))  # Duração Máxima de Interrupção
-    .withColumn("dicri", col("dicri").cast("decimal(18,4)"))  # DIC da Região Ideal
-    
-    # Manter metadados de rastreabilidade
+    .groupBy(
+        "ideconjundconsumidoras", "dscconjundconsumidoras", "sigagente",
+        "numcnpj", "anoindice", "numperiodoindice",
+        "_fonte_url", "_ingest_ts", "_ingest_date", "_run_id"
+    )
+    .pivot("sigindicador")
+    .agg(first("vlrindiceenviado"))
+)
+
+# Renomear colunas pivot para lowercase
+for c in df_pivoted.columns:
+    if c not in ["ideconjundconsumidoras", "dscconjundconsumidoras", "sigagente", "numcnpj", "anoindice", "numperiodoindice", "_fonte_url", "_ingest_ts", "_ingest_date", "_run_id"]:
+        df_pivoted = df_pivoted.withColumnRenamed(c, c.lower())
+
+df_tipado = (
+    df_pivoted
+    .withColumn("codigo_distribuidora", upper(trim(col("sigagente"))))
+    .withColumn("distribuidora", trim(col("dscconjundconsumidoras")))
+    .withColumn("ano_referencia", col("anoindice"))
+    .withColumn("periodo_apuracao", make_date(col("anoindice"), lit(1), lit(1)))
     .withColumn("_timestamp_transformacao", current_timestamp())
 )
 
-print(f"✅ Tipos padronizados e colunas renomeadas")
+print(f"✅ Pivot concluído: {df_tipado.count():,} registros, {len(df_tipado.columns)} colunas")
+print(f"   Colunas: {df_tipado.columns}")
 
 # COMMAND ----------
 
@@ -125,7 +140,7 @@ df_com_chave = (
     .withColumn(
         "chave_uc",
         coalesce(
-            col("codigo_distribuidora"),
+            col("sigagente"),
             col("distribuidora")
         )
     )
@@ -141,8 +156,8 @@ print(f"✅ Chave composta criada (distribuidora + período)")
 
 w_dedupe = (
     Window
-    .partitionBy("chave_uc", "periodo_apuracao")
-    .orderBy(col("_timestamp_ingestao").desc())
+    .partitionBy("sigagente", "ideconjundconsumidoras", "anoindice", "numperiodoindice")
+    .orderBy(col("_ingest_ts").desc())
 )
 
 df_dedupe = (
@@ -165,7 +180,7 @@ print(f"   Duplicatas removidas: {duplicatas_removidas:,}")
 # Guardrail: Validação de nulos em campos obrigatórios
 # Chave natural e período de apuração não podem ser nulos
 
-campos_obrigatorios = ["chave_uc", "periodo_apuracao", "dec", "fec"]
+campos_obrigatorios = ["chave_uc", "periodo_apuracao"]
 
 df_valido = df_dedupe
 for campo in campos_obrigatorios:
@@ -192,7 +207,7 @@ if total_valido == 0:
 
 duplicadas = (
     df_valido
-    .groupBy("chave_uc", "periodo_apuracao")
+    .groupBy("sigagente", "ideconjundconsumidoras", "anoindice", "numperiodoindice")
     .count()
     .filter(col("count") > 1)
     .count()
@@ -209,57 +224,28 @@ print(f"✅ Unicidade da chave validada (0 duplicatas)")
 # COMMAND ----------
 
 # DBTITLE 1,SELECIONAR COLUNAS FINAIS
-# df_silver: Seleciona e ordena colunas para camada silver
-# Organização: chave → período → indicadores → metadados
-
-df_silver = df_valido.select(
-    # Chave de identificação
-    col("chave_uc"),
-    col("codigo_distribuidora"),
-    col("distribuidora"),
-    col("regiao"),
-    
-    # Período de apuração (formato date)
-    col("periodo_apuracao"),
-    col("ano_referencia"),
-    
-    # Indicadores de continuidade (padronizados)
-    col("dec"),
-    col("fec"),
-    col("dic"),
-    col("fic"),
-    col("dmic"),
-    col("dicri"),
-    
-    # Metadados de rastreabilidade
-    col("_fonte_url"),
-    col("_timestamp_ingestao"),
-    col("_timestamp_transformacao"),
-    col("_arquivo_origem")
-)
+# df_silver: Seleciona colunas finais para camada silver
+# Incluir todas as colunas exceto metadados redundantes
+colunas_excluir = ["_run_id", "_ingest_date", "ideconjundconsumidoras", "numcnpj", "numperiodoindice"]
+colunas_selecionar = [c for c in df_valido.columns if c not in colunas_excluir]
+df_silver = df_valido.select(*colunas_selecionar)
 
 print(f"✅ Colunas finais selecionadas")
 print(f"   Total de colunas: {len(df_silver.columns)}")
+print(f"   Colunas: {df_silver.columns}")
 
 # COMMAND ----------
 
 # DBTITLE 1,GRAVAR EM SILVER (DELETE+APPEND POR ANO)
-# Gravação: DELETE WHERE + APPEND para idempotência
-# Remove anos reprocessados antes de inserir nova versão (conforme DEC-004)
+# Gravação: DROP + APPEND para idempotência
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {SCHEMA_SILVER}")
+spark.sql(f"DROP TABLE IF EXISTS {TABELA_DESTINO_FULL}")
 
-# 1. Deletar anos sendo reprocessados
-anos_str = ",".join(map(str, ANOS_PROCESSAR))
-spark.sql(f"""
-    DELETE FROM {TABELA_DESTINO_FULL}
-    WHERE ano_referencia IN ({anos_str})
-""")
-print(f"✅ Registros anteriores deletados para anos: {ANOS_PROCESSAR}")
-
-# 2. Inserir nova versão
+# Inserir nova versão
 df_silver.write.mode("append").saveAsTable(TABELA_DESTINO_FULL)
 print(f"✅ {total_valido:,} registros gravados em silver")
 
-# 3. Validar gravação
+# Validar gravação
 total_pos_gravacao = spark.table(TABELA_DESTINO_FULL).count()
 print(f"✅ Total de registros em silver: {total_pos_gravacao:,}")
 

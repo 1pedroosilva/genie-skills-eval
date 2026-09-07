@@ -1,5 +1,29 @@
 # Evolução do Projeto: Continuidade ANEEL
 
+## 2026-09-07 -- Sessão 10
+
+**Feito:** Pipeline completo bronze-silver-gold executado com sucesso para o ano de 2025 com dados reais da ANEEL. Escopo reduzido de 2023-2025 para apenas 2025 para viabilizar a execução no serverless. Corrigidos 11 problemas em 5 notebooks ao longo de 8 iterações de diagnóstico e correção:
+
+* **Bronze 101 (interrupções):** Substituída abordagem `spark.read.parquet(HTTP)` (não suportada no serverless) por download via `requests` para UC Volume (`/Volumes/.../raw_data/`) + `spark.read.parquet(volume_path)`. URLs reais do CKAN ANEEL mapeadas ano a ano. Idempotência via tabela de controle com `Last-Modified`.
+* **Bronze 102 (indicadores):** Mesma abordagem UC Volume. Corrigidos: (1) `F.col()` sem import de F (NameError), (2) `spark.sparkContext.applicationId` não suportado em serverless, (3) validação de schema esperava colunas inexistentes (`ano_referencia`, `dec`, `fec`) quando os dados ANEEL usam formato longo (`sigindicador`, `vlrindiceenviado`), (4) `CREATE TABLE IF NOT EXISTS` criava tabela vazia sem schema, (5) `DELETE WHERE AnoIndice` referenciava coluna pós-snake_case (`anoindice`).
+* **Silver 201 (interrupções):** Corrigidos: (1) referência a coluna `TempoInterrupcaoMinutos` inexistente na bronze (calculada a partir de `DatFimInterrupcao - DatInicioInterrupcao`), (2) `coalesce(_source_last_modified, current_timestamp())` falhava porque a string HTTP date não converte para timestamp, (3) `CREATE TABLE IF NOT EXISTS` + `DELETE WHERE _ano_fonte` falhava em tabela criada vazia sem schema. Substituído por `DROP TABLE IF EXISTS` + APPEND.
+* **Silver 202 (indicadores):** Reescrita completa do cell de transformação para pivotar dados de formato longo (`sigindicador` + `vlrindiceenviado`) para largo (colunas `dec`, `fec`, `decinc`, `decind`, etc.). Corrigidos: (1) `ano_referencia` para `anoindice`, (2) `_timestamp_ingestao` para `_ingest_ts`, (3) chave de deduplicação granular (distribuidora + conjunto + ano + período), (4) `DROP + APPEND` substituindo `DELETE + APPEND`, (5) colunas de seleção final dinâmicas.
+* **Gold 301:** Mesma correção de `DROP TABLE IF EXISTS` + APPEND.
+
+Volume de dados ingeridos e processados (ano 2025):
+
+| Tabela | Registros | Colunas |
+| --- | --- | --- |
+| Bronze - Interrupções | 9.715.372 | 22 |
+| Bronze - Indicadores | 741.933 | 13 |
+| Silver - Interrupções | 8.669.725 | 12 |
+| Silver - Indicadores | 37.795 | 34 |
+| Gold - Tempo por Distribuidora/Mês | 620 | 10 |
+
+**Estado atual:** Pipeline completo bronze-silver-gold operacional para 2025. Todas as 6 tabelas populadas com dados reais da ANEEL. Job `567314997539912` executando com parâmetro `anos=2025`.
+**Próximo passo:** Expandir escopo para múltiplos anos (necessita revisar abordagem de carga para volumes maiores), executar EDA e validações de qualidade, implementar comparativo DEC observado vs apurado, criar consumidor do resultado (dashboard ou relatório).
+**Pendências:** [PENDENTE] consumidor do resultado (dashboard/relatório); [PENDENTE] expandir escopo para múltiplos anos; [PENDENTE] executar EDA e validações de qualidade bronze; [PENDENTE] registro do projeto no índice de projetos do .assistant_instructions.md; [PENDENTE] revisar race conditions em edits paralelos de notebooks (causaram reverts de correções durante a sessão).
+
 ## 2026-09-07 -- Sessão 9
 
 **Feito:** Alterada a chave natural da tabela silver `interrupcoes_distribuicao`. Chave atualizada de código do conjunto isolado para chave composta de quatro campos: `cod_distribuidora`, `data_inicio`, `conjunto`, `tipo_interrupcao`. Notebook 201_interrupcoes_distribuicao alterado e testado com a nova estrutura de chave. Deduplicação ajustada para utilizar a chave completa. Registrada DEC-005 documentando a decisão, alternativas consideradas e justificativa.

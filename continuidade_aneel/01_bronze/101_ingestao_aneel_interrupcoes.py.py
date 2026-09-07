@@ -22,16 +22,16 @@ import requests
 
 # DBTITLE 1,CONFIGURAR PARÂMETROS
 # Configuração do catálogo e schema de destino
-CATALOG = "main"
+CATALOG = "workspace"
 SCHEMA_BRONZE = "continuidade_aneel_bronze"
 TABLE_INTERRUPCOES = "aneel_interrupcoes"
 TABLE_CONTROL = "controle_ingestao"
 
-# URL base da ANEEL (atualizar com URL real do arquivo Parquet)
-# Exemplo: https://dadosabertos.aneel.gov.br/dataset/.../interrupcoes_2024.parquet
-URL_BASE_ANEEL = "https://dadosabertos.aneel.gov.br/dataset"
+# URLs dos arquivos Parquet da ANEEL (portal CKAN de dados abertos)
+URLS_PARQUET = {
+    2025: "https://dadosabertos.aneel.gov.br/dataset/ccb25653-f07b-4f28-84c2-62a89d1f5a56/resource/691de320-cb3d-471b-b9ec-8c1b86af8c83/download/interrupcoes-energia-eletrica-2025.parquet",
+}
 
-# Caminho de checkpoint para Auto Loader (se usado)
 CHECKPOINT_PATH = "/tmp/checkpoints/aneel_interrupcoes"
 
 # COMMAND ----------
@@ -65,7 +65,7 @@ print(f"✓ Schema {CATALOG}.{SCHEMA_BRONZE} e tabela de controle prontos")
 
 # Esta célula deve ser adaptada conforme a estrutura real do portal da ANEEL
 # Exemplo simplificado: lista de anos
-anos_disponiveis = [2020, 2021, 2022, 2023, 2024]
+anos_disponiveis = list(URLS_PARQUET.keys())
 
 # Buscar anos já processados
 df_processados = spark.sql(f"""
@@ -86,6 +86,13 @@ print(f"Anos a processar: {anos_a_processar}")
 
 # DBTITLE 1,PROCESSAR CADA ANO (LOOP PRINCIPAL)
 # Processar cada ano disponível com verificação de idempotência
+# Serverless: baixar via requests para UC Volume, depois spark.read.parquet
+import os
+
+# Garantir que o volume existe
+spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{SCHEMA_BRONZE}")
+spark.sql(f"CREATE VOLUME IF NOT EXISTS {CATALOG}.{SCHEMA_BRONZE}.raw_data")
+VOLUME_PATH = f"/Volumes/{CATALOG}/{SCHEMA_BRONZE}/raw_data"
 
 for ano in anos_a_processar:
     try:
@@ -93,11 +100,13 @@ for ano in anos_a_processar:
         print(f"Processando ano: {ano}")
         print(f"{'='*60}")
         
-        # Construir URL do arquivo (ajustar conforme estrutura real da ANEEL)
-        url_arquivo = f"{URL_BASE_ANEEL}/interrupcoes_{ano}.parquet"
+        url_arquivo = URLS_PARQUET.get(ano)
+        if not url_arquivo:
+            print(f"⚠ Sem URL mapeada para ano {ano} - pulando")
+            continue
         
         # Obter metadados HTTP (Last-Modified)
-        response = requests.head(url_arquivo, allow_redirects=True)
+        response = requests.head(url_arquivo, allow_redirects=True, timeout=30)
         last_modified = response.headers.get('Last-Modified', '')
         
         # Verificar se já foi processado com este Last-Modified
@@ -111,13 +120,22 @@ for ano in anos_a_processar:
         """).collect()[0]['count']
         
         if ja_processado > 0:
-            print(f"⏭️  Ano {ano} já processado (Last-Modified: {last_modified}) - pulando")
+            print(f"⏭ Ano {ano} já processado (Last-Modified: {last_modified}) - pulando")
             continue
         
-        # Ler arquivo Parquet da ANEEL
-        print(f"📥 Lendo arquivo: {url_arquivo}")
-        df_raw = spark.read.parquet(url_arquivo)
+        # Download para UC Volume (serverless-safe: sem /tmp/, sem createDataFrame)
+        print(f"📥 Baixando: {url_arquivo}")
+        r = requests.get(url_arquivo, timeout=300)
+        r.raise_for_status()
+        print(f"   Download: {len(r.content) / (1024*1024):.1f} MB")
         
+        parquet_path = f"{VOLUME_PATH}/interrupcoes_{ano}.parquet"
+        with open(parquet_path, "wb") as f:
+            f.write(r.content)
+        print(f"   Arquivo salvo em {parquet_path}")
+        
+        # Ler com Spark do volume (sem createDataFrame, sem estouro de memória)
+        df_raw = spark.read.parquet(parquet_path)
         num_registros = df_raw.count()
         print(f"📊 Registros lidos: {num_registros:,}")
         
@@ -148,6 +166,8 @@ for ano in anos_a_processar:
         )
         
         print(f"✅ Ano {ano} processado com sucesso")
+        
+        del r
         
     except Exception as e:
         print(f"❌ Erro ao processar ano {ano}: {str(e)}")
@@ -191,8 +211,11 @@ display(df_resumo)
 
 # Exibir amostra dos dados ingeridos
 print(f"\n🔍 Amostra de dados em {CATALOG}.{SCHEMA_BRONZE}.{TABLE_INTERRUPCOES}:")
-df_sample = spark.table(f"{CATALOG}.{SCHEMA_BRONZE}.{TABLE_INTERRUPCOES}").limit(10)
-display(df_sample)
+try:
+    df_sample = spark.table(f"{CATALOG}.{SCHEMA_BRONZE}.{TABLE_INTERRUPCOES}").limit(10)
+    display(df_sample)
+except Exception as e:
+    print(f"⚠ Tabela {CATALOG}.{SCHEMA_BRONZE}.{TABLE_INTERRUPCOES} não possui dados ou não existe: {e}")
 
 # COMMAND ----------
 
