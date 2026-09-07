@@ -168,6 +168,23 @@ body{
 }
 .open:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
 
+/* ---------- evidência complementar ---------- */
+.extra{margin-top:34px}
+.extra h2{font-size:13px;font-weight:500;color:var(--muted);margin:0 0 10px}
+.xcard{background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--pending);padding:16px 18px}
+.xcard.pronto{border-left-color:var(--done)}
+.xcard h3{margin:0 0 4px;font-size:14.5px;font-weight:600}
+.xcard .m{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:0 0 10px}
+.xcard p{margin:0 0 12px;font-size:13.5px;color:var(--ink);max-width:74ch}
+.xacoes{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center}
+.xacoes a,.xacoes button{
+  appearance:none;-webkit-appearance:none;font:inherit;font-size:13.5px;
+  background:transparent;border:none;border-bottom:1px solid var(--done);
+  color:var(--done);padding:0 0 2px;cursor:pointer;text-decoration:none;
+}
+.xacoes a:focus-visible,.xacoes button:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.xnota{font-size:12.5px;color:var(--muted);border:none}
+
 /* ---------- achados ---------- */
 .findings{margin-top:56px;padding-top:28px;border-top:1px solid var(--rule)}
 .findings h2{font-size:16px;font-weight:600;margin:0 0 4px}
@@ -297,11 +314,13 @@ body{
       </ol>
       <h2 style="font-size:16px;margin:22px 0 10px">Achados</h2>
       <p style="margin:0 0 8px">Documentação não propaga; contato empírico propaga. A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em nove sessões, enquanto os notebooks que consultaram o Unity Catalog usam o destino correto.</p>
-      <p style="margin:0 0 8px">O protocolo de fechamento registra intenção, não estado. Em cinco sessões o log de evolução afirmou um estado que o disco não confirmava.</p>
+      <p style="margin:0 0 8px">O protocolo de fechamento registra intenção, não estado. Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava.</p>
       <p style="margin:0 0 8px">A revisão de código não olha para fora do arquivo: dezesseis problemas identificados, nenhum deles o catálogo inexistente que impede a primeira escrita.</p>
       <p style="margin:0">O roteamento de skills falha quando o asset é meio, não fim do pedido — único erro em nove sessões.</p>
     </section>
   </noscript>
+
+  <section class="extra" id="extra"></section>
 
   <section class="findings">
     <h2>Achados</h2>
@@ -406,7 +425,7 @@ const SESSOES = [
     skills:["project-context","eda-and-validation","data-quality-guardrails","naming-conventions","notebook-structure"],
     artefatos:[
       { nome:"VAL_001_regras_silver_interrupcoes.py", sha:"a08464a", path:"05_validacoes/VAL_001_regras_silver_interrupcoes.py.py" },
-      { nome:"EDA_001_qualidade_interrupcoes_bronze.py", sha:"e42cb8a", path:"04_investigacoes/EDA_001_qualidade_interrupcoes_bronze.py.py", manual:true }
+      { nome:"EDA_001_qualidade_interrupcoes_bronze.py", sha:"e42cb8a", path:"04_investigacoes/EDA_001_qualidade_interrupcoes_bronze.py.py", marca:"correção manual" }
     ],
     achados:["catalogo","estado-falso","roteamento"] },
 
@@ -434,20 +453,33 @@ const SESSOES = [
     ],
     achados:["escopo-revisao","estado-falso"] },
 
-  { passo:9, arm:"com", duracao:4, palavras:1026, objetivo:"Verificar se a documentação gerada é verificável no próprio código e se o registro da sessão reflete o que de fato mudou.", file:"09_documentacao_notebook_gold.html",
+  { passo:9, arm:"com", duracao:4, palavras:1346, objetivo:"Verificar se a documentação gerada é verificável no próprio código e se o registro da sessão reflete o que de fato mudou.", file:"09_documentacao_notebook_gold.html",
     quando:"06/09/2026 15:51",
     skills:["artifact-documentation","technical-writing"],
     artefatos:[
-      { nome:"registro em evolucao_projeto.md; notebook 301 sem alteração", sha:"cb4be1e" }
+      { nome:"301_tempo_interrupcao_distribuidora_mes.py — documentação reescrita", sha:"c6f718b", path:"03_gold/301_tempo_interrupcao_distribuidora_mes.py.py", marca:"reaplicado após rejeição" },
+      { nome:"registro da sessão em evolucao_projeto.md", sha:"cb4be1e" }
     ],
-    achados:["estado-falso"] }
+    achados:[] }
 ];
+
+const COMPLEMENTAR = {
+  titulo:"Sessão contínua de commits",
+  meta:"fora da sequência pareada · chat único, em andamento",
+  texto:"Chat único usado para todas as operações de Git do projeto, atravessando os passos numerados. "+
+        "Exercita a skill git-workflow, que nenhum passo da sequência aciona. A evidência é dupla: "+
+        "o chat mostra o processo de decisão, e o histórico do repositório mostra o resultado — "+
+        "escopo dos commits, formato das mensagens e a separação entre o que o agente entregou e "+
+        "o que precisou de correção manual.",
+  file:null,   // caminho da transcrição quando o chat for encerrado e exportado
+  historico:"https://github.com/1pedroosilva/genie-skills-eval/commits/main"
+};
 
 const ACHADOS = [
   { id:"catalogo", titulo:"Documentação não propaga; contato empírico propaga",
     texto:"A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em nove sessões. Os notebooks que consultaram o Unity Catalog ou leram o artefato real usam o destino correto; os que nunca tocaram o ambiente apontam para um catálogo inexistente." },
   { id:"estado-falso", titulo:"O fechamento registra intenção, não estado",
-    texto:"Em cinco sessões o log de evolução afirmou um estado que o disco não confirmava. O fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e o log é o insumo da sessão seguinte." },
+    texto:"Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava. O fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e o log é o insumo da sessão seguinte." },
   { id:"escopo-revisao", titulo:"A revisão de código não olha para fora do arquivo",
     texto:"Dezesseis problemas reais identificados no notebook 101, nenhum deles o catálogo inexistente que impede a primeira escrita. O código foi avaliado contra si mesmo, não contra o ambiente nem contra as decisões do projeto." },
   { id:"roteamento", titulo:"Roteamento falha quando o asset é meio, não fim",
@@ -489,7 +521,7 @@ function artefato(a){
   const url = a.path
     ? `${REPO}/${a.dir ? "tree" : "blob"}/${a.sha}/${RAIZ}${a.path}`
     : `${REPO}/commit/${a.sha}`;
-  const marca = a.manual ? `<span class="manual" title="Correção manual: o agente não conseguiu gravar no lugar certo">correção manual</span>` : "";
+  const marca = a.marca ? `<span class="manual">${a.marca}</span>` : "";
   return `<li><a class="art" href="${url}" target="_blank" rel="noopener">${a.nome}</a>
     <span class="sha">${a.sha}</span>${marca}</li>`;
 }
@@ -604,6 +636,27 @@ PASSOS.forEach(p => {
 
 document.getElementById("progresso").textContent =
   SESSOES.length + " de " + (PASSOS.length * 2) + " sessões";
+
+const ex = document.getElementById("extra");
+ex.innerHTML = `<h2>Evidência complementar</h2>
+  <div class="xcard${COMPLEMENTAR.file ? " pronto" : ""}">
+    <h3>${COMPLEMENTAR.titulo}</h3>
+    <p class="m">${COMPLEMENTAR.meta}</p>
+    <p>${COMPLEMENTAR.texto}</p>
+    <div class="xacoes">
+      ${COMPLEMENTAR.file
+        ? `<button type="button" id="xler">Ler o chat completo</button>`
+        : `<span class="xnota">Transcrição publicada quando a sessão for encerrada.</span>`}
+      <a href="${COMPLEMENTAR.historico}" target="_blank" rel="noopener">Histórico de commits</a>
+    </div>
+  </div>`;
+if(COMPLEMENTAR.file){
+  document.getElementById("xler").addEventListener("click", () => {
+    SESSOES.push({passo:0, arm:"com", file:COMPLEMENTAR.file, quando:COMPLEMENTAR.meta,
+                  skills:["git-workflow"], artefatos:[], achados:[], duracao:0, palavras:0});
+    abrirLeitor(SESSOES.length-1);
+  });
+}
 
 const cont = document.getElementById("findings");
 ACHADOS.forEach(a => {
