@@ -1,0 +1,85 @@
+# Configurações do Projeto: Continuidade Energia ANEEL
+
+project:
+  name: "continuidade-energia-aneel"
+  version: "0.1.0"
+  description: "Análise de continuidade do fornecimento de energia elétrica no Brasil"
+  author: "Pedro Silva"
+  created_date: "2026-09-08"
+
+# Parâmetros de análise
+analysis:
+  years: [2024, 2025]
+  scope: "Brasil"
+  question: "O tempo de interrupção observado em cada distribuidora está compatível com o DEC apurado pelo regulador?"
+
+# Fontes de dados
+data_sources:
+  aneel:
+    base_url: "https://dadosabertos.aneel.gov.br/"
+    datasets:
+      interrupcoes:
+        name: "Interrupções na Rede de Distribuição"
+        format: "csv"
+        # URL exata será preenchida após identificação
+        url: "TBD"
+      indicadores:
+        name: "Indicadores Coletivos de Continuidade"
+        format: "csv"
+        # URL exata será preenchida após identificação
+        url: "TBD"
+
+# Estrutura de diretórios
+paths:
+  data_raw: "dados/raw"
+  data_processed: "dados/processed"
+  notebooks: "notebooks"
+  docs: "docs"
+  
+# Indicadores-chave
+indicators:
+  dec:
+    name: "DEC - Duração Equivalente de Interrupção"
+    unit: "horas"
+    description: "Tempo médio que cada unidade consumidora ficou sem energia"
+  fec:
+    name: "FEC - Frequência Equivalente de Interrupção"
+    unit: "quantidade"
+    description: "Número médio de interrupções por unidade consumidora"
+
+# Parâmetros de processamento
+processing:
+  # Tipos de interrupção a considerar no cálculo do DEC
+  interruption_types:
+    include:
+      - "Emergencial"
+      - "Não programada"
+    exclude:
+      - "Programada"
+  
+  # Filtros de qualidade
+  filters:
+    min_duration_minutes: 1
+    min_affected_consumers: 1
+  
+  # Limites de discrepância para alertas
+  discrepancy_thresholds:
+    warning_percent: 10  # Diferença > 10% gera warning
+    critical_percent: 20  # Diferença > 20% gera alerta crítico
+
+# Configurações de visualização
+visualization:
+  default_chart_type: "bar"
+  color_scheme: "viridis"
+  figure_size: [12, 6]
+  
+# Metadata
+metadata:
+  license: "Público - Dados ANEEL"
+  tags:
+    - "energia"
+    - "aneel"
+    - "continuidade"
+    - "dec"
+    - "distribuidoras"
+  status: "em_estruturacao"

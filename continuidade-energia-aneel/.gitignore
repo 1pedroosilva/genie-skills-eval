@@ -1,0 +1,44 @@
+# Arquivos de dados brutos (podem ser grandes)
+dados/raw/**/*.csv
+dados/raw/**/*.xlsx
+dados/raw/**/*.xls
+dados/raw/**/*.zip
+
+# Dados processados (parquet pode ser grande)
+dados/processed/**/*.parquet
+dados/processed/**/*.csv
+
+# Arquivos temporários
+*.tmp
+*.bak
+*~
+
+# Notebooks com outputs
+**/.ipynb_checkpoints/
+**/__pycache__/
+*.pyc
+
+# Logs
+*.log
+logs/
+
+# Ambiente virtual Python
+venv/
+env/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credenciais (se houver)
+.env
+*.key
+*.pem
+credentials/
