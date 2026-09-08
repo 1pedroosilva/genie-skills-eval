@@ -632,7 +632,10 @@ function abrirLeitor(i){
   if(i < 0 || i >= SESSOES.length) return;
   atual = i;
   const s = SESSOES[i];
-  rtitulo.innerHTML = `Passo ${String(s.passo).padStart(2,"0")} — ${PASSOS[s.passo-1].titulo}
+  const cab = s.passo && PASSOS[s.passo-1]
+    ? `Passo ${String(s.passo).padStart(2,"0")} — ${PASSOS[s.passo-1].titulo}`
+    : (s.titulo || COMPLEMENTAR.titulo);
+  rtitulo.innerHTML = `${cab}
     <span>${s.quando} · skills ${s.arm === "com" ? "ativas" : "desligadas"}</span>`;
   frame.src = s.file;
   rtab.href = s.file;
@@ -699,6 +702,7 @@ document.querySelectorAll(".xler").forEach(btn => {
   btn.addEventListener("click", () => {
     const p = COMPLEMENTAR.partes[Number(btn.dataset.i)];
     SESSOES.push({passo:0, arm:"com", file:p.file, quando:COMPLEMENTAR.meta,
+                  titulo:`${COMPLEMENTAR.titulo} — ${p.rotulo}`,
                   skills:["git-workflow"], artefatos:[], achados:[], duracao:0, palavras:0});
     abrirLeitor(SESSOES.length-1);
   });
