@@ -316,6 +316,7 @@ body{
         <li><a href="11_execucao_job_ponta_a_ponta.html">Execução do pipeline de ponta a ponta</a> — primeiro contato do código com dado real, em oito iterações de correção</li>
         <li><a href="12_documentacao_projeto.html">Documentação técnica e de negócio</a> — documentação do projeto produzida a partir dos artefatos em operação, com lacunas declaradas</li>
       </ol>
+      <p style="margin:0 0 8px">Evidência complementar, fora da sequência: <a href="chat_commits_git_projeto_p1.html">sessão de commits, parte 1</a> e <a href="chat_commits_git_projeto_p2.html">parte 2</a> — chat único usado para todas as operações de Git do projeto.</p>
       <h2 style="font-size:16px;margin:22px 0 10px">Achados</h2>
       <p style="margin:0 0 8px">Documentação não propaga; contato empírico propaga. A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em doze sessões, enquanto os notebooks que consultaram o Unity Catalog usam o destino correto.</p>
       <p style="margin:0 0 8px">O protocolo de fechamento registra intenção, não estado. Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava.</p>
@@ -500,13 +501,16 @@ const SESSOES = [
 
 const COMPLEMENTAR = {
   titulo:"Sessão contínua de commits",
-  meta:"fora da sequência pareada · chat único, em andamento",
+  meta:"fora da sequência pareada · chat único, encerrado · duas partes",
   texto:"Chat único usado para todas as operações de Git do projeto, atravessando os passos numerados. "+
         "Exercita a skill git-workflow, que nenhum passo da sequência aciona. A evidência é dupla: "+
         "o chat mostra o processo de decisão, e o histórico do repositório mostra o resultado — "+
         "escopo dos commits, formato das mensagens e a separação entre o que o agente entregou e "+
         "o que precisou de correção manual.",
-  file:null,   // caminho da transcrição quando o chat for encerrado e exportado
+  partes:[
+    { rotulo:"Parte 1", file:"chat_commits_git_projeto_p1.html" },
+    { rotulo:"Parte 2", file:"chat_commits_git_projeto_p2.html" }
+  ],
   historico:"https://github.com/1pedroosilva/genie-skills-eval/commits/main"
 };
 
@@ -680,24 +684,25 @@ document.getElementById("progresso").textContent =
 
 const ex = document.getElementById("extra");
 ex.innerHTML = `<h2>Evidência complementar</h2>
-  <div class="xcard${COMPLEMENTAR.file ? " pronto" : ""}">
+  <div class="xcard${COMPLEMENTAR.partes.length ? " pronto" : ""}">
     <h3>${COMPLEMENTAR.titulo}</h3>
     <p class="m">${COMPLEMENTAR.meta}</p>
     <p>${COMPLEMENTAR.texto}</p>
     <div class="xacoes">
-      ${COMPLEMENTAR.file
-        ? `<button type="button" id="xler">Ler o chat completo</button>`
+      ${COMPLEMENTAR.partes.length
+        ? COMPLEMENTAR.partes.map((p,i) => `<button type="button" class="xler" data-i="${i}">Ler ${p.rotulo}</button>`).join("")
         : `<span class="xnota">Transcrição publicada quando a sessão for encerrada.</span>`}
       <a href="${COMPLEMENTAR.historico}" target="_blank" rel="noopener">Histórico de commits</a>
     </div>
   </div>`;
-if(COMPLEMENTAR.file){
-  document.getElementById("xler").addEventListener("click", () => {
-    SESSOES.push({passo:0, arm:"com", file:COMPLEMENTAR.file, quando:COMPLEMENTAR.meta,
+document.querySelectorAll(".xler").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const p = COMPLEMENTAR.partes[Number(btn.dataset.i)];
+    SESSOES.push({passo:0, arm:"com", file:p.file, quando:COMPLEMENTAR.meta,
                   skills:["git-workflow"], artefatos:[], achados:[], duracao:0, palavras:0});
     abrirLeitor(SESSOES.length-1);
   });
-}
+});
 
 const cont = document.getElementById("findings");
 ACHADOS.forEach(a => {
