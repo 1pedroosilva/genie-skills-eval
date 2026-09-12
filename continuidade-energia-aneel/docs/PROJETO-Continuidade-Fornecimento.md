@@ -17,10 +17,10 @@ Analisar indicadores de continuidade do fornecimento de energia (DEC, FEC, DIC, 
 ### Modelo Medalhão (Bronze → Silver → Gold)
 
 #### **Camada Bronze** (Dados Brutos)
-- **Catálogo**: `main`
-- **Schema**: `bronze_aneel`
+- **Catálogo/Schema**: `workspace.proj_aneel_cont_01_bronze`
 - **Tabelas**:
-  - `interrupcoes_energia`: Dados brutos de interrupções da ANEEL
+  - `indicadores_continuidade`: Indicadores coletivos de continuidade (DEC, FEC e variantes) — 5.108.332 registros
+  - `interrupcoes_energia`: Dados brutos de interrupções da ANEEL (em `main.bronze_aneel`)
 
 #### **Camada Silver** (Em planejamento)
 - Limpeza e transformações
@@ -36,16 +36,20 @@ Analisar indicadores de continuidade do fornecimento de energia (DEC, FEC, DIC, 
 
 ## Fontes de Dados
 
-### ANEEL - Indicadores de Continuidade
+### ANEEL - Indicadores Coletivos de Continuidade
 - **Portal**: [Dados Abertos ANEEL](https://dadosabertos.aneel.gov.br/dataset/indicadores-coletivos-de-continuidade)
-- **Formato**: Parquet (arquivo anual, republicado a cada atualização)
+- **Formato**: Parquet (arquivo único, republicado a cada atualização)
+- **URL do arquivo**: `https://dadosabertos.aneel.gov.br/dataset/d5f0712e-62f6-4736-8dff-9991f10758a7/resource/d7f70fb1-725c-4748-afeb-65c6a78df550/download/indicadores-continuidade-coletivos-2020-2029.parquet`
 - **Frequência de atualização**: Mensal/Trimestral (conforme publicação da ANEEL)
-- **Indicadores incluídos**:
+- **Cobertura temporal**: jan/2020 a ago/2026 (80 períodos mensais)
+- **Indicadores incluídos** (23 tipos):
   - **DEC**: Duração Equivalente de Interrupção por Unidade Consumidora
   - **FEC**: Frequência Equivalente de Interrupção por Unidade Consumidora
-  - **DIC**: Duração de Interrupção Individual
-  - **FIC**: Frequência de Interrupção Individual
-  - **DMIC**: Duração Máxima de Interrupção Contínua
+  - **DECIP/DECIPC/DECIND/DECINC/DECINE/DECINO/DECXP/DECXPC/DECXN/DECXNC**: Variantes de DEC
+  - **FECIP/FECIPC/FECIND/FECINC/FECINE/FECINO/FECXP/FECXPC/FECXN/FECXNC**: Variantes de FEC
+  - **NumCon**: Número de Consumidores
+- **Distribuidoras**: 105 agentes
+- **Total de registros**: 5.108.332
 
 ---
 
@@ -79,6 +83,45 @@ Analisar indicadores de continuidade do fornecimento de energia (DEC, FEC, DIC, 
 - URL do Parquet parametrizada por ano de referência
 - Schema flexível para acomodar mudanças na estrutura dos dados da ANEEL
 - Tratamento de erro robusto para diferentes cenários de acesso
+
+### ✅ Sessão: 11/09/2026 00:23
+
+#### 2. Ingestão de Indicadores Coletivos de Continuidade - Camada Bronze
+
+**Notebook criado**: [Ingestão ANEEL - Indicadores Coletivos de Continuidade](#notebook-2458819770635339)
+
+**Descrição**: Pipeline de ingestão completo para carregar os Indicadores Coletivos de Continuidade da ANEEL na camada bronze.
+
+**Funcionalidades implementadas**:
+- ✅ Download do arquivo Parquet (28.8 MB) do portal de dados abertos da ANEEL via `urllib.request`
+- ✅ Leitura com pandas e conversão para Spark DataFrame (necessário em compute serverless, que não suporta leitura direta de URLs HTTPS nem arquivos locais fora de /Workspace)
+- ✅ Normalização de nomes de colunas para lowercase (DatGeracaoConjuntoDados → datgeracaoconjuntodados, etc.)
+- ✅ Adição de metadados de rastreabilidade:
+  - `_fonte_url`: URL do arquivo fonte baixado
+  - `_ingest_ts`: Timestamp UTC da ingestão
+  - `_ingest_date`: Data da ingestão
+  - `_run_id`: Identificador único da execução (YYYYMMDDHHMMSS)
+- ✅ Criação automática do schema `workspace.proj_aneel_cont_01_bronze`
+- ✅ Escrita em formato Delta com `overwriteSchema` e `mergeSchema` habilitados
+- ✅ Validações de qualidade pós-ingestão (total, cobertura temporal, distribuição por indicador, nulos em colunas-chave)
+- ✅ Consulta de exemplo para exploração inicial
+
+**Destino**: `workspace.proj_aneel_cont_01_bronze.indicadores_continuidade`
+
+**Modo de execução**: Full load (overwrite) - dados completos substituídos a cada execução
+
+**Resultado da execução**:
+- 5.108.332 registros escritos com sucesso
+- 80 períodos mensais (jan/2020 a ago/2026)
+- 23 indicadores distintos (DEC, FEC e variantes + NumCon)
+- 105 distribuidoras (agentes)
+- Zero nulos em colunas-chave (sigagente, sigindicador, anoindice, numperiodoindice, vlrindiceenviado)
+- Run ID: 20260911032756
+
+**Observações técnicas**:
+- O Spark no compute serverless não suporta leitura direta de URLs HTTPS (`HttpFileSystem` sem `listStatus`) nem arquivos locais fora de `/Workspace` (`LocalFilesystemAccessDeniedException`). Solução: baixar com Python, ler com pandas e converter para Spark DataFrame.
+- Colunas originais da fonte em PascalCase (ex: `DatGeracaoConjuntoDados`), normalizadas para lowercase no notebook.
+- Arquivo temporário limpo automaticamente após a escrita.
 
 ---
 
@@ -117,9 +160,21 @@ Analisar indicadores de continuidade do fornecimento de energia (DEC, FEC, DIC, 
 ## Estrutura de Pastas
 
 ```
-continuidade-energia-aneel/docs/
-├── PROJETO-Continuidade-Fornecimento.md    # Este arquivo
-└── Ingestão ANEEL - Interrupções de Energia.ipynb    # Notebook de ingestão
+continuidade-energia-aneel/
+├── README.md
+├── config.yaml
+├── docs/
+│   ├── PROJETO-Continuidade-Fornecimento.md    # Este arquivo
+│   └── dicionario_dados.md                     # Dicionário de dados
+├── notebooks/
+│   ├── Ingestão ANEEL - Interrupções de Energia          # Notebook de ingestão de interrupções
+│   ├── Ingestão ANEEL - Indicadores Coletivos de Continuidade  # Notebook de ingestão de indicadores
+│   ├── 01_extracao_dados.py
+│   ├── 02_processamento.py
+│   └── 03_analise_dec.py
+└── dados/
+    ├── raw/
+    └── processed/
 ```
 
 ---
@@ -136,8 +191,9 @@ continuidade-energia-aneel/docs/
 
 | Data | Descrição |
 |------|----------|
-| 08/09/2026 22:41 | Criação do projeto e implementação da ingestão bronze |
+| 08/09/2026 22:41 | Criação do projeto e implementação da ingestão bronze (interrupções) |
+| 11/09/2026 00:23 | Ingestão de Indicadores Coletivos de Continuidade na bronze (5.108.332 registros) |
 
 ---
 
-*Última atualização: 08/09/2026*
+*Última atualização: 11/09/2026*

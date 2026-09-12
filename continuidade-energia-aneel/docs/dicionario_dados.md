@@ -33,26 +33,56 @@
 ## 2. Indicadores Coletivos de Continuidade
 
 ### Fonte
-* **Dataset**: [A ser preenchido com URL exata]
-* **Última atualização**: [A ser preenchido]
-* **Formato**: CSV
+* **Dataset**: [Indicadores Coletivos de Continuidade - ANEEL](https://dadosabertos.aneel.gov.br/dataset/indicadores-coletivos-de-continuidade)
+* **URL do arquivo**: `https://dadosabertos.aneel.gov.br/dataset/d5f0712e-62f6-4736-8dff-9991f10758a7/resource/d7f70fb1-725c-4748-afeb-65c6a78df550/download/indicadores-continuidade-coletivos-2020-2029.parquet`
+* **Última atualização**: 11/09/2026 (Run ID: 20260911032756)
+* **Formato**: Parquet
 * **Codificação**: UTF-8
+* **Tabela bronze**: `workspace.proj_aneel_cont_01_bronze.indicadores_continuidade`
+* **Total de registros**: 5.108.332
+* **Cobertura temporal**: jan/2020 a ago/2026 (80 períodos mensais)
+* **Distribuidoras**: 105 agentes
 
-### Campos (exemplo - atualizar após análise dos dados reais)
+### Campos (schema da tabela bronze)
 
 | Campo | Tipo | Descrição | Exemplo |
 |-------|------|-------------|----------|
-| `cod_distribuidora` | String | Código único da distribuidora | "CEG" |
-| `nome_distribuidora` | String | Nome da distribuidora | "Light SESA" |
-| `uf` | String | Unidade Federativa | "RJ" |
-| `ano` | Integer | Ano de referência | 2024 |
-| `mes` | Integer | Mês de referência (ou 0 para anual) | 12 |
-| `periodo` | String | Período de apuração | "Anual", "Mensal" |
-| `dec_apurado` | Float | DEC oficial em horas | 12.5 |
-| `dec_meta` | Float | Meta regulatória de DEC | 10.0 |
-| `fec_apurado` | Float | FEC oficial | 8.2 |
-| `fec_meta` | Float | Meta regulatória de FEC | 7.0 |
-| `total_consumidores` | Integer | Total de consumidores no período | 850000 |
+| `datgeracaoconjuntodados` | DATE | Data de geração do conjunto de dados pela ANEEL | 2026-09-05 |
+| `ideconjundconsumidoras` | BIGINT | ID do conjunto de unidades consumidoras | 16658 |
+| `dscconjundconsumidoras` | STRING | Descrição do conjunto de unidades consumidoras | "CERSAD" |
+| `sigagente` | STRING | Sigla do agente (distribuidora) | "CEMIG-D" |
+| `numcnpj` | BIGINT | CNPJ da distribuidora | 6981180000116 |
+| `sigindicador` | STRING | Sigla do indicador (DEC, FEC, etc.) | "DEC" |
+| `anoindice` | BIGINT | Ano de referência do índice | 2025 |
+| `numperiodoindice` | BIGINT | Número do período (1-12, mensal) | 6 |
+| `vlrindiceenviado` | DOUBLE | Valor do indicador enviado pela distribuidora | 0.63 |
+| `_fonte_url` | STRING | URL do arquivo fonte baixado (metadado) | https://dadosabertos.aneel.gov.br/... |
+| `_ingest_ts` | TIMESTAMP | Timestamp UTC da ingestão (metadado) | 2026-09-11T03:27:56Z |
+| `_ingest_date` | DATE | Data da ingestão (metadado) | 2026-09-11 |
+| `_run_id` | STRING | ID único da execução (metadado) | 20260911032756 |
+
+### Indicadores disponíveis (23 tipos)
+
+| Sigla | Descrição |
+|-------|-----------|
+| DEC | Duração Equivalente de Interrupção por Unidade Consumidora |
+| FEC | Frequência Equivalente de Interrupção por Unidade Consumidora |
+| DECIP / FECIP | DEC/FEC Individual Programada |
+| DECIPC / FECIPC | DEC/FEC Individual Programada Contínua |
+| DECIND / FECIND | DEC/FEC Individual Não Programada |
+| DECINC / FECINC | DEC/FEC Individual Contínua |
+| DECINE / FECINE | DEC/FEC Individual Não Programada Especial |
+| DECINO / FECINO | DEC/FEC Individual Não Programada Outros |
+| DECXP / FECXP | DEC/FEC Extra Programada |
+| DECXPC / FECXPC | DEC/FEC Extra Programada Contínua |
+| DECXN / FECXN | DEC/FEC Extra Não Programada |
+| DECXNC / FECXNC | DEC/FEC Extra Não Programada Contínua |
+| NumCon | Número de Consumidores |
+
+### Notas sobre os dados
+* Colunas originais da fonte em PascalCase (ex: `DatGeracaoConjuntoDados`), normalizadas para lowercase na bronze
+* O valor `vlrindiceenviado` pode ser 0 (zero) para indicadores não aplicáveis ao período/conjunto
+* `numperiodoindice` varia de 1 a 12 (períodos mensais)
 
 ### Fórmulas Oficiais
 
@@ -110,4 +140,4 @@ Onde:
 
 ---
 
-**Última atualização**: [A ser preenchido após primeira extração de dados]
+**Última atualização**: 11/09/2026
