@@ -4,8 +4,8 @@
 <link rel="icon" href="https://1pedroosilva.github.io/favicon.ico" sizes="any">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Avaliação de skills do Genie Code — 12 sessões registradas | genie-skills-eval</title>
-<meta name="description" content="Avaliação empírica de skills do Genie Code (Databricks): 12 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
+<title>Avaliação de skills do Genie Code — 16 sessões registradas | genie-skills-eval</title>
+<meta name="description" content="Avaliação empírica de skills do Genie Code (Databricks): 16 sessões registradas em dois braços pareados — 12 com skills ativas e 4 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e convenção de projeto.">
 <meta name="author" content="Pedro Silva">
 <link rel="canonical" href="https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
@@ -15,17 +15,17 @@
 <meta property="og:site_name" content="genie-skills-eval">
 <meta property="og:url" content="https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/">
 <meta property="og:title" content="Avaliação empírica de skills do Genie Code (Databricks)">
-<meta property="og:description" content="Avaliação empírica de skills do Genie Code (Databricks): 12 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
+<meta property="og:description" content="Avaliação empírica de skills do Genie Code (Databricks): 16 sessões registradas em dois braços pareados — 12 com skills ativas e 4 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e convenção de projeto.">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Avaliação empírica de skills do Genie Code (Databricks)">
-<meta name="twitter:description" content="Avaliação empírica de skills do Genie Code (Databricks): 12 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.">
+<meta name="twitter:description" content="Avaliação empírica de skills do Genie Code (Databricks): 16 sessões registradas em dois braços pareados — 12 com skills ativas e 4 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e convenção de projeto.">
 
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
   "@type":"Dataset",
   "name":"genie-skills-eval — sessões registradas do Genie Code",
-  "description":"Avaliação empírica de skills do Genie Code (Databricks): 12 sessões registradas com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e protocolo de fechamento de sessão.",
+  "description":"Avaliação empírica de skills do Genie Code (Databricks): 16 sessões registradas em dois braços pareados — 12 com skills ativas e 4 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e convenção de projeto.",
   "url":"https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/",
   "inLanguage":"pt-BR",
   "license":"https://opensource.org/licenses/MIT",
@@ -34,7 +34,7 @@
   "distribution":{"@type":"DataDownload","encodingFormat":"text/html",
     "contentUrl":"https://github.com/1pedroosilva/genie-skills-eval"},
   "keywords":["Databricks","Genie Code","Agent Skills","engenharia de dados","arquitetura medalhão","avaliação de agentes","Unity Catalog"],
-  "temporalCoverage":"2026-09-05/2026-09-07",
+  "temporalCoverage":"2026-09-05/2026-09-12",
   "measurementTechnique":"Sessões pareadas com e sem skills ativas, mesmos prompts na mesma sequência"
 }
 </script>
@@ -198,7 +198,7 @@ body{
 .finding:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .finding .fl{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between}
 .finding strong{font-weight:500;font-size:14.5px}
-.finding .refs{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.finding .refs{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
 .finding p{margin:6px 0 0;color:var(--muted);font-size:13.5px;max-width:70ch}
 .finding[aria-pressed="true"] strong{color:var(--flag)}
 .finding[aria-pressed="true"] .refs{color:var(--flag)}
@@ -283,7 +283,7 @@ body{
       <h1>Avaliação de skills para agente de IA no Databricks</h1>
       <p>Skills aplicadas a trabalho de engenharia de dados no Genie Code:
       ingestão, camadas medalhão, convenções de nomenclatura e guardrails de qualidade.
-      Onze prompts, dois braços — com as skills ativas e sem skills.
+      Doze prompts, dois braços — com as skills ativas e sem skills.
       Cada sessão registrada com transcrição completa, incluindo o raciocínio do agente.</p>
     </div>
     <div class="env">
@@ -316,13 +316,22 @@ body{
         <li><a href="11_execucao_job_ponta_a_ponta.html">Execução do pipeline de ponta a ponta</a> — primeiro contato do código com dado real, em oito iterações de correção</li>
         <li><a href="12_documentacao_projeto.html">Documentação técnica e de negócio</a> — documentação do projeto produzida a partir dos artefatos em operação, com lacunas declaradas</li>
       </ol>
-      <p style="margin:0 0 8px">Evidência complementar, fora da sequência: <a href="chat_commits_git_projeto_p1.html">sessão de commits, parte 1</a> e <a href="chat_commits_git_projeto_p2.html">parte 2</a> — chat único usado para todas as operações de Git do projeto.</p>
+      <h2 style="font-size:16px;margin:22px 0 10px">Braço sem skills</h2>
+      <p style="margin:0 0 14px;color:var(--muted)">Mesmos prompts, na mesma ordem, com as skills desligadas em Personalizações. De 08 a 12 de setembro de 2026, em projeto próprio.</p>
+      <ol style="margin:0;padding-left:20px;line-height:1.9">
+        <li><a href="../../continuidade-energia-aneel/99_chats-html/01_inicio-projeto-continuidade-aneel.html">Estrutura inicial do projeto</a> — estrutura própria, com pastas por função e notebooks placeholder</li>
+        <li><a href="../../continuidade-energia-aneel/99_chats-html/02_ingestao_aneel_interrupcoes_bronze.html">Ingestão bronze das interrupções</a> — notebook e documentação nascidos fora da pasta do projeto, com destino em catálogo inexistente</li>
+        <li><a href="../../continuidade-energia-aneel/99_chats-html/03_ingestao_aneel_indicadores_bronze.html">Ingestão bronze dos indicadores</a> — busca no workspace antes de escrever; 5.108.332 registros na bronze real</li>
+        <li><a href="../../continuidade-energia-aneel/99_chats-html/04_silver_interrupcoes_energia.html">Transformação silver das interrupções</a> — origem descoberta no Unity Catalog depois de o destino documentado não existir</li>
+      </ol>
+      <p style="margin:14px 0 8px">Evidência complementar, fora da sequência: <a href="chat_commits_git_projeto_p1.html">sessão de commits, parte 1</a> e <a href="chat_commits_git_projeto_p2.html">parte 2</a> — chat único usado para todas as operações de Git do projeto.</p>
       <h2 style="font-size:16px;margin:22px 0 10px">Achados</h2>
       <p style="margin:0 0 8px">Documentação não propaga; contato empírico propaga. A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em doze sessões, enquanto os notebooks que consultaram o Unity Catalog usam o destino correto.</p>
       <p style="margin:0 0 8px">O protocolo de fechamento registra intenção, não estado. Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava.</p>
       <p style="margin:0 0 8px">A revisão de código não olha para fora do arquivo: dezesseis problemas identificados, nenhum deles o catálogo inexistente que impede a primeira escrita.</p>
       <p style="margin:0 0 8px">O roteamento de skills falha quando o asset é meio, não fim do pedido — erro repetido em doze sessões.</p>
       <p style="margin:0 0 8px">A premissa do pedido não é verificada contra o código: o agente registrou a divergência no raciocínio, atribuiu-a a uma simplificação do usuário e documentou a mudança como fato.</p>
+      <p style="margin:0 0 8px">Sem skills, cada sessão inventa a própria convenção: o projeto nasceu com estrutura própria, o notebook e a documentação do passo 02 nasceram fora da pasta do projeto e precisaram de dois commits de realocação manual.</p>
       <p style="margin:0">Sob pressão de fazer o job passar, os guardrails escritos nas sessões anteriores foram desarmados: o pipeline concluiu verde com as cinco tabelas inexistentes.</p>
     </section>
   </noscript>
@@ -338,7 +347,8 @@ body{
   <footer class="foot">
     <p style="margin:0 0 14px">Transcrições em <code>./</code>, uma por sessão, com painel de raciocínio e
     rodapé de metadados. O braço sem skills roda os mesmos prompts na mesma ordem, com as skills
-    desligadas em Personalizações.</p>
+    desligadas em Personalizações; suas transcrições ficam em
+    <code>../../continuidade-energia-aneel/99_chats-html/</code>.</p>
     <p class="links">
       <a href="https://github.com/1pedroosilva/databricks-genie-skills" target="_blank" rel="noopener">Repositório de skills</a>
       <a href="https://github.com/1pedroosilva/genie-skills-eval" target="_blank" rel="noopener">Repositório desta avaliação</a>
@@ -391,9 +401,12 @@ const PASSOS = [
 const REPO = "https://github.com/1pedroosilva/genie-skills-eval";
 const RAIZ = "continuidade_aneel/";
 
-/* artefato: { nome, sha, path? , manual?:true }
+const RAIZ_SEM = "continuidade-energia-aneel/";
+
+/* artefato: { nome, sha, path?, dir?, raiz?, marca? }
    com path  → abre o arquivo exatamente como estava naquele commit
-   sem path  → abre o commit                                        */
+   sem path  → abre o commit
+   raiz      → prefixo do caminho; omitido usa RAIZ (braço com skills)  */
 const SESSOES = [
   { passo:1, arm:"com", duracao:4, palavras:5998, objetivo:"Verificar se um pedido de projeto novo aciona sozinho o protocolo de abertura: entrevista de definições, esqueleto de pastas, documentos de gestão e criação dos schemas.", file:"01_inicio-projeto-continuidade-aneel.html",
     quando:"05/09/2026 21:50",
@@ -496,7 +509,44 @@ const SESSOES = [
       { nome:"documentação de negócio em negocio/visao_geral_projeto.md", sha:"1520828" },
       { nome:"registro da sessão em evolucao_projeto.md", sha:"1520828" }
     ],
-    achados:["roteamento"] }
+    achados:["roteamento"] },
+
+  { passo:1, arm:"sem", duracao:5, palavras:1042, objetivo:"Mesmo pedido de abertura do passo 01, com as skills desligadas: verificar que estrutura de pastas, que nomes e que documentos de gestão o agente produz quando nada no ambiente define a convenção do projeto.", file:"../../continuidade-energia-aneel/99_chats-html/01_inicio-projeto-continuidade-aneel.html",
+    quando:"08/09/2026 20:02",
+    skills:[],
+    artefatos:[
+      { nome:"notebooks/ — três placeholders numerados por etapa", sha:"3dafcea", path:"notebooks", dir:true, raiz:RAIZ_SEM },
+      { nome:"README.md, config.yaml, dados/ e docs/dicionario_dados.md", sha:"3dafcea" }
+    ],
+    achados:["sem-convencao"] },
+
+  { passo:2, arm:"sem", duracao:4, palavras:1335, objetivo:"Mesmo pedido de ingestão bronze: verificar onde o notebook nasce, com que nome e para que destino escreve quando nenhuma convenção de localização, nomenclatura ou catálogo está carregada.", file:"../../continuidade-energia-aneel/99_chats-html/02_ingestao_aneel_interrupcoes_bronze.html",
+    quando:"08/09/2026 22:41",
+    skills:[],
+    artefatos:[
+      { nome:"Ingestão ANEEL - Interrupções de Energia.py", sha:"d998d5d", path:"docs/Ingestão ANEEL - Interrupções de Energia.py", raiz:RAIZ_SEM, marca:"realocação manual" },
+      { nome:"PROJETO-Continuidade-Fornecimento.md", sha:"d998d5d", path:"docs/PROJETO-Continuidade-Fornecimento.md", raiz:RAIZ_SEM, marca:"realocação manual" }
+    ],
+    achados:["catalogo","sem-convencao"] },
+
+  { passo:3, arm:"sem", duracao:14, palavras:3719, objetivo:"Mesmo pedido para a segunda fonte da bronze: verificar se o agente reencontra sozinho o projeto e o destino já em uso, com o workspace como única fonte de contexto.", file:"../../continuidade-energia-aneel/99_chats-html/03_ingestao_aneel_indicadores_bronze.html",
+    quando:"11/09/2026 00:23",
+    skills:[],
+    artefatos:[
+      { nome:"Ingestão ANEEL - Indicadores Coletivos de Continuidade.py", sha:"bef320c", path:"notebooks/Ingestão ANEEL - Indicadores Coletivos de Continuidade.py", raiz:RAIZ_SEM },
+      { nome:"5.108.332 registros na bronze; PROJETO, config.yaml e dicionário atualizados", sha:"bef320c" }
+    ],
+    achados:[] },
+
+  { passo:4, arm:"sem", duracao:9, palavras:4623, objetivo:"Mesmo pedido de transformação silver, agora com o destino documentado na sessão anterior apontando para um catálogo que não existe: verificar o que o agente faz para descobrir a origem real antes de transformar.", file:"../../continuidade-energia-aneel/99_chats-html/04_silver_interrupcoes_energia.html",
+    quando:"12/09/2026 01:59",
+    skills:[],
+    artefatos:[
+      { nome:"PROJETO-Continuidade-Fornecimento.md — camada silver", sha:"35f33bd", path:"docs/PROJETO-Continuidade-Fornecimento.md", raiz:RAIZ_SEM },
+      { nome:"dicionario_dados.md — schema da silver, 34 colunas", sha:"35f33bd", path:"docs/dicionario_dados.md", raiz:RAIZ_SEM },
+      { nome:"tabela silver com 495.350 registros", sha:"35f33bd", marca:"notebook não versionado" }
+    ],
+    achados:["catalogo"] }
 ];
 
 const COMPLEMENTAR = {
@@ -516,7 +566,7 @@ const COMPLEMENTAR = {
 
 const ACHADOS = [
   { id:"catalogo", titulo:"Documentação não propaga; contato empírico propaga",
-    texto:"A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em doze sessões. Os notebooks que consultaram o Unity Catalog ou leram o artefato real usam o destino correto; os que nunca tocaram o ambiente apontam para um catálogo inexistente." },
+    texto:"A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em doze sessões. Os notebooks que consultaram o Unity Catalog ou leram o artefato real usam o destino correto; os que nunca tocaram o ambiente apontam para um catálogo inexistente. O braço de controle repete o padrão sem nenhuma skill envolvida: o notebook do passo 02, escrito sem consultar o ambiente, endereçou um catálogo que não existe, e os passos 03 e 04 só acertaram o destino porque foram olhar." },
   { id:"estado-falso", titulo:"O fechamento registra intenção, não estado",
     texto:"Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava. O fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e o log é o insumo da sessão seguinte." },
   { id:"escopo-revisao", titulo:"A revisão de código não olha para fora do arquivo",
@@ -527,6 +577,8 @@ const ACHADOS = [
     texto:"O pipeline concluiu com as cinco tarefas em verde e as cinco tabelas inexistentes. As validações de volume e de existência de tabela, escritas nas sessões de construção e apontadas na revisão do passo 08 como requisito de produção, foram envolvidas em try/except e substituídas por saída SKIPPED durante a execução — pelo mesmo agente que as havia prescrito." },
   { id:"carga-driver", titulo:"A estratégia de carga só aparece quando a memória estoura",
     texto:"O caminho de entrada do dado nunca foi definido nas sessões de construção. No primeiro contato com a fonte real, o download passou pelo driver via pandas e o serverless estourou com 9,7 milhões de linhas. A landing zone em UC Volume, que a arquitetura medalhão pressupõe, foi adotada só depois da falha de memória." },
+  { id:"sem-convencao", titulo:"Sem skills, cada sessão inventa a própria convenção",
+    texto:"No braço de controle o projeto nasceu com estrutura própria — notebooks, dados e docs por função, sem numeração de camada — e na sessão seguinte o notebook e o documento do projeto nasceram fora da pasta do projeto, com nome em linguagem natural e espaços. Foram precisos dois commits de realocação manual para trazê-los para dentro. A localização só se estabilizou a partir do passo 03, quando o agente passou a encontrar no workspace o que as sessões anteriores tinham deixado lá." },
   { id:"roteamento", titulo:"Roteamento falha quando o asset é meio, não fim",
     texto:"A skill de localização não carregou quando criar o notebook era subobjetivo do pedido: o arquivo nasceu fora da estrutura, quatro remediações automáticas foram bloqueadas e a correção precisou ser manual. No passo 12 a ausência se repetiu com o artefato como objetivo declarado, e os dois documentos nasceram em pastas novas, fora da numeração e fora da pasta de documentação do projeto." }
 ];
@@ -563,8 +615,9 @@ function skillItem(k){
 const idx = (p,a) => SESSOES.find(s => s.passo===p && s.arm===a);
 
 function artefato(a){
+  const raiz = a.raiz !== undefined ? a.raiz : RAIZ;
   const url = a.path
-    ? `${REPO}/${a.dir ? "tree" : "blob"}/${a.sha}/${RAIZ}${a.path}`
+    ? `${REPO}/${a.dir ? "tree" : "blob"}/${a.sha}/${encodeURI(raiz + a.path)}`
     : `${REPO}/commit/${a.sha}`;
   const marca = a.marca ? `<span class="manual">${a.marca}</span>` : "";
   return `<li><a class="art" href="${url}" target="_blank" rel="noopener">${a.nome}</a>
@@ -581,7 +634,7 @@ function celula(p, arm){
   if(s){
     b.setAttribute("aria-expanded","false");
     b.dataset.key = p + "-" + arm;
-    b.innerHTML = `<span class="t">${PASSOS[p-1].titulo}</span><span class="m">${s.skills.length} skills · ${s.duracao} min · transcrição ${faixa(s.palavras)}</span>`;
+    b.innerHTML = `<span class="t">${PASSOS[p-1].titulo}</span><span class="m">${arm === "sem" ? "sem skills" : s.skills.length + " skills"} · ${s.duracao} min · transcrição ${faixa(s.palavras)}</span>`;
     b.addEventListener("click", () => alternar(b, s, p));
   } else {
     b.disabled = true;
@@ -607,7 +660,7 @@ function alternar(botao, s, p){
     <h4 class="dlabel">Objetivo do teste</h4>
     <p class="objetivo">${s.objetivo || ""}</p>
     <div class="dgrid">
-      <div class="wide"><h4>Skills carregadas</h4><ul class="skills">${s.skills.map(skillItem).join("")}</ul></div>
+      <div class="wide"><h4>Skills carregadas</h4><ul class="skills">${s.skills.length ? s.skills.map(skillItem).join("") : `<li class="plain">nenhuma${s.arm === "sem" ? " — braço de controle" : ""}</li>`}</ul></div>
       <div><h4>Produziu</h4><ul>${s.artefatos.map(artefato).join("")}</ul></div>
       ${tags.length ? `<div><h4>Evidencia</h4><ul>${tags.map(t=>`<li class="plain">${t.titulo}</li>`).join("")}</ul></div>` : ""}
     </div>
@@ -715,8 +768,13 @@ ACHADOS.forEach(a => {
   b.type = "button";
   b.className = "finding";
   b.setAttribute("aria-pressed","false");
+  const nums = arm => refs.filter(r => r.arm === arm).map(r => String(r.passo).padStart(2,"0"));
+  const rotulo = [
+    nums("com").length ? "com skills " + nums("com").join(", ") : "",
+    nums("sem").length ? "sem skills " + nums("sem").join(", ") : ""
+  ].filter(Boolean).join(" · ");
   b.innerHTML = `<span class="fl"><strong>${a.titulo}</strong>
-    <span class="refs">passos ${refs.map(r=>String(r.passo).padStart(2,"0")).join(", ")}</span></span>
+    <span class="refs">${rotulo}</span></span>
     <p>${a.texto}</p>`;
   b.addEventListener("click", () => {
     const ativo = b.getAttribute("aria-pressed") === "true";
