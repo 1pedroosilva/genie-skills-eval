@@ -116,6 +116,30 @@ continuidade-energia-aneel/
 - Mover configurações para `config.yaml` externo
 - Criar notebook de testes unitários separado
 
+## Documentação Notebook Gold - Tempo de Interrupção
+
+**Data**: 13/09/2026 15:50 - 15:54
+
+- ✅ Documentação completa do notebook Gold criada
+- 📊 Notebook documentado: [Gold - Tempo Interrupção por Distribuidora e Mês](#notebook-218687058620801)
+- 📄 Arquivo de documentação: `docs/Gold - Tempo Interrupção - Documentação.md`
+- 🎯 **Objetivo**: Agregar tempo de interrupção (DEC) e frequência (FEC) por distribuidora e mês
+- 📊 **Tabela destino**: `workspace.proj_aneel_cont_03_gold.tempo_interrupcao_mensal`
+
+### Conteúdo Documentado:
+- Fluxo completo de processamento (Silver → Agregação → Enriquecimento → Gold)
+- 17 indicadores calculados (DEC médio/mín/máx/total, FEC, consumidores, ranking)
+- Métricas de evolução temporal (variação % mês a mês, ranking mensal)
+- 5 casos de uso principais: distribuidoras críticas, tendências, anomalias, metas regulatórias, rankings
+- Tecnologias: PySpark com Window Functions, Delta Lake, modo overwrite
+- Validações SQL incluídas no notebook
+
+### Observações Importantes:
+- Notebook já está pronto e funcional (não foi criado nesta sessão, apenas documentado)
+- Modo overwrite: sobrescreve dados a cada execução
+- Frequência sugerida: mensal, após atualização da tabela Silver
+- Ranking calculado dentro de cada mês
+
 ## Indicadores-Chave
 
 - **DEC (Duração Equivalente de Interrupção por Unidade Consumidora)**: Tempo médio que cada unidade consumidora ficou sem energia
