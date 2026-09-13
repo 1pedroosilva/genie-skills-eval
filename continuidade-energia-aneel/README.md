@@ -46,12 +46,13 @@ continuidade-energia-aneel/
 ## Próximos Passos
 
 1. ✅ Estrutura do projeto criada
-2. ✅ Implementar extração de dados da ANEEL
+2. ✅ Implementar extração de dados da ANEEL (interrupções e indicadores)
 3. ✅ Análise de qualidade de dados de interrupções
-4. ⏳ Processar e limpar dados de interrupções (regras definidas)
-4. ⏳ Calcular DEC observado por distribuidora
-5. ⏳ Comparar com DEC oficial
-6. ⏳ Gerar visualizações e relatórios
+4. ✅ Transformação silver de indicadores de continuidade
+5. ⏳ Processar e limpar dados de interrupções (regras definidas)
+6. ⏳ Calcular DEC observado por distribuidora a partir de interrupções
+7. ⏳ Camada gold: comparar DEC observado vs. DEC oficial
+8. ⏳ Gerar visualizações e relatórios analíticos
 
 
 
@@ -65,6 +66,21 @@ continuidade-energia-aneel/
 - ✅ 98,36% dos dados são válidos e prontos para transformação silver
 - 📊 Notebook: [Análise de Qualidade - Interrupções Bronze](#notebook-4356906633627129)
 - 📄 Documentação completa: `docs/PROJETO-Continuidade-Fornecimento.md`
+
+## Transformação Silver - Indicadores de Continuidade
+
+**Data**: 13/09/2026 01:18 - 01:23
+
+- ✅ Ingestão bronze dos Indicadores Coletivos de Continuidade ANEEL implementada
+- ✅ Transformação silver completa criada e documentada
+- ✅ Padronização de colunas (snake_case, nomes descritivos)
+- ✅ Criação de data_apuracao (formato DATE padrão YYYY-MM-01)
+- ✅ Limpeza de dados (remoção de espaços, validações)
+- ✅ Metadados de processamento e rastreabilidade
+- 📊 Notebook: [Silver - Indicadores de Continuidade](#notebook-4356906633627185)
+- 🗄️ Tabela: `workspace.proj_aneel_cont_02_silver.indicadores_continuidade`
+- 📈 Volume: ~5,1 milhões de registros (jan/2020 a ago/2026)
+- 🎯 Indicadores: 23 tipos (DEC, FEC, DIC, FIC, DMIC, NumCon e variantes)
 
 ## Indicadores-Chave
 
@@ -81,4 +97,4 @@ continuidade-energia-aneel/
 
 ---
 
-**Status**: 🟢 Projeto em desenvolvimento - camada bronze implementada, análise de qualidade concluída
+**Status**: 🟢 Projeto em desenvolvimento - camada bronze implementada, transformação silver de indicadores concluída
