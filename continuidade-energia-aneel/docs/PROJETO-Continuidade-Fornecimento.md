@@ -264,6 +264,60 @@ Analisar indicadores de continuidade do fornecimento de energia (DEC, FEC, DIC, 
 
 ---
 
+### ✅ Sessão: 13/09/2026 17:44 - 17:49
+
+#### 5. Análise de Impacto — Mudança de Chave da Tabela Silver de Interrupções
+
+**Contexto**: Alteração da chave primária da tabela `workspace.proj_aneel_cont_01_silver.interrupcoes` para melhor representar a unicidade dos dados.
+
+**Mudança implementada**:
+- **Chave anterior**: `ide_conjunto_unidade_consumidora` (código do conjunto sozinho)
+- **Chave nova**: `(ide_conjunto_unidade_consumidora, dat_inicio_interrupcao)` (conjunto + data de início)
+- **Status do notebook**: ✅ Já alterado e testado
+
+**Componentes identificados que precisam acompanhar a mudança**:
+
+1. **Documentação do Projeto** (`docs/PROJETO-Continuidade-Fornecimento.md`)
+   - Linhas 187, 200, 212-218: Referências à chave natural antiga em seções de deduplicação
+   - Linhas 239, 259-260: Observações técnicas sobre a chave
+   - **Ação**: Atualizar todas as referências para a nova chave composta
+
+2. **Dicionário de Dados** (`docs/dicionario_dados.md`)
+   - Seções sobre regras de negócio e campos-chave da tabela silver
+   - **Ação**: Adicionar/atualizar documentação explicando a nova chave composta e sua justificativa
+
+3. **README Principal** (`README.md`)
+   - Linhas 63-66: Estatísticas de qualidade baseadas na chave antiga (8.559 registros com problemas)
+   - **Ação**: Atualizar estatísticas refletindo a nova chave
+
+4. **Validações e Provas de Qualidade**
+   - Queries de validação de unicidade ("Prova 1: Zero duplicatas")
+   - Contagens de registros únicos
+   - **Ação**: Reescrever queries para testar unicidade da nova chave `(ide_conjunto_unidade_consumidora, dat_inicio_interrupcao)`
+
+5. **Queries de Exemplo e Análises Downstream**
+   - Notebooks Gold que fazem `GROUP BY` assumindo unicidade pela chave antiga
+   - JOINs que usam `num_ordem_interrupcao` como chave
+   - Análises de duplicatas ou qualidade de dados
+   - **Ação**: Revisar notebooks e queries SQL que referenciam a tabela silver de interrupções
+
+**⚠️ Ponto de atenção crítico**:
+
+A mudança altera a **granularidade dos dados**:
+- **Antes**: Uma linha por `(NumOrdemInterrupcao, NumUnidadeConsumidora)` — permitia múltiplas linhas para o mesmo conjunto em datas diferentes
+- **Depois**: Uma linha por `(Conjunto, Data Início)` — consolida todas as interrupções de um conjunto na mesma data/hora
+
+**Implicação**: Se houver múltiplas interrupções no mesmo conjunto na mesma data/hora de início (mas com números de ordem diferentes), a nova chave considera apenas UMA delas. Verificar alinhamento com regra de negócio desejada.
+
+**Próximas ações sugeridas**:
+- [ ] Atualizar documentação do projeto com referências à chave antiga
+- [ ] Atualizar dicionário de dados
+- [ ] Revalidar queries de qualidade de dados
+- [ ] Revisar notebooks Gold que dependem da tabela silver de interrupções
+- [ ] Atualizar estatísticas no README
+
+---
+
 ## Próximos Passos
 
 ### Camada Silver
