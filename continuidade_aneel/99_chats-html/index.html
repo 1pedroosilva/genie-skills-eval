@@ -4,8 +4,8 @@
 <link rel="icon" href="https://1pedroosilva.github.io/favicon.ico" sizes="any">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Avaliação de skills do Genie Code — 16 sessões registradas | genie-skills-eval</title>
-<meta name="description" content="Avaliação empírica de skills do Genie Code (Databricks): 16 sessões registradas em dois braços pareados — 12 com skills ativas e 4 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e convenção de projeto.">
+<title>Avaliação de skills do Genie Code — 18 sessões registradas | genie-skills-eval</title>
+<meta name="description" content="Avaliação empírica de skills do Genie Code (Databricks): 18 sessões registradas em dois braços pareados — 12 com skills ativas e 6 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre o que as skills governam (localização, nome e registro do artefato) e o que não governam (o contato com o ambiente).">
 <meta name="author" content="Pedro Silva">
 <link rel="canonical" href="https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
@@ -15,17 +15,17 @@
 <meta property="og:site_name" content="genie-skills-eval">
 <meta property="og:url" content="https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/">
 <meta property="og:title" content="Avaliação empírica de skills do Genie Code (Databricks)">
-<meta property="og:description" content="Avaliação empírica de skills do Genie Code (Databricks): 16 sessões registradas em dois braços pareados — 12 com skills ativas e 4 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e convenção de projeto.">
+<meta property="og:description" content="Avaliação empírica de skills do Genie Code (Databricks): 18 sessões registradas em dois braços pareados — 12 com skills ativas e 6 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre o que as skills governam (localização, nome e registro do artefato) e o que não governam (o contato com o ambiente).">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Avaliação empírica de skills do Genie Code (Databricks)">
-<meta name="twitter:description" content="Avaliação empírica de skills do Genie Code (Databricks): 16 sessões registradas em dois braços pareados — 12 com skills ativas e 4 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e convenção de projeto.">
+<meta name="twitter:description" content="Avaliação empírica de skills do Genie Code (Databricks): 18 sessões registradas em dois braços pareados — 12 com skills ativas e 6 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre o que as skills governam (localização, nome e registro do artefato) e o que não governam (o contato com o ambiente).">
 
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
   "@type":"Dataset",
   "name":"genie-skills-eval — sessões registradas do Genie Code",
-  "description":"Avaliação empírica de skills do Genie Code (Databricks): 16 sessões registradas em dois braços pareados — 12 com skills ativas e 4 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre roteamento de skills por description, propagação de decisões arquiteturais e convenção de projeto.",
+  "description":"Avaliação empírica de skills do Genie Code (Databricks): 18 sessões registradas em dois braços pareados — 12 com skills ativas e 6 com as skills desligadas —, com transcrição completa, artefatos versionados e achados sobre o que as skills governam (localização, nome e registro do artefato) e o que não governam (o contato com o ambiente).",
   "url":"https://1pedroosilva.github.io/genie-skills-eval/continuidade_aneel/99_chats-html/",
   "inLanguage":"pt-BR",
   "license":"https://opensource.org/licenses/MIT",
@@ -34,7 +34,7 @@
   "distribution":{"@type":"DataDownload","encodingFormat":"text/html",
     "contentUrl":"https://github.com/1pedroosilva/genie-skills-eval"},
   "keywords":["Databricks","Genie Code","Agent Skills","engenharia de dados","arquitetura medalhão","avaliação de agentes","Unity Catalog"],
-  "temporalCoverage":"2026-09-05/2026-09-12",
+  "temporalCoverage":"2026-09-05/2026-09-13",
   "measurementTechnique":"Sessões pareadas com e sem skills ativas, mesmos prompts na mesma sequência"
 }
 </script>
@@ -186,22 +186,54 @@ body{
 .xacoes a:focus-visible,.xacoes button:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
 .xnota{font-size:12.5px;color:var(--muted);border:none}
 
+/* ---------- leitura ---------- */
+.tese{margin:34px 0 0;background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--done);padding:18px 20px}
+.tese h2{font-size:12.5px;font-weight:500;color:var(--muted);margin:0 0 9px;text-transform:uppercase;letter-spacing:.05em}
+.tese p{margin:0 0 10px;font-size:15px;max-width:74ch;line-height:1.62}
+.tese p:last-child{margin:0}
+.tese b{font-weight:600}
+
 /* ---------- achados ---------- */
 .findings{margin-top:56px;padding-top:28px;border-top:1px solid var(--rule)}
 .findings h2{font-size:16px;font-weight:600;margin:0 0 4px}
-.findings > p{margin:0 0 22px;color:var(--muted);max-width:64ch}
-.finding{
-  appearance:none;-webkit-appearance:none;text-align:left;width:100%;font:inherit;
-  background:transparent;border:none;border-top:1px solid var(--rule);
-  padding:16px 0;cursor:pointer;color:var(--ink);display:block;
+.findings > .intro{margin:0 0 20px;color:var(--muted);max-width:66ch;font-size:13.5px}
+.finding{border-top:1px solid var(--rule);padding:16px 0}
+.ftitle{
+  appearance:none;-webkit-appearance:none;font:inherit;text-align:left;width:100%;
+  background:transparent;border:none;padding:0;color:var(--ink);
+  font-size:14.5px;font-weight:500;cursor:pointer;display:flex;gap:9px;align-items:baseline;
 }
-.finding:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
-.finding .fl{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between}
-.finding strong{font-weight:500;font-size:14.5px}
-.finding .refs{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
-.finding p{margin:6px 0 0;color:var(--muted);font-size:13.5px;max-width:70ch}
-.finding[aria-pressed="true"] strong{color:var(--flag)}
-.finding[aria-pressed="true"] .refs{color:var(--flag)}
+.ftitle::before{content:"\25C7";font-size:10px;color:var(--muted);flex:none}
+.ftitle:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.finding[aria-pressed="true"] .ftitle{color:var(--flag)}
+.finding[aria-pressed="true"] .ftitle::before{content:"\25C6";color:var(--flag)}
+.finding p{margin:7px 0 11px 19px;color:var(--muted);font-size:13.5px;max-width:70ch}
+.refs{display:flex;flex-wrap:wrap;gap:5px 6px;align-items:center;margin-left:19px}
+.refs .lbl{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.ref+.lbl{margin-left:9px}
+.ref{
+  appearance:none;-webkit-appearance:none;font:inherit;font-family:var(--mono);font-size:11.5px;
+  background:transparent;color:var(--muted);border:1px solid var(--rule);
+  padding:3px 8px;cursor:pointer;line-height:1.4;
+}
+.ref:hover{border-color:var(--done);color:var(--done)}
+.ref:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.limpar{
+  appearance:none;-webkit-appearance:none;font:inherit;font-size:12.5px;margin-left:12px;
+  background:transparent;border:none;border-bottom:1px solid var(--flag);
+  color:var(--flag);padding:0 0 1px;cursor:pointer;
+}
+.limpar[hidden]{display:none}
+.notas{margin-top:32px;padding-top:20px;border-top:1px solid var(--rule)}
+.notas h3{font-size:12.5px;font-weight:500;color:var(--muted);margin:0 0 12px}
+.notas ul{margin:0;padding:0;list-style:none}
+.notas li{font-size:13.5px;color:var(--muted);max-width:74ch;padding:0 0 11px;line-height:1.5}
+.notas li b{font-weight:500;color:var(--ink)}
+.limite{
+  margin:28px 0 0;padding:14px 16px;background:var(--flag-soft);border-left:3px solid var(--flag);
+  font-size:13px;color:var(--ink);max-width:76ch;line-height:1.55;
+}
+.limite b{font-weight:600}
 
 /* ---------- leitor ---------- */
 .reader[hidden]{display:none}
@@ -267,10 +299,16 @@ body{
 @media (max-width:620px){
   .wrap{padding:28px 16px 60px}
   .env{text-align:left}
-  .mhead,.mrow{grid-template-columns:34px 1fr}
-  .mhead span:nth-child(3){display:none}
-  .mrow .cell:nth-of-type(2){display:none}
-  .pnum{padding-right:8px}
+  .mhead{display:none}
+  .mrow{grid-template-columns:34px 1fr;margin-bottom:10px}
+  .pnum{grid-row:1 / span 2;align-items:flex-start;padding:12px 8px 0 0}
+  .cell::before{
+    content:attr(data-rotulo);display:block;font-family:var(--mono);
+    font-size:10px;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:4px;
+  }
+  .tese{padding:16px}
+  .tese p{font-size:14.5px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -293,6 +331,16 @@ body{
       <span id="progresso"></span>
     </div>
   </header>
+
+  <section class="tese">
+    <h2>O que a comparação mostra</h2>
+    <p>As skills governam a <b>forma</b> do artefato: onde ele nasce, como se chama, o que fica
+    registrado depois. Não governam o <b>contato com o ambiente</b> — e é aí que os dois braços
+    erram igual.</p>
+    <p>Os dois endereçaram um catálogo que não existe, e nos dois o acerto só veio do notebook que
+    foi consultar o Unity Catalog antes de escrever. O braço sem skills chegou ao dado real oito
+    passos antes; o braço com skills chegou lá desarmando os guardrails que ele mesmo havia prescrito.</p>
+  </section>
 
   <main class="matrix" id="matrix">
     <div class="mhead"><span></span><span>com skills</span><span>sem skills</span></div>
@@ -317,22 +365,24 @@ body{
         <li><a href="12_documentacao_projeto.html">Documentação técnica e de negócio</a> — documentação do projeto produzida a partir dos artefatos em operação, com lacunas declaradas</li>
       </ol>
       <h2 style="font-size:16px;margin:22px 0 10px">Braço sem skills</h2>
-      <p style="margin:0 0 14px;color:var(--muted)">Mesmos prompts, na mesma ordem, com as skills desligadas em Personalizações. De 08 a 12 de setembro de 2026, em projeto próprio.</p>
+      <p style="margin:0 0 14px;color:var(--muted)">Mesmos prompts, na mesma ordem, com as skills desligadas em Personalizações. De 08 a 13 de setembro de 2026, em projeto próprio.</p>
       <ol style="margin:0;padding-left:20px;line-height:1.9">
-        <li><a href="../../continuidade-energia-aneel/99_chats-html/01_inicio-projeto-continuidade-aneel.html">Estrutura inicial do projeto</a> — estrutura própria, com pastas por função e notebooks placeholder</li>
+        <li><a href="../../continuidade-energia-aneel/99_chats-html/01_inicio-projeto-continuidade-aneel.html">Estrutura inicial do projeto</a> — estrutura própria, por função, sem numeração de camada</li>
         <li><a href="../../continuidade-energia-aneel/99_chats-html/02_ingestao_aneel_interrupcoes_bronze.html">Ingestão bronze das interrupções</a> — notebook e documentação nascidos fora da pasta do projeto, com destino em catálogo inexistente</li>
         <li><a href="../../continuidade-energia-aneel/99_chats-html/03_ingestao_aneel_indicadores_bronze.html">Ingestão bronze dos indicadores</a> — busca no workspace antes de escrever; 5.108.332 registros na bronze real</li>
         <li><a href="../../continuidade-energia-aneel/99_chats-html/04_silver_interrupcoes_energia.html">Transformação silver das interrupções</a> — origem descoberta no Unity Catalog depois de o destino documentado não existir</li>
+        <li><a href="../../continuidade-energia-aneel/99_chats-html/05_qualidade_bronze_interrupcoes.html">Investigação de qualidade do bronze</a> — quatro regras provadas contra 500 mil registros reais; notebook criado em docs/</li>
+        <li><a href="../../continuidade-energia-aneel/99_chats-html/06_silver_indicadores_continuidade.html">Transformação silver dos indicadores</a> — notebook entregue como pronto sem ter sido executado</li>
       </ol>
       <p style="margin:14px 0 8px">Evidência complementar, fora da sequência: <a href="chat_commits_git_projeto_p1.html">sessão de commits, parte 1</a> e <a href="chat_commits_git_projeto_p2.html">parte 2</a> — chat único usado para todas as operações de Git do projeto.</p>
       <h2 style="font-size:16px;margin:22px 0 10px">Achados</h2>
-      <p style="margin:0 0 8px">Documentação não propaga; contato empírico propaga. A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em doze sessões, enquanto os notebooks que consultaram o Unity Catalog usam o destino correto.</p>
-      <p style="margin:0 0 8px">O protocolo de fechamento registra intenção, não estado. Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava.</p>
-      <p style="margin:0 0 8px">A revisão de código não olha para fora do arquivo: dezesseis problemas identificados, nenhum deles o catálogo inexistente que impede a primeira escrita.</p>
-      <p style="margin:0 0 8px">O roteamento de skills falha quando o asset é meio, não fim do pedido — erro repetido em doze sessões.</p>
-      <p style="margin:0 0 8px">A premissa do pedido não é verificada contra o código: o agente registrou a divergência no raciocínio, atribuiu-a a uma simplificação do usuário e documentou a mudança como fato.</p>
-      <p style="margin:0 0 8px">Sem skills, cada sessão inventa a própria convenção: o projeto nasceu com estrutura própria, o notebook e a documentação do passo 02 nasceram fora da pasta do projeto e precisaram de dois commits de realocação manual.</p>
-      <p style="margin:0">Sob pressão de fazer o job passar, os guardrails escritos nas sessões anteriores foram desarmados: o pipeline concluiu verde com as cinco tabelas inexistentes.</p>
+      <p style="margin:0 0 8px">As skills governam a forma do artefato — onde nasce, como se chama, o que fica registrado. Não governam o contato com o ambiente, e é aí que os dois braços erram igual.</p>
+      <p style="margin:0 0 8px">O destino errado aparece nos dois braços: com skills veio de uma decisão documentada que nenhum notebook leu; sem skills, de um palpite. Nos dois, o acerto só veio de quem consultou o Unity Catalog antes de escrever.</p>
+      <p style="margin:0 0 8px">A localização do artefato é o que a skill entrega e o que falta sem ela: dois desvios em doze sessões com skills, contra cinco commits de realocação manual no braço de controle.</p>
+      <p style="margin:0 0 8px">O braço sem skills chegou ao dado real oito passos antes. O braço com skills chegou lá no passo 11, desarmando as validações que ele mesmo havia prescrito.</p>
+      <p style="margin:0 0 8px">O fechamento registra intenção, não estado: em quatro sessões o log afirmou o que o disco não confirmava. O controle não tem fechamento, e anunciou como pronta uma silver que nunca executou.</p>
+      <p style="margin:0 0 8px">O tempo da sessão mede quanto o agente foi olhar: sem skills, a sessão de 4 minutos é a que errou tudo, e as de 14, 9 e 18 minutos são as que acertaram.</p>
+      <p style="margin:0">Limitação: os dois braços dividem o mesmo Unity Catalog, e a partir do passo 03 o controle reusou o schema criado pelo outro braço. O pareamento é de prompt e de agente, não de ambiente.</p>
     </section>
   </noscript>
 
@@ -340,8 +390,14 @@ body{
 
   <section class="findings">
     <h2>Achados</h2>
-    <p>Selecione um achado para destacar as sessões que o evidenciam.</p>
+    <p class="intro">Cada achado traz os passos que o sustentam. Toque num passo para abrir a sessão;
+    toque no título para destacar todos na matriz.<button class="limpar" id="limpar" type="button" hidden>limpar destaque</button></p>
     <div id="findings"></div>
+    <div class="notas" id="notas"></div>
+    <p class="limite"><b>Limitação do pareamento.</b> Os dois braços dividem o mesmo Unity Catalog.
+    A partir do passo 03, o braço sem skills encontrou no workspace e reusou o schema criado pelo
+    braço com skills — o que explica parte do acerto de destino de lá em diante. O pareamento é de
+    prompt e de agente, não de ambiente.</p>
   </section>
 
   <footer class="foot">
@@ -423,7 +479,7 @@ const SESSOES = [
     artefatos:[
       { nome:"101_ingestao_aneel_interrupcoes.py", sha:"d6c0cfc", path:"01_bronze/101_ingestao_aneel_interrupcoes.py.py" }
     ],
-    achados:["catalogo"] },
+    achados:["catalogo","olhar"] },
 
   { passo:3, arm:"com", duracao:5, palavras:1415, objetivo:"Verificar se o segundo notebook da mesma camada sai consistente com o primeiro em nomes, metadados de rastreabilidade e estratégia de gravação.", file:"03_ingestao_aneel_indicadores_bronze.html",
     quando:"06/09/2026 01:14",
@@ -431,7 +487,7 @@ const SESSOES = [
     artefatos:[
       { nome:"102_indicadores_continuidade.py", sha:"ca01a26", path:"01_bronze/102_indicadores_continuidade.py.py" }
     ],
-    achados:["catalogo"] },
+    achados:["catalogo","olhar"] },
 
   { passo:4, arm:"com", duracao:5, palavras:1563, objetivo:"Verificar se a fronteira entre camadas é respeitada na passagem de bronze para silver e se a estratégia de gravação escolhida garante idempotência.", file:"04_transformacao_silver_interrupcoes.html",
     quando:"06/09/2026 01:42",
@@ -439,7 +495,7 @@ const SESSOES = [
     artefatos:[
       { nome:"201_interrupcoes_distribuicao.py", sha:"0f3f320", path:"02_silver/201_interrupcoes_distribuicao.py.py" }
     ],
-    achados:["catalogo","estado-falso"] },
+    achados:["catalogo","estado-falso","olhar"] },
 
   { passo:5, arm:"com", duracao:14, palavras:2417, objetivo:"Verificar onde o agente coloca artefatos que ele mesmo decide criar, quando a criação do notebook é meio e não fim do pedido, e sem confirmação a pedir.", file:"05_investigacao_qualidade_bronze.html",
     quando:"06/09/2026 09:42",
@@ -448,7 +504,7 @@ const SESSOES = [
       { nome:"VAL_001_regras_silver_interrupcoes.py", sha:"a08464a", path:"05_validacoes/VAL_001_regras_silver_interrupcoes.py.py" },
       { nome:"EDA_001_qualidade_interrupcoes_bronze.py", sha:"e42cb8a", path:"04_investigacoes/EDA_001_qualidade_interrupcoes_bronze.py.py", marca:"correção manual" }
     ],
-    achados:["catalogo","estado-falso","roteamento"] },
+    achados:["catalogo","estado-falso","localizacao"] },
 
   { passo:6, arm:"com", duracao:5, palavras:1430, objetivo:"Verificar se a segunda transformação silver herda as decisões já registradas no projeto e o destino do bronze correspondente.", file:"06_transformacao_silver_indicadores.html",
     quando:"06/09/2026 13:25",
@@ -499,7 +555,7 @@ const SESSOES = [
       { nome:"correções nos cinco notebooks do pipeline", sha:"4f05fc7" },
       { nome:"registro da sessão em evolucao_projeto.md", sha:"4f05fc7" }
     ],
-    achados:["verde-vazio","carga-driver"] },
+    achados:["empirico","carga-driver"] },
 
   { passo:12, arm:"com", duracao:8, palavras:2050, objetivo:"Verificar se a documentação produzida se sustenta no que existe no ambiente: procedência das afirmações, descarte de material narrativo, tratamento de divergências e declaração de lacunas.", file:"12_documentacao_projeto.html",
     quando:"07/09/2026 20:07",
@@ -509,7 +565,7 @@ const SESSOES = [
       { nome:"documentação de negócio em negocio/visao_geral_projeto.md", sha:"1520828" },
       { nome:"registro da sessão em evolucao_projeto.md", sha:"1520828" }
     ],
-    achados:["roteamento"] },
+    achados:["localizacao"] },
 
   { passo:1, arm:"sem", duracao:5, palavras:1042, objetivo:"Mesmo pedido de abertura do passo 01, com as skills desligadas: verificar que estrutura de pastas, que nomes e que documentos de gestão o agente produz quando nada no ambiente define a convenção do projeto.", file:"../../continuidade-energia-aneel/99_chats-html/01_inicio-projeto-continuidade-aneel.html",
     quando:"08/09/2026 20:02",
@@ -518,7 +574,7 @@ const SESSOES = [
       { nome:"notebooks/ — três placeholders numerados por etapa", sha:"3dafcea", path:"notebooks", dir:true, raiz:RAIZ_SEM },
       { nome:"README.md, config.yaml, dados/ e docs/dicionario_dados.md", sha:"3dafcea" }
     ],
-    achados:["sem-convencao"] },
+    achados:["localizacao"] },
 
   { passo:2, arm:"sem", duracao:4, palavras:1335, objetivo:"Mesmo pedido de ingestão bronze: verificar onde o notebook nasce, com que nome e para que destino escreve quando nenhuma convenção de localização, nomenclatura ou catálogo está carregada.", file:"../../continuidade-energia-aneel/99_chats-html/02_ingestao_aneel_interrupcoes_bronze.html",
     quando:"08/09/2026 22:41",
@@ -527,7 +583,7 @@ const SESSOES = [
       { nome:"Ingestão ANEEL - Interrupções de Energia.py", sha:"d998d5d", path:"docs/Ingestão ANEEL - Interrupções de Energia.py", raiz:RAIZ_SEM, marca:"realocação manual" },
       { nome:"PROJETO-Continuidade-Fornecimento.md", sha:"d998d5d", path:"docs/PROJETO-Continuidade-Fornecimento.md", raiz:RAIZ_SEM, marca:"realocação manual" }
     ],
-    achados:["catalogo","sem-convencao"] },
+    achados:["catalogo","localizacao","olhar"] },
 
   { passo:3, arm:"sem", duracao:14, palavras:3719, objetivo:"Mesmo pedido para a segunda fonte da bronze: verificar se o agente reencontra sozinho o projeto e o destino já em uso, com o workspace como única fonte de contexto.", file:"../../continuidade-energia-aneel/99_chats-html/03_ingestao_aneel_indicadores_bronze.html",
     quando:"11/09/2026 00:23",
@@ -536,7 +592,7 @@ const SESSOES = [
       { nome:"Ingestão ANEEL - Indicadores Coletivos de Continuidade.py", sha:"bef320c", path:"notebooks/Ingestão ANEEL - Indicadores Coletivos de Continuidade.py", raiz:RAIZ_SEM },
       { nome:"5.108.332 registros na bronze; PROJETO, config.yaml e dicionário atualizados", sha:"bef320c" }
     ],
-    achados:[] },
+    achados:["empirico","olhar"] },
 
   { passo:4, arm:"sem", duracao:9, palavras:4623, objetivo:"Mesmo pedido de transformação silver, agora com o destino documentado na sessão anterior apontando para um catálogo que não existe: verificar o que o agente faz para descobrir a origem real antes de transformar.", file:"../../continuidade-energia-aneel/99_chats-html/04_silver_interrupcoes_energia.html",
     quando:"12/09/2026 01:59",
@@ -544,9 +600,27 @@ const SESSOES = [
     artefatos:[
       { nome:"PROJETO-Continuidade-Fornecimento.md — camada silver", sha:"35f33bd", path:"docs/PROJETO-Continuidade-Fornecimento.md", raiz:RAIZ_SEM },
       { nome:"dicionario_dados.md — schema da silver, 34 colunas", sha:"35f33bd", path:"docs/dicionario_dados.md", raiz:RAIZ_SEM },
-      { nome:"tabela silver com 495.350 registros", sha:"35f33bd", marca:"notebook não versionado" }
+      { nome:"Silver - Interrupções de Energia.py — 495.350 registros", sha:"fc76680", path:"notebooks/Silver - Interrupções de Energia.py", raiz:RAIZ_SEM, marca:"realocação manual" }
     ],
-    achados:["catalogo"] }
+    achados:["catalogo","empirico","olhar"] },
+
+  { passo:5, arm:"sem", duracao:18, palavras:4205, objetivo:"Mesmo pedido de investigação de qualidade, com a prova das regras como parte do enunciado: verificar onde o agente coloca o notebook que ele mesmo decide criar quando a criação é meio, e não fim, do pedido.", file:"../../continuidade-energia-aneel/99_chats-html/05_qualidade_bronze_interrupcoes.html",
+    quando:"12/09/2026 23:46",
+    skills:[],
+    artefatos:[
+      { nome:"Análise de Qualidade - Interrupções Bronze.py", sha:"5ed4c15", path:"docs/Análise de Qualidade - Interrupções Bronze.py", raiz:RAIZ_SEM, marca:"nasceu em docs/" },
+      { nome:"quatro regras e três provas em PROJETO e README; 491.822 de 500.000 registros aproveitáveis", sha:"3c597e5" }
+    ],
+    achados:["localizacao","empirico","olhar"] },
+
+  { passo:6, arm:"sem", duracao:5, palavras:2257, objetivo:"Mesma segunda transformação silver: verificar se o agente herda a chave, o schema de destino e o padrão de nomes que ele próprio estabeleceu nas sessões anteriores, sem nada que os registre além do README.", file:"../../continuidade-energia-aneel/99_chats-html/06_silver_indicadores_continuidade.html",
+    quando:"13/09/2026 01:18",
+    skills:[],
+    artefatos:[
+      { nome:"Silver - Indicadores de Continuidade.py", sha:"0df6702", path:"notebooks/Silver - Indicadores de Continuidade.py", raiz:RAIZ_SEM, marca:"realocação manual" },
+      { nome:"README atualizado; notebook entregue sem execução", sha:"656e255" }
+    ],
+    achados:["estado-falso","localizacao"] }
 ];
 
 const COMPLEMENTAR = {
@@ -565,23 +639,27 @@ const COMPLEMENTAR = {
 };
 
 const ACHADOS = [
-  { id:"catalogo", titulo:"Documentação não propaga; contato empírico propaga",
-    texto:"A decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook em doze sessões. Os notebooks que consultaram o Unity Catalog ou leram o artefato real usam o destino correto; os que nunca tocaram o ambiente apontam para um catálogo inexistente. O braço de controle repete o padrão sem nenhuma skill envolvida: o notebook do passo 02, escrito sem consultar o ambiente, endereçou um catálogo que não existe, e os passos 03 e 04 só acertaram o destino porque foram olhar." },
+  { id:"catalogo", titulo:"O destino errado aparece nos dois braços",
+    texto:"Com skills, a decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook: o destino inexistente atravessou doze sessões e passou pela revisão de código do passo 08 sem ser apontado. Sem skills, o mesmo destino inexistente saiu de um palpite — main.bronze_aneel, catálogo que nunca existiu no workspace. Nos dois braços, o notebook que acertou foi o que consultou o Unity Catalog antes de escrever." },
+  { id:"localizacao", titulo:"A localização do artefato é o que a skill entrega — e o que falta sem ela",
+    texto:"Com skills, doze sessões e dois desvios, ambos quando criar o arquivo era meio e não fim do pedido. Sem skills, o desvio é a regra: estrutura própria no passo 01, notebook e documentação nascidos fora da pasta do projeto no passo 02, notebook de análise em docs/ no passo 05, e os dois notebooks de silver fora de notebooks/. Cinco commits de realocação manual até aqui." },
+  { id:"empirico", titulo:"O braço sem skills chegou ao dado real oito passos antes",
+    texto:"Sem skills, o passo 03 escreveu 5,1 milhões de linhas na bronze, o passo 04 leu a tabela antes de transformar e o passo 05 provou as regras contra os 500 mil registros reais. Com skills, o pipeline só tocou dado real no passo 11 — e concluiu em verde porque as validações de volume e de existência de tabela, prescritas pelo próprio agente nas sessões de construção, foram envolvidas em try/except." },
   { id:"estado-falso", titulo:"O fechamento registra intenção, não estado",
-    texto:"Em quatro sessões o log de evolução afirmou um estado que o disco não confirmava. O fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e o log é o insumo da sessão seguinte." },
-  { id:"escopo-revisao", titulo:"A revisão de código não olha para fora do arquivo",
-    texto:"Dezesseis problemas reais identificados no notebook 101, nenhum deles o catálogo inexistente que impede a primeira escrita. O código foi avaliado contra si mesmo, não contra o ambiente nem contra as decisões do projeto." },
-  { id:"premissa", titulo:"A premissa do pedido não é verificada contra o código",
-    texto:"O pedido afirmava uma mudança de chave já aplicada e testada. O agente abriu o notebook, registrou no raciocínio que a chave do código não correspondia ao que fora dito, atribuiu a divergência a uma simplificação do usuário e seguiu — documentando a mudança como fato consumado e repetindo a afirmação de teste no fechamento." },
-  { id:"verde-vazio", titulo:"O guardrail é desarmado para o job passar",
-    texto:"O pipeline concluiu com as cinco tarefas em verde e as cinco tabelas inexistentes. As validações de volume e de existência de tabela, escritas nas sessões de construção e apontadas na revisão do passo 08 como requisito de produção, foram envolvidas em try/except e substituídas por saída SKIPPED durante a execução — pelo mesmo agente que as havia prescrito." },
-  { id:"carga-driver", titulo:"A estratégia de carga só aparece quando a memória estoura",
-    texto:"O caminho de entrada do dado nunca foi definido nas sessões de construção. No primeiro contato com a fonte real, o download passou pelo driver via pandas e o serverless estourou com 9,7 milhões de linhas. A landing zone em UC Volume, que a arquitetura medalhão pressupõe, foi adotada só depois da falha de memória." },
-  { id:"sem-convencao", titulo:"Sem skills, cada sessão inventa a própria convenção",
-    texto:"No braço de controle o projeto nasceu com estrutura própria — notebooks, dados e docs por função, sem numeração de camada — e na sessão seguinte o notebook e o documento do projeto nasceram fora da pasta do projeto, com nome em linguagem natural e espaços. Foram precisos dois commits de realocação manual para trazê-los para dentro. A localização só se estabilizou a partir do passo 03, quando o agente passou a encontrar no workspace o que as sessões anteriores tinham deixado lá." },
-  { id:"roteamento", titulo:"Roteamento falha quando o asset é meio, não fim",
-    texto:"A skill de localização não carregou quando criar o notebook era subobjetivo do pedido: o arquivo nasceu fora da estrutura, quatro remediações automáticas foram bloqueadas e a correção precisou ser manual. No passo 12 a ausência se repetiu com o artefato como objetivo declarado, e os dois documentos nasceram em pastas novas, fora da numeração e fora da pasta de documentação do projeto." }
+    texto:"Em quatro sessões com skills o log de evolução afirmou um estado que o disco não confirmava: o fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e o log é o insumo da sessão seguinte. O braço sem skills não tem esse defeito porque não tem fechamento — o registro vive no README, e o passo 06 anunciou a silver de indicadores como pronta sem nunca executá-la." },
+  { id:"olhar", titulo:"O tempo da sessão mede quanto o agente foi olhar",
+    texto:"No braço sem skills, a sessão mais curta é a que não consultou nada e errou destino e localização: 4 minutos no passo 02. As longas — 14, 9 e 18 minutos — são as que vasculharam o workspace e o Unity Catalog, e são as que acertaram. Com skills, as sessões equivalentes levaram 5 minutos cada, com o contexto entregue de saída; nenhuma delas gastou esse tempo verificando o destino, e nenhuma delas o acertou." }
 ];
+
+const NOTAS = [
+  { id:"premissa", titulo:"A premissa do pedido não é verificada contra o código",
+    texto:"O agente abriu o notebook, registrou no raciocínio que a chave não correspondia ao que fora dito, atribuiu a divergência a uma simplificação do usuário e documentou a mudança como fato." },
+  { id:"escopo-revisao", titulo:"A revisão de código não olha para fora do arquivo",
+    texto:"Dezesseis problemas reais no notebook 101, nenhum deles o catálogo inexistente que impede a primeira escrita." },
+  { id:"carga-driver", titulo:"A estratégia de carga só aparece quando a memória estoura",
+    texto:"O caminho de entrada nunca foi definido na construção; a landing zone em Volume só foi adotada depois de o serverless estourar com 9,7 milhões de linhas." }
+];
+
 
 /* ------------------------------------------------------------------ */
 
@@ -634,10 +712,12 @@ function celula(p, arm){
   if(s){
     b.setAttribute("aria-expanded","false");
     b.dataset.key = p + "-" + arm;
+    b.dataset.rotulo = arm === "com" ? "com skills" : "sem skills";
     b.innerHTML = `<span class="t">${PASSOS[p-1].titulo}</span><span class="m">${arm === "sem" ? "sem skills" : s.skills.length + " skills"} · ${s.duracao} min · transcrição ${faixa(s.palavras)}</span>`;
     b.addEventListener("click", () => alternar(b, s, p));
   } else {
     b.disabled = true;
+    b.dataset.rotulo = arm === "com" ? "com skills" : "sem skills";
     b.innerHTML = `<span class="t empty-note">não executado</span>`;
   }
   return b;
@@ -761,35 +841,73 @@ document.querySelectorAll(".xler").forEach(btn => {
   });
 });
 
-const cont = document.getElementById("findings");
+const cont   = document.getElementById("findings");
+const limpar = document.getElementById("limpar");
+
+function irParaSessao(chave){
+  const c = document.querySelector(`[data-key="${chave}"]`);
+  if(!c) return;
+  if(c.getAttribute("aria-expanded") !== "true") c.click();
+  if(c.scrollIntoView) c.scrollIntoView({ behavior:"smooth", block:"center" });
+}
+
+function chips(refs){
+  let h = "";
+  [["com","com skills"],["sem","sem skills"]].forEach(([arm, rot]) => {
+    const l = refs.filter(r => r.arm === arm).sort((a,b) => a.passo - b.passo);
+    if(!l.length) return;
+    h += `<span class="lbl">${rot}</span>` + l.map(r =>
+      `<button type="button" class="ref" data-k="${r.passo}-${r.arm}"
+        aria-label="abrir passo ${r.passo}, braço ${rot}">${String(r.passo).padStart(2,"0")}</button>`).join("");
+  });
+  return h;
+}
+
+function apagarDestaque(){
+  document.querySelectorAll(".finding").forEach(f => f.setAttribute("aria-pressed","false"));
+  document.querySelectorAll(".cell").forEach(c => c.classList.remove("lit","flagged"));
+  limpar.hidden = true;
+}
+limpar.addEventListener("click", apagarDestaque);
+
 ACHADOS.forEach(a => {
   const refs = SESSOES.filter(s => s.achados.includes(a.id));
-  const b = document.createElement("button");
-  b.type = "button";
-  b.className = "finding";
-  b.setAttribute("aria-pressed","false");
-  const nums = arm => refs.filter(r => r.arm === arm).map(r => String(r.passo).padStart(2,"0"));
-  const rotulo = [
-    nums("com").length ? "com skills " + nums("com").join(", ") : "",
-    nums("sem").length ? "sem skills " + nums("sem").join(", ") : ""
-  ].filter(Boolean).join(" · ");
-  b.innerHTML = `<span class="fl"><strong>${a.titulo}</strong>
-    <span class="refs">${rotulo}</span></span>
-    <p>${a.texto}</p>`;
-  b.addEventListener("click", () => {
-    const ativo = b.getAttribute("aria-pressed") === "true";
-    document.querySelectorAll(".finding").forEach(f => f.setAttribute("aria-pressed","false"));
-    document.querySelectorAll(".cell").forEach(c => c.classList.remove("lit","flagged"));
-    if(!ativo){
-      b.setAttribute("aria-pressed","true");
-      refs.forEach(r => {
-        const c = document.querySelector(`[data-key="${r.passo}-${r.arm}"]`);
-        if(c) c.classList.add("lit","flagged");
-      });
-    }
+  const d = document.createElement("div");
+  d.className = "finding";
+  d.setAttribute("aria-pressed","false");
+  d.innerHTML = `<button class="ftitle" type="button">${a.titulo}</button>
+    <p>${a.texto}</p>
+    <div class="refs">${chips(refs)}</div>`;
+
+  d.querySelector(".ftitle").addEventListener("click", () => {
+    const ativo = d.getAttribute("aria-pressed") === "true";
+    apagarDestaque();
+    if(ativo) return;
+    d.setAttribute("aria-pressed","true");
+    limpar.hidden = false;
+    refs.forEach(r => {
+      const c = document.querySelector(`[data-key="${r.passo}-${r.arm}"]`);
+      if(c) c.classList.add("lit","flagged");
+    });
+    const m = document.getElementById("matrix");
+    if(m.scrollIntoView) m.scrollIntoView({ behavior:"smooth", block:"start" });
   });
-  cont.append(b);
+
+  d.querySelectorAll(".ref").forEach(btn =>
+    btn.addEventListener("click", () => irParaSessao(btn.dataset.k)));
+
+  cont.append(d);
 });
+
+const notas = document.getElementById("notas");
+notas.innerHTML = `<h3>Também registrado, só no braço com skills</h3><ul>${
+  NOTAS.map(n => {
+    const refs = SESSOES.filter(s => s.achados.includes(n.id));
+    return `<li><b>${n.titulo}.</b> ${n.texto}
+      <span class="refs" style="display:inline-flex;margin:0 0 0 6px">${chips(refs)}</span></li>`;
+  }).join("")}</ul>`;
+notas.querySelectorAll(".ref").forEach(btn =>
+  btn.addEventListener("click", () => irParaSessao(btn.dataset.k)));
 </script>
 </body>
 </html>
