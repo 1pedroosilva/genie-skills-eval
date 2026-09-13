@@ -82,6 +82,40 @@ continuidade-energia-aneel/
 - 📈 Volume: ~5,1 milhões de registros (jan/2020 a ago/2026)
 - 🎯 Indicadores: 23 tipos (DEC, FEC, DIC, FIC, DMIC, NumCon e variantes)
 
+## Revisão de Code Review - Notebook de Ingestão
+
+**Data**: 13/09/2026 15:03
+
+- ✅ Revisão completa do notebook "Ingestão ANEEL - Interrupções de Energia"
+- 🔍 Identificados **13 problemas** (5 críticos, 8 importantes) que bloqueiam produção
+- 📊 Notebook revisado: [Ingestão ANEEL - Interrupções de Energia](#notebook-1581954047410310)
+- ⚠️ **Status**: Bloqueado para produção até correções
+
+### Problemas Críticos Identificados:
+1. Location DBFS com mount point não configurado (falha garantida)
+2. Escrita em `/dbfs` incompatível com serverless compute
+3. Mode overwrite sem validações (risco de perda de dados)
+4. Timezone não especificado em timestamps de auditoria
+5. URL hardcoded frágil (sem validação HTTP)
+
+### Problemas Importantes:
+6. Falta de widgets para parametrização (ANO_REFERENCIA, CATALOG, SCHEMA)
+7. Logging inadequado (print ao invés de logging estruturado)
+8. Tratamento de erros genérico (sem distinguir tipos de exceção)
+9. Validações insuficientes (sem checks de duplicatas, nulls, ranges)
+10. Display() em código de produção (incompatível com jobs agendados)
+11. Sem idempotência (re-execução sobrescreve sem controle)
+12. Célula de exploração em notebook de produção
+13. Sem estratégia de retry e notificação de falhas
+
+### Ações Recomendadas:
+- Corrigir itens 1-5 imediatamente (bloqueadores)
+- Corrigir itens 6-13 antes do primeiro deploy
+- Implementar validações com Great Expectations
+- Adicionar notificações via job alerts
+- Mover configurações para `config.yaml` externo
+- Criar notebook de testes unitários separado
+
 ## Indicadores-Chave
 
 - **DEC (Duração Equivalente de Interrupção por Unidade Consumidora)**: Tempo médio que cada unidade consumidora ficou sem energia
