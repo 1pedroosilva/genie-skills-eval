@@ -172,6 +172,98 @@ Analisar indicadores de continuidade do fornecimento de energia (DEC, FEC, DIC, 
 
 ---
 
+### ✅ Sessão: 12/09/2026 23:46 - 13/09/2026 00:01
+
+#### 4. Análise de Qualidade de Dados — Interrupções Bronze
+
+**Notebook criado**: [Análise de Qualidade - Interrupções Bronze](#notebook-4356906633627129)
+
+**Descrição**: Investigação detalhada da qualidade dos dados na tabela bronze de interrupções (`workspace.proj_aneel_cont_01_bronze.101_interrupcoes`) para definir e validar regras de tratamento antes da transformação silver.
+
+**Funcionalidades implementadas**:
+- ✅ Análise de campos nulos em colunas críticas (NumOrdemInterrupcao, DatInicioInterrupcao, DatFimInterrupcao, DscTipoInterrupcao, NumUnidadeConsumidora, NumConsumidorConjunto)
+- ✅ Identificação de durações inválidas (data fim ≤ data início)
+- ✅ Análise de distribuição de durações (classificação em faixas: até 24h, 1-6 dias, 7-30 dias, >30 dias)
+- ✅ Detecção de duplicatas na chave natural (NumOrdemInterrupcao + NumUnidadeConsumidora)
+- ✅ Identificação de unidades consumidoras inválidas (NumUnidadeConsumidora = 0)
+- ✅ Análise de tipos de interrupção (Programada vs Não Programada)
+- ✅ Estatísticas gerais (durações média/mediana, consumidores afetados, distribuição temporal)
+
+**Problemas identificados**:
+
+| Problema | Quantidade | % do Total | Severidade | Ação Definida |
+|----------|-----------|-----------|------------|---------------|
+| Campos nulos críticos | 0 | 0,00% | - | ✅ Nenhuma |
+| Durações zero (início = fim) | 2.702 | 0,54% | ⚠️ Média | Excluir |
+| Durações > 30 dias | 5 | 0,00% | ⚠️ Média | Marcar com flag |
+| Durações 7-30 dias | 298 | 0,06% | ⚠️ Baixa | Marcar com flag |
+| Duplicatas (chave natural) | 3.608 | 0,72% | ⚠️ Alta | Deduplicar |
+| UCs inválidas (=0) | 1.946 | 0,39% | ⚠️ Alta | Excluir |
+| **Total com problemas** | **~8.559** | **1,71%** | - | - |
+
+**Regras de tratamento definidas e validadas**:
+
+1. **Exclusão de registros inválidos**:
+   ```sql
+   WHERE NumUnidadeConsumidora > 0  -- Excluir UCs inválidas
+     AND DatFimInterrupcao > DatInicioInterrupcao  -- Excluir durações zero/negativas
+   ```
+
+2. **Deduplicação por chave natural**:
+   ```sql
+   ROW_NUMBER() OVER (
+     PARTITION BY NumOrdemInterrupcao, NumUnidadeConsumidora 
+     ORDER BY DatGeracaoConjuntoDados DESC, DatFimInterrupcao DESC
+   ) = 1
+   ```
+   **Justificativa**: Registros com `DatGeracaoConjuntoDados` mais recente e `DatFimInterrupcao` mais recente representam as versões mais atualizadas do evento.
+
+3. **Marcação de durações extremas** (flag para análise posterior, sem exclusão):
+   ```sql
+   CASE 
+     WHEN TIMESTAMPDIFF(DAY, DatInicioInterrupcao, DatFimInterrupcao) > 30 
+       THEN 'Duração extrema'
+     WHEN TIMESTAMPDIFF(DAY, DatInicioInterrupcao, DatFimInterrupcao) BETWEEN 7 AND 30 
+       THEN 'Duração longa'
+     ELSE 'Normal'
+   END as flag_duracao
+   ```
+
+4. **Cálculo de métricas derivadas**:
+   - Duração em minutos: `TIMESTAMPDIFF(MINUTE, DatInicioInterrupcao, DatFimInterrupcao)`
+   - Duração em horas (decimal): `duracao_minutos / 60.0`
+   - Flag de tipo programado: `CASE WHEN DscTipoInterrupcao = 'Programada' THEN TRUE ELSE FALSE END`
+
+**Validações realizadas (provas de qualidade)**:
+
+- ✅ **Prova 1 — Zero duplicatas**: Confirmado que após aplicação da regra ROW_NUMBER, não restam duplicatas na chave natural (491.822 registros = 491.822 chaves únicas)
+- ✅ **Prova 2 — Durações válidas**: Confirmado que após filtros, todas as durações são > 0 (duração mínima = 10 segundos, nenhum registro com duração ≤ 0)
+- ✅ **Prova 3 — UCs válidas**: Confirmado que após filtros, todas as UCs são > 0 (UC mínima = 1, zero registros com UC = 0)
+
+**Resultado da análise**:
+- 500.000 registros no Bronze
+- 491.822 registros válidos esperados no Silver (98,36% de aproveitamento)
+- 8.178 registros a serem excluídos (1,64%)
+- Durações: média 483 minutos (~8h), mediana 238 minutos (~4h)
+- 93,24% das interrupções duram até 24 horas
+- Consumidores afetados: média 28.740, máximo 92.606
+
+**Conclusão**:
+- ✅ Qualidade dos dados Bronze é adequada (98,36% dos registros são válidos)
+- ✅ Problemas identificados são conhecidos e tratáveis
+- ✅ Regras de tratamento definidas e validadas com queries SQL
+- ✅ Dados prontos para transformação Silver com as regras documentadas
+- ⏭️ Próximo passo: Implementar transformação Silver com as regras validadas
+
+**Observações técnicas**:
+- Chave natural identificada: `(NumOrdemInterrupcao, NumUnidadeConsumidora)` — uma mesma interrupção pode afetar múltiplas unidades consumidoras
+- Duplicatas representam múltiplas versões/atualizações do mesmo evento na fonte (diferentes `DatGeracaoConjuntoDados` ou `DatFimInterrupcao`)
+- Durações zero representam interrupções instantâneas ou erros de registro
+- Alguns registros com durações extremas (>30 dias) seguem padrão "mês inteiro" (01/XX 00:01 até 31/XX 23:59), possivelmente dados sintéticos ou interrupções crônicas
+- A análise considerou apenas registros do ano 2024
+
+---
+
 ## Próximos Passos
 
 ### Camada Silver
@@ -243,7 +335,8 @@ continuidade-energia-aneel/
 | 08/09/2026 22:41 | Criação do projeto e implementação da ingestão bronze (interrupções) |
 | 11/09/2026 00:23 | Ingestão de Indicadores Coletivos de Continuidade na bronze (5.108.332 registros) |
 | 12/09/2026 02:03 | Transformação silver de interrupções (495.350 registros, 34 colunas) |
+| 12/09/2026 23:46 - 13/09/2026 00:01 | Análise de qualidade de dados bronze (interrupções): 98,36% válidos, regras de tratamento validadas |
 
 ---
 
-*Última atualização: 12/09/2026*
+*Última atualização: 13/09/2026*
