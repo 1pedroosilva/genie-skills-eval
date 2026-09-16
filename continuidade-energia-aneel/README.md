@@ -155,4 +155,104 @@ continuidade-energia-aneel/
 
 ---
 
-**Status**: 🟢 Projeto em desenvolvimento - camada bronze implementada, transformação silver de indicadores concluída
+## Pipeline Completa Bronze → Silver → Gold
+
+**Data**: 14/09/2026 23:11 - 23:45
+
+### ✅ Diagnóstico e Correção da Pipeline
+
+- ✅ Diagnóstico completo das 5 tabelas do pipeline
+- ✅ Validação da estrutura de schemas (bronze: 01, silver: 01 e 02, gold: 03)
+- ✅ Confirmação de populamento correto de todas as tabelas
+- 🎯 Job executado com sucesso: [Pipeline Continuidade de Fornecimento - Bronze Silver Gold](#job-940211691414181/271484094733438)
+
+### 📊 Status das Tabelas (Run 271484094733438)
+
+| # | Camada | Tabela | Schema | Registros | Tempo Exec. |
+|---|--------|--------|--------|-----------|-------------|
+| 1 | Bronze | interrupcoes | proj_aneel_cont_01_bronze | 9.211.251 | 11s |
+| 2 | Bronze | indicadores_continuidade | proj_aneel_cont_01_bronze | 5.108.332 | 352s |
+| 3 | Silver | interrupcoes | proj_aneel_cont_01_silver | 9.086.036 | 86s |
+| 4 | Silver | indicadores_continuidade | proj_aneel_cont_02_silver | 5.108.332 | 29s |
+| 5 | Gold | tempo_interrupcao_mensal | proj_aneel_cont_03_gold | 8.082 | 33s |
+
+### 🔧 Correções Realizadas
+
+**Notebook Silver - Interrupções de Energia** (ID: 3059658603716946):
+- ✅ Removida célula SQL problemática com comandos SET incompatíveis com serverless
+- ✅ Todas as células restantes preservadas e funcionais
+- ✅ Execução bem-sucedida em serverless compute
+
+**Job Pipeline** (ID: 940211691414181):
+- ✅ Configuração de max_retries = 0 aplicada (nível job + 5 tasks)
+- ✅ retry_on_timeout = false aplicado em todas as tasks
+- ✅ Dependências restauradas: gold depende de ambas tasks silver
+- ✅ 5 tasks executadas com sucesso (total: 511s / ~8.5 min)
+
+### 📈 Análise Exploratória (EDA) Completa
+
+**Data**: 14/09/2026 23:41 - 23:45
+
+- ✅ Notebook EDA criado: [EDA - Pipeline Continuidade Fornecimento COMPLETO](#notebook-1419368866069979)
+- ✅ 5 células Python executadas com sucesso
+- ✅ Análises estatísticas completas para cada tabela
+
+#### Insights-chave:
+
+1. **Bronze Interrupções** (9,2M registros)
+   - Período: 2024 completo
+   - Top distribuidora: CEMIG-D (975k interrupções)
+   - 95% interrupções não programadas
+   - Duração média: 7,52 horas (máx: 133 dias)
+
+2. **Bronze Indicadores** (5,1M registros)
+   - 105 distribuidoras
+   - 23 tipos de indicadores
+   - Média: 28.532 consumidores/conjunto
+
+3. **Silver Interrupções** (9,1M registros)
+   - Filtrados: 1,36% do bronze (excelente qualidade)
+   - Top tempo total: CEMIG-D (6,1M horas)
+   - 0 nulos em duração, 4 nulos em fato gerador
+
+4. **Silver Indicadores** (5,1M registros)
+   - Período: 2020-01 a 2026-08 (6,5 anos)
+   - Top DEC médio: ÂMBAR ENERGIA RR (5,41h)
+   - DEC médio geral: 1,04h
+
+5. **Gold Tempo Interrupção** (8.082 agregações mensais)
+   - 80 meses de dados (2020-2026)
+   - DEC médio: 1,25h, FEC médio: 0,71
+   - Variação mensal: +56,49% (alta volatilidade)
+
+### 🎯 Conquistas da Sessão
+
+1. ✅ Pipeline Bronze → Silver → Gold 100% operacional
+2. ✅ Job automatizado com 5 tasks funcionando sem retry
+3. ✅ Todas as tabelas populadas e validadas
+4. ✅ EDA completo com análises estatísticas detalhadas
+5. ✅ Documentação técnica atualizada
+
+### 📁 Assets do Projeto
+
+**Notebooks:**
+- [Bronze - Ingestão Interrupções](#notebook-1581954047410310)
+- [Bronze - Ingestão Indicadores](#notebook-2458819770635339)
+- [Silver - Interrupções de Energia](#notebook-3059658603716946)
+- [Silver - Indicadores de Continuidade](#notebook-4356906633627185)
+- [Gold - Tempo Interrupção por Distribuidora e Mês](#notebook-218687058620801)
+- [EDA - Pipeline Continuidade Fornecimento COMPLETO](#notebook-1419368866069979)
+
+**Job:**
+- [Pipeline Continuidade de Fornecimento - Bronze Silver Gold](#job-940211691414181)
+
+**Tabelas Unity Catalog:**
+- `workspace.proj_aneel_cont_01_bronze.101_interrupcoes`
+- `workspace.proj_aneel_cont_01_bronze.indicadores_continuidade`
+- `workspace.proj_aneel_cont_01_silver.interrupcoes`
+- `workspace.proj_aneel_cont_02_silver.indicadores_continuidade`
+- `workspace.proj_aneel_cont_03_gold.tempo_interrupcao_mensal`
+
+---
+
+**Status**: 🟢 Pipeline completa e operacional - Todas as camadas Bronze → Silver → Gold funcionando

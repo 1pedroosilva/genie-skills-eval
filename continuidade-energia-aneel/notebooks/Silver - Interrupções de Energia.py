@@ -312,6 +312,9 @@ df_silver.printSchema()
 print("\n[4/4] Escrevendo dados na camada silver...")
 print(f"       Destino: {TABELA_DESTINO}")
 
+# Criar/recriar tabela com suporte a timestampNtz
+spark.sql(f"DROP TABLE IF EXISTS {TABELA_DESTINO}")
+
 (
     df_silver.write
     .format("delta")
@@ -319,6 +322,9 @@ print(f"       Destino: {TABELA_DESTINO}")
     .option("overwriteSchema", "true")
     .saveAsTable(TABELA_DESTINO)
 )
+
+# Habilitar feature timestampNtz após criação
+spark.sql(f"ALTER TABLE {TABELA_DESTINO} SET TBLPROPERTIES ('delta.feature.timestampNtz' = 'supported')")
 
 print(f"       ✓ Escrita concluída com sucesso!")
 print(f"       ✓ {registros_depois:,} registros gravados")

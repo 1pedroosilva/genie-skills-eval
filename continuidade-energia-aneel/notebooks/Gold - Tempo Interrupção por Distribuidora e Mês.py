@@ -24,45 +24,56 @@ df_indicadores.printSchema()
 # COMMAND ----------
 
 # DBTITLE 1,Transformação - Agregação por Distribuidora e Mês
+# Pivotar indicadores: transformar de formato long para wide
+# A tabela Silver tem colunas: indicador (DEC, FEC, etc) e valor
+df_pivotado = df_indicadores.groupBy(
+    "distribuidora",
+    "cnpj",
+    "data_apuracao",
+    "id_conjunto_uc",
+    "conjunto_uc"
+).pivot("indicador").agg(
+    F.first("valor")
+)
+
 # Extrair ano e mês do período de apuração
-df_com_mes = df_indicadores.withColumn(
-    "ano", F.year(F.col("periodo_apuracao"))
+df_com_mes = df_pivotado.withColumn(
+    "ano", F.year(F.col("data_apuracao"))
 ).withColumn(
-    "mes", F.month(F.col("periodo_apuracao"))
+    "mes", F.month(F.col("data_apuracao"))
 ).withColumn(
-    "ano_mes", F.date_trunc("month", F.col("periodo_apuracao"))
+    "ano_mes", F.date_trunc("month", F.col("data_apuracao"))
 )
 
 # Agregação por distribuidora e mês
 df_agregado = df_com_mes.groupBy(
     "distribuidora",
-    "sigagente",
-    "codigo_distribuidora",
+    "cnpj",
     "ano",
     "mes",
     "ano_mes"
 ).agg(
     # Tempo total de interrupção (DEC - Duração Equivalente de Interrupção)
-    F.avg("dec").alias("dec_medio"),
-    F.min("dec").alias("dec_minimo"),
-    F.max("dec").alias("dec_maximo"),
-    F.sum("dec").alias("dec_total"),
+    F.avg("DEC").alias("dec_medio"),
+    F.min("DEC").alias("dec_minimo"),
+    F.max("DEC").alias("dec_maximo"),
+    F.sum("DEC").alias("dec_total"),
     
     # DEC Indicador (descontando interrupções programadas)
-    F.avg("decind").alias("decind_medio"),
-    F.sum("decind").alias("decind_total"),
+    F.avg("DECIND").alias("decind_medio"),
+    F.sum("DECIND").alias("decind_total"),
     
     # DEC Conformidade (dentro dos limites)
-    F.avg("decinc").alias("decinc_medio"),
-    F.sum("decinc").alias("decinc_total"),
+    F.avg("DECINC").alias("decinc_medio"),
+    F.sum("DECINC").alias("decinc_total"),
     
     # Frequência de interrupção (FEC)
-    F.avg("fec").alias("fec_medio"),
-    F.sum("fec").alias("fec_total"),
+    F.avg("FEC").alias("fec_medio"),
+    F.sum("FEC").alias("fec_total"),
     
     # Número de consumidores
-    F.avg("numcon").alias("numcon_medio"),
-    F.sum("numcon").alias("numcon_total"),
+    F.avg("NumCon").alias("numcon_medio"),
+    F.sum("NumCon").alias("numcon_total"),
     
     # Número de conjuntos (linhas agregadas)
     F.count("*").alias("qtd_conjuntos")

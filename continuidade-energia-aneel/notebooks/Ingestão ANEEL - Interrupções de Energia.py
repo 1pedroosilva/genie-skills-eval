@@ -14,9 +14,9 @@
 # MAGIC
 # MAGIC ## Destino
 # MAGIC - **Camada**: Bronze
-# MAGIC - **Catálogo**: `main`
-# MAGIC - **Schema**: `bronze_aneel`
-# MAGIC - **Tabela**: `interrupcoes_energia`
+# MAGIC - **Catálogo**: `workspace`
+# MAGIC - **Schema**: `proj_aneel_cont_01_bronze`
+# MAGIC - **Tabela**: `101_interrupcoes`
 # MAGIC
 # MAGIC ## Estratégia de Ingestão
 # MAGIC - Leitura direta do arquivo Parquet publicado
@@ -30,18 +30,16 @@
 # Parâmetros de configuração
 ANO_REFERENCIA = 2024  # Ano dos dados a serem ingeridos
 
-# URLs conhecidas do portal ANEEL (atualizar conforme necessário)
-# Nota: A ANEEL publica os dados em diferentes formatos. Ajuste a URL conforme o dataset específico
-URL_BASE_ANEEL = "https://dadosabertos.aneel.gov.br/dataset/"
-
-# Para este exemplo, vamos usar a URL direta do arquivo Parquet
-# A URL exata pode variar - ajuste conforme a estrutura atual do portal
-URL_PARQUET = f"https://dadosabertos.aneel.gov.br/dataset/b6ace465-a8a7-4b8b-ba0e-a8f4ae746db1/resource/indicadores-continuidade-{ANO_REFERENCIA}.parquet"
+# URL correta do dataset de Interrupções de Energia Elétrica da ANEEL
+# Dataset: Interrupções de Energia Elétrica nas Redes de Distribuição
+# Dataset ID: ccb25653-f07b-4f28-84c2-62a89d1f5a56
+# Resource ID para 2024: fc5ca52c-329c-4443-a2d6-08ccec711ade
+URL_PARQUET = "https://dadosabertos.aneel.gov.br/dataset/ccb25653-f07b-4f28-84c2-62a89d1f5a56/resource/fc5ca52c-329c-4443-a2d6-08ccec711ade/download/interrupcoes-energia-eletrica-2024.parquet"
 
 # Configuração de destino
-CATALOG = "main"
-SCHEMA_BRONZE = "bronze_aneel"
-TABELA_BRONZE = "interrupcoes_energia"
+CATALOG = "workspace"
+SCHEMA_BRONZE = "proj_aneel_cont_01_bronze"
+TABELA_BRONZE = "101_interrupcoes"
 TABELA_COMPLETA = f"{CATALOG}.{SCHEMA_BRONZE}.{TABELA_BRONZE}"
 
 print(f"Configurações:")
@@ -53,81 +51,84 @@ print(f"  Destino: {TABELA_COMPLETA}")
 # DBTITLE 1,Criar Schema Bronze (se não existir)
 # MAGIC %sql
 # MAGIC -- Criar o schema bronze se não existir
-# MAGIC CREATE SCHEMA IF NOT EXISTS main.bronze_aneel
+# MAGIC CREATE SCHEMA IF NOT EXISTS workspace.proj_aneel_cont_01_bronze
 # MAGIC COMMENT 'Camada Bronze - Dados brutos da ANEEL'
-# MAGIC LOCATION 'dbfs:/mnt/bronze/aneel'
 
 # COMMAND ----------
 
-# DBTITLE 1,Ingestão - Leitura e Escrita na Bronze
+# DBTITLE 1,Criar Volume de Staging
+# MAGIC %sql
+# MAGIC -- Criar volume para staging de arquivos temporários
+# MAGIC CREATE VOLUME IF NOT EXISTS workspace.proj_aneel_cont_01_bronze.staging_files
+# MAGIC COMMENT 'Volume temporário para staging de arquivos externos durante ingestão'
+
+# COMMAND ----------
+
+# DBTITLE 1,Ingestão - Download e Carga
 from pyspark.sql import functions as F
 from datetime import datetime
 import requests
+import os
 
-# Adicionar metadados de ingestão
 timestamp_ingestao = datetime.now().isoformat()
 
-print(f"Iniciando ingestão dos dados da ANEEL...")
-print(f"Timestamp: {timestamp_ingestao}")
+print("═" * 70)
+print("INGESTÃO BRONZE - INTERRUPÇÕES")
+print("═" * 70)
+print(f"Timestamp: {timestamp_ingestao}\n")
+
+# Verificar se tabela já existe
+print("[1/6] Verificando tabela...")
+if spark.catalog.tableExists(TABELA_COMPLETA):
+    existing_count = spark.table(TABELA_COMPLETA).count()
+    print(f"       ✓ Tabela já existe: {existing_count:,} registros")
+    dbutils.notebook.exit("SUCCESS: Tabela já existe")
+
+print("       ✓ Tabela não existe - iniciando\n")
+
+VOLUME_PATH = "/Volumes/workspace/proj_aneel_cont_01_bronze/staging_files"
+STAGING_FILE = f"{VOLUME_PATH}/aneel_interrupcoes_{ANO_REFERENCIA}.parquet"
 
 try:
-    # Tentativa 1: Leitura direta do Parquet via HTTP
-    print(f"\nTentando ler arquivo Parquet de: {URL_PARQUET}")
+    print("[2/6] Download HTTP...")
+    response = requests.get(URL_PARQUET, timeout=300)
+    response.raise_for_status()
+    file_size_mb = len(response.content) / (1024 * 1024)
+    print(f"       ✓ Download: {file_size_mb:.2f} MB\n")
     
-    df_aneel = (
-        spark.read
-        .format("parquet")
-        .option("header", "true")
-        .option("inferSchema", "true")
-        .load(URL_PARQUET)
+    print("[3/6] Gravando no volume...")
+    with open(STAGING_FILE, 'wb') as f:
+        f.write(response.content)
+    print("       ✓ Arquivo no volume\n")
+    
+    print("[4/6] Lendo com Spark...")
+    df_aneel = spark.read.parquet(STAGING_FILE)
+    total_registros = df_aneel.count()
+    print(f"       ✓ Leitura: {total_registros:,} registros\n")
+    
+    print("[5/6] Adicionando metadados...")
+    df_bronze = (
+        df_aneel
+        .withColumn("_data_ingestao", F.lit(timestamp_ingestao).cast("timestamp"))
+        .withColumn("_arquivo_fonte", F.lit(URL_PARQUET))
+        .withColumn("_ano_referencia", F.lit(ANO_REFERENCIA))
     )
+    print("       ✓ Metadados OK\n")
     
-    print(f"✓ Leitura bem-sucedida via URL direta")
+    print(f"[6/6] Gravando {TABELA_COMPLETA}...")
+    df_bronze.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable(TABELA_COMPLETA)
+    print(f"       ✓ Sucesso: {total_registros:,} registros")
     
 except Exception as e:
-    print(f"⚠ Falha na leitura direta: {str(e)}")
-    print(f"\nTentando download e leitura local...")
-    
-    # Tentativa 2: Download para DBFS e leitura local
-    import urllib.request
-    
-    temp_path = f"/tmp/aneel_interrupcoes_{ANO_REFERENCIA}.parquet"
-    dbfs_path = f"dbfs:/tmp/aneel_interrupcoes_{ANO_REFERENCIA}.parquet"
-    
-    # Download
-    urllib.request.urlretrieve(URL_PARQUET, f"/dbfs{temp_path}")
-    print(f"✓ Download concluído: {dbfs_path}")
-    
-    # Leitura do arquivo local
-    df_aneel = spark.read.parquet(dbfs_path)
-    print(f"✓ Leitura bem-sucedida do arquivo local")
-
-# Adicionar colunas de metadados
-df_bronze = (
-    df_aneel
-    .withColumn("_data_ingestao", F.lit(timestamp_ingestao).cast("timestamp"))
-    .withColumn("_arquivo_fonte", F.lit(URL_PARQUET))
-    .withColumn("_ano_referencia", F.lit(ANO_REFERENCIA))
-)
-
-print(f"\nSchema dos dados:")
-df_bronze.printSchema()
-
-print(f"\nTotal de registros: {df_bronze.count():,}")
-
-# Escrever na tabela bronze
-print(f"\nEscrevendo dados na tabela bronze: {TABELA_COMPLETA}")
-
-(
-    df_bronze.write
-    .format("delta")
-    .mode("overwrite")  # Full load
-    .option("overwriteSchema", "true")  # Permitir evolução de schema
-    .option("mergeSchema", "true")
-    .saveAsTable(TABELA_COMPLETA)
-)
-
-print(f"✓ Ingestão concluída com sucesso!")
+    print(f"\n❌ Erro: {str(e)}")
+    raise
+finally:
+    try:
+        if os.path.exists(STAGING_FILE):
+            os.remove(STAGING_FILE)
+            print("\n✓ Arquivo temp removido")
+    except:
+        pass
 
 # COMMAND ----------
 
@@ -177,17 +178,6 @@ except:
     print("   ⚠ Colunas esperadas não encontradas - verificar schema")
 
 print(f"\n✓ Validação concluída")
-
-# COMMAND ----------
-
-# DBTITLE 1,Consulta de Exemplo - Exploração
-# MAGIC %sql
-# MAGIC -- Consulta de exemplo para explorar os dados
-# MAGIC -- Ajuste conforme as colunas reais do dataset
-# MAGIC
-# MAGIC SELECT *
-# MAGIC FROM main.bronze_aneel.interrupcoes_energia
-# MAGIC LIMIT 10
 
 # COMMAND ----------
 
