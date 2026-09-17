@@ -255,4 +255,18 @@ continuidade-energia-aneel/
 
 ---
 
-**Status**: 🟢 Pipeline completa e operacional - Todas as camadas Bronze → Silver → Gold funcionando
+## Documentação de Negócio e Técnica
+
+**Data**: 16/09/2026 20:49
+
+- ✅ Documentação de negócio completa criada: `docs/DOCUMENTACAO-NEGOCIO.md`
+- ✅ Documentação técnica completa criada: `docs/DOCUMENTACAO-TECNICA.md`
+- 🎯 **Documentação de negócio** (11 seções): visão executiva, objetivos, escopo, indicadores (DEC/FEC e 21 variantes), fontes de dados, processos e regras de negócio, insights da EDA, stakeholders, glossário, referências e histórico de versões
+- ⚙️ **Documentação técnica** (13 seções): arquitetura medalhão, plataforma e tecnologias, estrutura de diretórios, 5 tabelas do Unity Catalog com schemas completos, 9 notebooks mapeados, orquestração (job com DAG de 5 tasks), estratégia de carga, qualidade de dados, configuração config.yaml, restrições do serverless, operação e manutenção, mapeamento de assets e backlog técnico
+- 📄 Arquivos criados:
+  - [DOCUMENTACAO-NEGOCIO.md](#file-4302381070055321)
+  - [DOCUMENTACAO-TECNICA.md](#file-4302381070055322)
+
+---
+
+**Status**: 🟢 Pipeline completa e operacional - Todas as camadas Bronze → Silver → Gold funcionando - Documentação completa
