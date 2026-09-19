@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avaliação das skills do Genie Code · Pedro Oliveira</title>
+
+<meta name="robots" content="index, follow">
+<meta name="author" content="Pedro Oliveira">
+<meta name="description" content="As skills acertam onde o arquivo nasce e como se chama, e não alcançam o que está fora dele. Avaliação pareada de catorze skills do Databricks Genie Code: o mesmo projeto construído duas vezes, com transcrição completa de cada sessão.">
+<link rel="icon" href="https://1pedroosilva.github.io/favicon.ico" sizes="any">
+<link rel="icon" href="https://1pedroosilva.github.io/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="https://1pedroosilva.github.io/apple-touch-icon.png">
+<link rel="canonical" href="https://1pedroosilva.github.io/genie-skills-eval/">
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://1pedroosilva.github.io/genie-skills-eval/">
+<meta property="og:title" content="Avaliação das skills do Genie Code">
+<meta property="og:description" content="O mesmo projeto de dados feito duas vezes, com as skills ativas e com elas desligadas. Vinte e três sessões, transcrição completa, versão congelada.">
+<meta property="og:image" content="https://1pedroosilva.github.io/og.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Dataset",
+  "name":"Avaliacao pareada de skills do Databricks Genie Code",
+  "description":"Vinte e tres sessoes de trabalho registradas em dois bracos pareados, doze com skills ativas e onze sem, sobre o mesmo projeto de engenharia de dados com dados publicos da ANEEL.",
+  "url":"https://1pedroosilva.github.io/genie-skills-eval/",
+  "license":"https://github.com/1pedroosilva/genie-skills-eval",
+  "creator":{"@type":"Person","name":"Pedro Oliveira","url":"https://1pedroosilva.github.io/"},
+  "variableMeasured":["localizacao do artefato","nomenclatura","destino de gravacao","registro de estado","duracao da sessao"]
+}
+</script>
+
+<meta name="color-scheme" content="light dark">
+<script>
+(function(){
+  var t=null;
+  try{t=localStorage.getItem('tema');}catch(e){}
+  if(!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+  document.documentElement.dataset.tema=t;
+})();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --paper:#E4E7E3; --panel:#EDEFEC; --panel-deep:#D9DDD8;
+  --ink:#16201C; --ink-soft:#5A6560; --rule:#BFC6C0;
+  --accent:#0F4C42; --flag:#9C4A2F;
+  --serif:"Newsreader",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --col:60ch; --step:220ms;
+}
+html[data-tema="escuro"]{
+  --paper:#151B19; --panel:#1C2321; --panel-deep:#111716;
+  --ink:#DCE3DE; --ink-soft:#8B9891; --rule:#2C3633;
+  --accent:#79C4B0; --flag:#D4785C;
+}
+@media (prefers-reduced-motion:reduce){
+  :root{--step:1ms}
+  *,*::before,*::after{animation-duration:1ms!important;transition-duration:1ms!important}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.62;
+  font-optical-sizing:auto;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-underline-offset:.22em;text-decoration-thickness:.055em}
+a:hover{color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+h1,h2,h3,h4{font-weight:500;line-height:1.2;letter-spacing:-.012em;margin:0}
+h1{font-size:clamp(1.95rem,5.2vw,3rem);font-weight:400}
+h2{font-size:clamp(1.4rem,3.6vw,1.85rem)}
+h3{font-size:1.08rem}
+h4{font-family:var(--mono);font-size:.84rem;font-weight:500}
+p{margin:0 0 1em;max-width:var(--col)}
+p:last-child{margin-bottom:0}
+
+.shell{max-width:1040px;margin:0 auto;padding:0 clamp(1.15rem,4vw,3rem);display:grid;grid-template-columns:minmax(0,1fr)}
+@media (min-width:1000px){.shell{grid-template-columns:186px minmax(0,1fr);column-gap:3.6rem}}
+.index{display:none}
+@media (min-width:1000px){
+  .index{display:block;position:sticky;top:0;align-self:start;height:100vh;padding-top:7.5rem;overflow:hidden}
+  .index ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--rule)}
+  .index a{
+    display:flex;gap:.5rem;padding:.3rem 0 .3rem .8rem;margin-left:-1px;border-left:1px solid transparent;
+    font-family:var(--mono);font-size:.69rem;letter-spacing:.03em;color:var(--ink-soft);
+    text-decoration:none;transition:color var(--step),border-color var(--step);
+  }
+  .index a[aria-current="true"]{color:var(--ink);border-left-color:var(--accent)}
+  .index a:hover{color:var(--ink)}
+  .index .num{color:var(--rule);font-variant-numeric:tabular-nums}
+  .index a[aria-current="true"] .num{color:var(--accent)}
+  .index .gap{height:.75rem}
+}
+.tema{
+  position:fixed;top:.5rem;right:clamp(.8rem,3vw,1.6rem);z-index:60;
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;
+  padding:.34rem .6rem;cursor:pointer;
+  background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:blur(9px);
+  color:var(--ink-soft);border:1px solid var(--rule);border-radius:2px;
+  transition:color var(--step),border-color var(--step);
+}
+.tema:hover{color:var(--ink);border-color:var(--ink-soft)}
+
+.railbar{
+  position:sticky;top:0;z-index:40;display:flex;align-items:center;
+  padding:.55rem clamp(1.15rem,4vw,3rem);
+  background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(9px);
+  border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;color:var(--ink-soft);
+}
+.railbar .bar{position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none}
+.railbar .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width 90ms linear}
+@media (min-width:1000px){.railbar{display:none}}
+
+main{padding-bottom:4rem;min-width:0}
+section{padding:3.6rem 0;border-top:1px solid var(--rule);min-width:0}
+section:first-of-type{border-top:0}
+.marker{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:.5rem}
+.marker b{color:var(--ink);font-weight:500}
+.lede{font-size:1.06rem;color:var(--ink-soft);max-width:var(--col)}
+.pstatus{font-family:var(--mono);font-size:.68rem;color:var(--ink-soft);letter-spacing:.03em;margin:.7rem 0 0}
+.pstatus b{color:var(--ink);font-weight:500}
+.hint{font-family:var(--mono);font-size:.67rem;color:var(--ink-soft);margin-top:.8rem;max-width:var(--col)}
+
+.back{
+  display:inline-flex;gap:.45rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.03em;
+  text-decoration:none;color:var(--ink-soft);margin-bottom:2rem;
+}
+.back:hover{color:var(--ink)}
+.hero{padding:6.5rem 0 3.4rem}
+.hero h1{margin-bottom:.2rem;max-width:22ch}
+.reveal{opacity:0;transform:translateY(9px);animation:rise .6s cubic-bezier(.2,.7,.3,1) forwards}
+.reveal:nth-child(2){animation-delay:.06s}
+.reveal:nth-child(3){animation-delay:.13s}
+.reveal:nth-child(4){animation-delay:.2s}
+.reveal:nth-child(5){animation-delay:.27s}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;animation:none}}
+
+.ask{
+  margin:2rem 0 0;padding:.1rem 0 .1rem 1.15rem;border-left:2px solid var(--accent);
+  font-size:1.14rem;line-height:1.5;color:var(--ink);max-width:var(--col);
+}
+
+/* cabeçalho de etapa */
+.stage{display:flex;align-items:baseline;gap:1rem;margin-bottom:.35rem;max-width:var(--col)}
+.stage .n{
+  font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.06em;
+  flex:0 0 auto;padding-top:.1rem;
+}
+.q{margin:.7rem 0 1.4rem;max-width:var(--col);font-size:1.02rem}
+.q em{
+  display:block;font-family:var(--mono);font-style:normal;font-size:.65rem;
+  letter-spacing:.07em;color:var(--ink-soft);margin-bottom:.4rem;
+}
+
+/* cadeia das etapas */
+.chain{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:1.6rem;max-width:var(--col)}
+.chain a{
+  font-family:var(--mono);font-size:.68rem;padding:.42rem .68rem;text-decoration:none;
+  color:var(--ink-soft);border:1px solid var(--rule);border-radius:2px;
+  transition:color var(--step),border-color var(--step);
+}
+.chain a:hover{color:var(--ink);border-color:var(--ink-soft)}
+.chain a .dot{color:var(--accent)}
+.chain a.off{color:var(--rule)}
+.chain a.off .dot{color:var(--rule)}
+.chain a .ar{color:var(--rule);margin-left:.15rem;transition:transform var(--step),color var(--step);display:inline-block}
+.chain a:hover .ar{color:var(--accent);transform:translateY(2px)}
+
+/* retorno ao mapa das etapas */
+.nav{display:flex;align-items:center;gap:.1rem;margin-left:auto;flex:0 0 auto}
+.nav a,.nav span{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:2px;color:var(--ink-soft);
+  transition:color var(--step),background var(--step);
+}
+.nav a:hover{color:var(--accent);background:var(--panel)}
+.nav span{color:var(--rule);cursor:default}
+.nav svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+
+/* botão flutuante de topo */
+.topo{
+  position:fixed;right:clamp(.8rem,3vw,1.6rem);bottom:1.1rem;z-index:55;
+  display:flex;align-items:center;gap:.4rem;padding:.45rem .7rem;cursor:pointer;
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.04em;
+  background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(9px);
+  color:var(--ink-soft);border:1px solid var(--rule);border-radius:2px;
+  opacity:0;pointer-events:none;transform:translateY(6px);
+  transition:opacity var(--step),transform var(--step),color var(--step),border-color var(--step);
+}
+.topo.on{opacity:1;pointer-events:auto;transform:none}
+.topo:hover{color:var(--ink);border-color:var(--ink-soft)}
+
+/* etiquetas de tema */
+.temas{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem;margin-top:1.4rem;max-width:var(--col)}
+.temas em{
+  font-family:var(--mono);font-size:.62rem;font-style:normal;letter-spacing:.06em;
+  color:var(--rule);margin-right:.2rem;
+}
+.temas span{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.02em;color:var(--ink-soft);
+  border:1px solid var(--rule);border-radius:2px;padding:.22rem .5rem;
+}
+
+/* nota técnica */
+.tech-note{
+  font-family:var(--mono);font-size:.69rem;line-height:1.85;color:var(--ink-soft);
+  margin-top:1.1rem;padding-left:.9rem;border-left:2px solid var(--rule);max-width:var(--col);
+}
+.tech-note b{color:var(--ink);font-weight:500}
+
+/* widget: republicação */
+.widget{margin-top:1.7rem;border:1px solid var(--rule);border-radius:2px;background:var(--panel);padding:1.1rem 1.15rem;max-width:var(--col)}
+.wlabel{font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:.9rem}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--rule);
+  border-radius:2px;outline:none;cursor:pointer;margin:.2rem 0;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:var(--accent);border:3px solid var(--panel);cursor:grab;
+}
+input[type=range]::-moz-range-thumb{
+  width:17px;height:17px;border-radius:50%;background:var(--accent);
+  border:3px solid var(--panel);cursor:grab;
+}
+.scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.62rem;color:var(--ink-soft);margin-top:.35rem}
+.readout{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--rule);font-family:var(--mono);font-size:.72rem;line-height:1.85}
+.readout .big{font-size:1.5rem;color:var(--ink);letter-spacing:-.01em;display:block;margin:.15rem 0 .35rem;font-variant-numeric:tabular-nums}
+.readout .meta{color:var(--ink-soft)}
+
+table{border-collapse:collapse;width:100%;margin-top:1.2rem;font-family:var(--mono);font-size:.68rem;max-width:var(--col)}
+th{text-align:left;font-weight:400;color:var(--ink-soft);letter-spacing:.04em;padding:.45rem .6rem .45rem 0;border-bottom:1px solid var(--rule)}
+td{padding:.5rem .6rem .5rem 0;border-bottom:1px solid var(--rule);color:var(--ink-soft);font-variant-numeric:tabular-nums;transition:color var(--step)}
+tr[data-on="true"] td{color:var(--ink)}
+tr[data-on="true"] td:first-child::before{content:"\25B8 ";color:var(--accent)}
+
+/* widget: comparador de escala */
+.diff{display:grid;position:relative;border:1px solid var(--rule);border-radius:2px;overflow:hidden;background:var(--panel)}
+.pane{grid-area:1/1;padding:1.1rem 1.15rem;font-family:var(--mono);font-size:.7rem;line-height:1.95}
+.pane.b{background:var(--panel-deep)}
+.pane.a{background:var(--panel);border-right:2px solid var(--accent)}
+.pane .co{color:var(--ink-soft);letter-spacing:.03em}
+.pane .vl{color:var(--ink);font-variant-numeric:tabular-nums;font-size:.86rem}
+.pane .note{display:block;margin-top:.9rem;color:var(--ink-soft);line-height:1.7}
+.pane .warn{color:var(--flag)}
+
+/* pilar em acordeão */
+.acc{margin-top:1.8rem;max-width:var(--col)}
+details{border-bottom:1px solid var(--rule)}
+details.first{border-top:1px solid var(--rule)}
+summary{cursor:pointer;list-style:none;padding:.9rem 0;display:flex;gap:.9rem;align-items:baseline}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;color:var(--ink-soft);font-family:var(--mono);font-size:.9rem}
+details[open] summary::after{content:"\2212";color:var(--accent)}
+summary:hover{color:var(--accent)}
+summary h4{font-family:var(--serif);font-size:1.02rem;font-weight:500;letter-spacing:-.01em}
+.dbody{padding:0 0 1.3rem}
+.dbody p{font-size:.95rem}
+
+/* linha do tempo */
+.tl{margin-top:1.6rem;border-left:1px solid var(--rule);padding-left:1.4rem}
+.tl li{list-style:none;position:relative;padding-bottom:1.9rem}
+.tl li:last-child{padding-bottom:0}
+.tl li::before{
+  content:"";position:absolute;left:calc(-1.4rem - 4px);top:.55rem;
+  width:7px;height:7px;border-radius:50%;background:var(--paper);border:1px solid var(--ink-soft);
+}
+.tl li[data-undo="true"]::before{background:var(--flag);border-color:var(--flag)}
+.tl ul{margin:0;padding:0}
+.tl .d{font-family:var(--mono);font-size:.66rem;color:var(--ink-soft);letter-spacing:.04em}
+.tl h4{margin:.15rem 0 .45rem;font-family:var(--serif);font-size:1.02rem;font-weight:500;letter-spacing:-.01em}
+.tl p{font-size:.95rem}
+
+.rows{margin-top:1.3rem}
+.row{display:grid;gap:.25rem 2rem;padding:.8rem 0;border-top:1px solid var(--rule)}
+@media (min-width:640px){.row{grid-template-columns:132px 1fr}}
+.row .k{font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);letter-spacing:.03em;padding-top:.22em}
+.row .v{max-width:var(--col)}
+
+.go{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:2.2rem}
+.go .chatbtn{
+  font-family:var(--mono);font-size:.74rem;padding:.58rem .95rem;cursor:pointer;
+  background:transparent;border:1px solid var(--rule);border-radius:2px;color:var(--ink-soft);
+  transition:color var(--step),border-color var(--step);
+}
+.go .chatbtn:hover{color:var(--ink);border-color:var(--ink-soft)}
+.go a{
+  display:inline-flex;align-items:center;gap:.45rem;
+  font-family:var(--mono);font-size:.74rem;padding:.58rem .95rem;text-decoration:none;
+  border:1px solid var(--rule);border-radius:2px;color:var(--ink-soft);
+  transition:background var(--step),color var(--step),border-color var(--step);
+}
+.go a:hover{color:var(--ink);border-color:var(--ink-soft)}
+.go a.main{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+.go a.main:hover{background:transparent;color:var(--ink);border-color:var(--ink-soft)}
+html[data-tema="escuro"] .go a.main{color:#101614}
+html[data-tema="escuro"] .go a.main:hover{color:var(--ink)}
+.go a svg{width:14px;height:14px;fill:currentColor;flex:0 0 auto}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  .hero{padding:5rem 0 3rem}
+  .ask{font-size:1.04rem}
+  .stage{gap:.7rem}
+  .pane{font-size:.64rem;padding:.9rem}
+}
+
+footer{border-top:1px solid var(--rule);padding:2.2rem 0 4rem;font-family:var(--mono);font-size:.72rem;color:var(--ink-soft)}
+footer a{margin-right:1.3rem}
+
+/* ── simulações ───────────────────────────── */
+.sim{margin-top:1.5rem;border:1px solid var(--rule);border-radius:2px;background:var(--panel);max-width:var(--col);overflow:hidden}
+.simhead{
+  display:flex;align-items:center;gap:.6rem;padding:.6rem .95rem;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.04em;color:var(--ink-soft);
+}
+.tag{
+  margin-left:auto;font-size:.58rem;letter-spacing:.07em;padding:.12rem .38rem;
+  border:1px solid var(--rule);border-radius:2px;color:var(--ink-soft);
+}
+.btns{display:flex;flex-wrap:wrap;gap:.35rem;padding:.8rem .95rem 0}
+.btns button{
+  font-family:var(--mono);font-size:.65rem;padding:.36rem .6rem;cursor:pointer;
+  background:transparent;color:var(--ink-soft);border:1px solid var(--rule);border-radius:2px;
+  transition:background var(--step),color var(--step),border-color var(--step);
+}
+.btns button:hover{color:var(--ink);border-color:var(--ink-soft)}
+.btns button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+html[data-tema="escuro"] .btns button[aria-pressed="true"]{color:#101614}
+.log{padding:.9rem .95rem 1.05rem;font-family:var(--mono);font-size:.67rem;line-height:1.95}
+.log .ln{display:flex;gap:.7rem;opacity:0;animation:slidein .3s ease-out forwards}
+.log .ln .y{color:var(--ink-soft);flex:0 0 3.4em;font-variant-numeric:tabular-nums}
+.log .ln .s{color:var(--ink)}
+.log .ln.mut .s{color:var(--ink-soft)}
+.log .ln.hit .s{color:var(--accent)}
+.log .ln.bad .s{color:var(--flag)}
+.log .sum{
+  display:block;margin-top:.75rem;padding-top:.6rem;border-top:1px solid var(--rule);
+  color:var(--ink-soft);opacity:0;animation:slidein .3s .18s ease-out forwards;
+}
+.log .sum b{color:var(--ink);font-weight:500}
+@keyframes slidein{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.log .ln,.log .sum{animation:none;opacity:1}}
+
+/* trecho de código */
+.code{
+  margin-top:1.2rem;border:1px solid var(--rule);border-radius:2px;
+  background:var(--panel-deep);overflow:hidden;
+}
+.code .file{
+  display:flex;align-items:center;gap:.5rem;padding:.5rem .85rem;border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.03em;color:var(--ink-soft);
+}
+.code .file b{color:var(--ink);font-weight:500}
+.code pre{
+  margin:0;padding:.85rem .85rem .95rem;overflow-x:auto;
+  font-family:var(--mono);font-size:.66rem;line-height:1.85;color:var(--ink);
+}
+.code .cm{color:var(--ink-soft)}
+.code .kw{color:var(--accent)}
+.code .st{color:var(--ink-soft)}
+
+/* abas dos pilares */
+.tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:1.7rem;max-width:var(--col)}
+.tabs button{
+  font-family:var(--mono);font-size:.68rem;padding:.45rem .75rem;cursor:pointer;
+  background:transparent;color:var(--ink-soft);border:1px solid var(--rule);border-radius:2px;
+  transition:background var(--step),color var(--step),border-color var(--step);
+}
+.tabs button:hover{color:var(--ink);border-color:var(--ink-soft)}
+.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+html[data-tema="escuro"] .tabs button[aria-selected="true"]{color:#101614}
+.tabbody{
+  margin-top:.75rem;max-width:var(--col);border:1px solid var(--rule);border-radius:2px;
+  background:var(--panel);padding:1.2rem 1.25rem;
+}
+.tabbody h4{font-family:var(--serif);font-size:1.06rem;font-weight:500;letter-spacing:-.01em}
+.tabbody .one{font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);margin:.3rem 0 .9rem}
+.tabbody p{font-size:.95rem}
+.tabpanel[hidden]{display:none}
+.tabpanel{animation:fadein var(--step) ease-out}
+@keyframes fadein{from{opacity:.35}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.tabpanel{animation:none}}
+
+/* mapa dos três problemas */
+.probs{margin-top:1.5rem;max-width:var(--col)}
+.prob{
+  display:grid;gap:.15rem .9rem;padding:.85rem 0;border-top:1px solid var(--rule);
+  text-decoration:none;color:inherit;transition:border-color var(--step);
+}
+.prob:last-child{border-bottom:1px solid var(--rule)}
+@media (min-width:560px){.prob{grid-template-columns:1fr auto;align-items:baseline}}
+.prob .t{font-size:1rem}
+.prob .g{font-family:var(--mono);font-size:.64rem;color:var(--ink-soft);letter-spacing:.03em;white-space:nowrap}
+.prob:hover{border-color:var(--accent)}
+.prob:hover .t{color:var(--accent)}
+.prob:hover .g{color:var(--ink)}
+
+
+/* matriz de sessões */
+.matriz{margin-top:1.6rem;border-top:1px solid var(--rule)}
+.mcab{display:grid;grid-template-columns:1fr 96px 96px;gap:.5rem;padding:.55rem 0;
+  border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.05em;color:var(--ink-soft)}
+.mcab span:not(:first-child){text-align:center}
+.lin{display:grid;grid-template-columns:1fr 96px 96px;gap:.5rem;align-items:center;
+  padding:.3rem 0;border-bottom:1px solid var(--rule)}
+.lin .tit{display:flex;gap:.7rem;align-items:baseline;font-size:.95rem;min-width:0}
+.lin .tit i{font-family:var(--mono);font-size:.66rem;font-style:normal;color:var(--ink-soft);flex:0 0 auto}
+.cel{
+  font-family:var(--mono);font-size:.66rem;padding:.45rem .2rem;cursor:pointer;text-align:center;
+  background:transparent;color:var(--ink-soft);border:1px solid var(--rule);border-radius:2px;
+  transition:background var(--step),color var(--step),border-color var(--step);
+}
+.cel:hover{color:var(--ink);border-color:var(--ink-soft)}
+.cel[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--panel)}
+html[data-tema="escuro"] .cel[aria-pressed="true"]{color:#101614}
+.cel.vazia{border-color:transparent;color:var(--rule);cursor:default;pointer-events:none}
+
+.det{margin:.2rem 0 .9rem;border-left:2px solid var(--accent);background:var(--panel);
+  padding:1.1rem 1.2rem;border-radius:0 2px 2px 0;position:relative;
+  animation:abrirdet .22s ease-out}
+.det[hidden]{display:none}
+@keyframes abrirdet{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.fechar{
+  position:absolute;top:.75rem;right:.85rem;cursor:pointer;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.04em;padding:.28rem .5rem;
+  background:transparent;color:var(--ink-soft);border:1px solid var(--rule);border-radius:2px;
+}
+.fechar:hover{color:var(--ink);border-color:var(--ink-soft)}
+.det .meta{font-family:var(--mono);font-size:.63rem;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:.3rem}
+.det h3{font-size:1.1rem;font-weight:500;margin-bottom:.7rem}
+.det .obj{font-size:.97rem;margin-bottom:1.1rem}
+.det .rot{font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;color:var(--ink-soft);
+  margin:1rem 0 .45rem;padding-top:.75rem;border-top:1px solid var(--rule)}
+.det ul{list-style:none;margin:0;padding:0}
+.det li{font-family:var(--mono);font-size:.68rem;line-height:1.9;display:flex;flex-wrap:wrap;gap:.15rem .6rem}
+.det li .glosa{color:var(--ink-soft)}
+.det .manual{color:var(--flag);font-size:.62rem}
+.det .nada{font-family:var(--mono);font-size:.66rem;color:var(--ink-soft)}
+.det .abrir{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;cursor:pointer;
+  font-family:var(--mono);font-size:.7rem;padding:.5rem .85rem;text-decoration:none;
+  background:transparent;border:1px solid var(--accent);border-radius:2px;color:var(--accent)}
+.det .abrir:hover{background:var(--accent);color:var(--panel)}
+html[data-tema="escuro"] .det .abrir:hover{color:#101614}
+
+/* camada de leitura da transcrição */
+.leitor{position:fixed;inset:0;z-index:90;display:none}
+.leitor.on{display:block}
+.leitor .fundo{position:absolute;inset:0;background:color-mix(in srgb,var(--ground,#000) 58%,transparent);
+  backdrop-filter:blur(3px)}
+.leitor .caixa{
+  position:absolute;inset:2.5vh 50% 2.5vh 50%;transform:translateX(-50%);
+  width:min(1080px,96vw);display:flex;flex-direction:column;
+  background:var(--paper);border:1px solid var(--rule);border-radius:3px;overflow:hidden;
+}
+.leitor .topo-caixa{
+  display:flex;align-items:center;gap:.8rem;padding:.7rem .9rem;
+  border-bottom:1px solid var(--rule);background:var(--panel);
+  font-family:var(--mono);font-size:.66rem;color:var(--ink-soft);
+}
+.leitor .topo-caixa b{color:var(--ink);font-weight:500}
+.leitor .topo-caixa .dir{margin-left:auto;display:flex;gap:.4rem}
+.leitor .topo-caixa a,.leitor .topo-caixa button{
+  font-family:var(--mono);font-size:.64rem;padding:.32rem .6rem;cursor:pointer;text-decoration:none;
+  background:transparent;color:var(--ink-soft);border:1px solid var(--rule);border-radius:2px;
+}
+.leitor .topo-caixa a:hover,.leitor .topo-caixa button:hover{color:var(--ink);border-color:var(--ink-soft)}
+.leitor iframe{flex:1 1 auto;width:100%;border:0;background:var(--paper)}
+@media (max-width:620px){.leitor .caixa{inset:0;width:100%;transform:none;border-radius:0;border:0}}
+body.travado{overflow:hidden}
+
+/* achados */
+.ach{padding:1.4rem 0;border-top:1px solid var(--rule);max-width:var(--col)}
+.ach h3{font-size:1.05rem;font-weight:500;margin-bottom:.5rem}
+.ach p{font-size:.95rem}
+.ach .onde{font-family:var(--mono);font-size:.62rem;color:var(--ink-soft);margin-top:.7rem}
+</style>
+
+<style>
+/* veredito */
+.hero .stmt{
+  font-size:clamp(1.25rem,2.9vw,1.55rem);line-height:1.42;margin:1.6rem 0 0;
+  max-width:34ch;
+}
+.hero .stmt b{color:var(--accent);font-weight:500}
+
+/* placar */
+.placar{margin:2.2rem 0 0;border-top:1px solid var(--rule)}
+.pl{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:.2rem .9rem;
+  padding:.95rem 0;border-bottom:1px solid var(--rule);
+}
+@media (min-width:640px){
+  .pl{grid-template-columns:minmax(0,13rem) minmax(0,1fr) minmax(0,1fr);align-items:baseline}
+}
+.pl .q{font-size:.95rem;color:var(--ink)}
+.pl .lado{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft);display:flex;gap:.55rem;align-items:baseline}
+.pl .lado i{
+  font-style:normal;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-soft);flex:0 0 auto;width:4.6rem;
+}
+@media (min-width:640px){.pl .lado i{display:none}}
+.pl .lado b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.pl .lado.igual b{color:var(--flag)}
+.plcab{display:none}
+@media (min-width:640px){
+  .plcab{
+    display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr) minmax(0,1fr);
+    gap:0 .9rem;padding:0 0 .5rem;
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--ink-soft);
+  }
+}
+
+/* desenho do teste, visual */
+.montagem{
+  margin:1.6rem 0 0;padding:1.3rem 1.2rem;background:var(--panel);
+  border:1px solid var(--rule);
+}
+.montagem svg{display:block;width:100%;height:auto;max-width:640px;margin:0 auto}
+.montagem figcaption{
+  margin-top:.9rem;font-family:var(--mono);font-size:.68rem;color:var(--ink-soft);
+  text-align:center;
+}
+
+/* achados como acordeao */
+.acc summary .k{width:auto;flex:0 0 auto;min-width:1.9rem;color:var(--rule);font-variant-numeric:tabular-nums}
+.acc summary .res{color:var(--ink-soft);font-size:.9rem}
+.acc summary .tt{display:block;color:var(--ink);font-size:.98rem;margin-bottom:.12rem}
+.acc summary{align-items:flex-start}
+.acc summary .col{min-width:0}
+.dbody .sess{
+  margin:.9rem 0 0;font-family:var(--mono);font-size:.68rem;color:var(--ink-soft);
+  display:flex;flex-wrap:wrap;gap:.3rem .55rem;
+}
+.dbody .sess b{font-weight:400;color:var(--ink-soft);margin-right:.2rem}
+.dbody .sess a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule)}
+.dbody .sess a:hover{color:var(--ink);border-bottom-color:var(--ink-soft)}
+
+/* tema */
+.temacard{
+  display:block;margin-top:1.5rem;padding:1.25rem 1.3rem;text-decoration:none;
+  background:var(--panel);border:1px solid var(--rule);
+  transition:border-color var(--step);
+}
+.temacard:hover{border-color:var(--accent)}
+.temacard .top{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+.temacard h3{color:var(--accent);font-size:1.12rem}
+.temacard:hover h3{color:var(--ink)}
+.temacard p{margin:.5rem 0 0;font-size:.93rem;color:var(--ink);max-width:var(--col)}
+.temacard .n{
+  display:flex;gap:1.4rem;margin-top:.9rem;flex-wrap:wrap;
+  font-family:var(--mono);font-size:.68rem;color:var(--ink-soft);
+}
+.temacard .n b{display:block;font-size:1.15rem;color:var(--ink);font-weight:400;font-variant-numeric:tabular-nums}
+.temacard .sel{
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-soft);border:1px solid var(--rule);padding:.12rem .42rem;
+}
+.aguarda{
+  margin-top:.8rem;padding:1.1rem 1.3rem;border:1px dashed var(--rule);
+  font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);
+}
+</style>
+
+</head>
+
+<body>
+
+<button class="tema" id="tema" type="button" aria-label="Alternar tema"></button>
+<button class="topo" id="topo" type="button"><span>&#8593;</span> topo</button>
+
+<div class="railbar">
+  <span id="railLabel">a avaliação</span>
+  <span class="bar"><i id="railFill"></i></span>
+</div>
+
+<div class="shell">
+  <nav class="index" aria-label="Seções">
+    <ol>
+      <li><a href="#desenho"><span class="num">··</span> o desenho</a></li>
+      <li><a href="#resultado"><span class="num">··</span> o que deu</a></li>
+      <li><a href="#achados"><span class="num">··</span> achados</a></li>
+      <li><a href="#notas"><span class="num">··</span> notas</a></li>
+      <li class="gap"></li>
+      <li><a href="#temas"><span class="num">··</span> as sessões</a></li>
+      <li><a href="#limites"><span class="num">··</span> limites</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <section class="hero" id="topo-sec">
+      <a class="back" href="https://1pedroosilva.github.io/projeto-databricks-skills/">&#8592; skills para o Genie Code</a>
+      <p class="marker"><b>2.02</b> &nbsp;avaliação</p>
+      <h1>O mesmo projeto, feito duas vezes</h1>
+      <p class="sub">com as catorze skills ativas e com elas desligadas</p>
+      <p class="stmt">
+        As skills acertam <b>onde o arquivo nasce</b> e como ele se chama.
+        Nenhum dos dois braços acertou <b>o que estava fora do arquivo</b>.
+      </p>
+      <p class="pstatus">&#9679; <b>em curso</b> &nbsp;·&nbsp; vinte e quatro sessões registradas, tema 01 de 02</p>
+    </section>
+
+    <section id="desenho">
+      <p class="marker">o desenho</p>
+      <h2>Como o teste foi montado</h2>
+<figure class="montagem">
+      <svg viewBox="0 0 640 186" role="img" aria-label="Um projeto construído duas vezes: braço com skills e braço sem skills, doze pedidos iguais na mesma ordem">
+        <defs>
+          <marker id="pt" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+            <path d="M0 0 L7 3.5 L0 7 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <g fill="none" stroke="currentColor" stroke-width="1" opacity=".38" color="var(--ink-soft)">
+          <path d="M104 62 L150 62" marker-end="url(#pt)"/>
+          <path d="M104 62 L128 62 L128 128 L150 128" marker-end="url(#pt)"/>
+        </g>
+        <g font-family="var(--mono)" font-size="10.5" fill="var(--ink-soft)">
+          <text x="8" y="58">os mesmos</text>
+          <text x="8" y="72">doze pedidos</text>
+          <text x="8" y="86">na mesma ordem</text>
+        </g>
+        <g>
+          <rect x="152" y="44" width="360" height="36" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+          <text x="168" y="67" font-family="var(--mono)" font-size="11.5" fill="var(--accent)">braço A</text>
+          <text x="238" y="67" font-family="var(--mono)" font-size="11.5" fill="var(--ink)">catorze skills carregadas</text>
+        </g>
+        <g>
+          <rect x="152" y="110" width="360" height="36" fill="none" stroke="var(--rule)" stroke-width="1.2"/>
+          <text x="168" y="133" font-family="var(--mono)" font-size="11.5" fill="var(--ink-soft)">braço B</text>
+          <text x="238" y="133" font-family="var(--mono)" font-size="11.5" fill="var(--ink)">todas desligadas</text>
+        </g>
+        <g fill="none" stroke="currentColor" stroke-width="1" opacity=".38" color="var(--ink-soft)">
+          <path d="M514 62 L556 62" marker-end="url(#pt)"/>
+          <path d="M514 128 L556 128" marker-end="url(#pt)"/>
+        </g>
+        <g font-family="var(--mono)" font-size="10.5" fill="var(--ink-soft)">
+          <text x="560" y="58">um</text>
+          <text x="560" y="72">projeto</text>
+          <text x="560" y="124">um</text>
+          <text x="560" y="138">projeto</text>
+        </g>
+        <g font-family="var(--mono)" font-size="10" fill="var(--ink-soft)" opacity=".8">
+          <text x="152" y="176">a única diferença entre os dois é a linha de cima</text>
+        </g>
+      </svg>
+      <figcaption>um projeto de engenharia de dados, construído do zero, duas vezes</figcaption>
+    </figure>
+      <div class="acc">
+        <details class="first">
+          <summary>
+            <span class="k">condições</span>
+            <span class="col"><span class="tt">O que ficou igual e o que mudou</span></span>
+          </summary>
+          <div class="dbody">
+            <p>Um projeto de engenharia de dados foi construído do zero, duas vezes, com dados
+            públicos de interrupção de energia da ANEEL. Os mesmos doze pedidos, na mesma ordem,
+            no mesmo workspace. Na primeira vez com as catorze skills carregadas, na segunda com
+            todas desligadas.</p>
+            <p>Braço com skills: doze sessões, de 05 a 07 de setembro de 2026, mais duas sessões
+            de versionamento. Braço sem skills: doze sessões, de 08 a 14 de setembro.</p>
+          </div>
+        </details>
+        <details>
+          <summary>
+            <span class="k">versão</span>
+            <span class="col"><span class="tt">As skills ficaram congeladas num commit</span></span>
+          </summary>
+          <div class="dbody">
+            <p>A versão testada está fixada em <a href="https://github.com/1pedroosilva/databricks-genie-skills/tree/6c7933e" target="_blank" rel="noopener noreferrer"><code>6c7933e</code></a>,
+            para que qualquer pessoa reconstrua exatamente o que foi avaliado, e para que
+            mudanças posteriores nas skills não contaminem a leitura destes resultados.</p>
+          </div>
+        </details>
+        <details>
+          <summary>
+            <span class="k">medida</span>
+            <span class="col"><span class="tt">O que se observa em cada sessão</span></span>
+          </summary>
+          <div class="dbody">
+            <p>Onde o artefato nasce, com que nome, para que destino escreve, o que fica
+            registrado ao fim, e quanto tempo o agente gastou verificando antes de escrever.</p>
+            <p>Cada sessão tem transcrição completa publicada, incluindo o painel de raciocínio
+            do agente, para que qualquer afirmação aqui possa ser conferida na origem.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="resultado">
+      <p class="marker">o que deu</p>
+      <h2>Cinco perguntas, dois braços</h2>
+      <p class="lede" style="margin-top:.8rem">
+        Cada linha é uma decisão que o agente toma sozinha em toda sessão. Em vermelho, onde os
+        dois braços chegaram ao mesmo resultado, que é onde a skill não alcança.
+      </p>
+      <div class="placar">
+      <div class="plcab"><span></span><span>com skills</span><span>sem skills</span></div>
+      <div class="pl">
+        <span class="q">Onde o arquivo nasce</span>
+        <span class="lado"><i>com</i><b>2 desvios em 12 sessões</b></span>
+        <span class="lado"><i>sem</i><b>desvio na maioria das sessões</b></span>
+      </div>
+      <div class="pl">
+        <span class="q">Para qual catálogo escreve</span>
+        <span class="lado igual"><i>com</i><b>errado</b></span>
+        <span class="lado igual"><i>sem</i><b>errado</b></span>
+      </div>
+      <div class="pl">
+        <span class="q">Quando toca o dado real</span>
+        <span class="lado"><i>com</i><b>passo 11 de 12</b></span>
+        <span class="lado"><i>sem</i><b>passo 03 de 12</b></span>
+      </div>
+      <div class="pl">
+        <span class="q">Quanto tempo verificando</span>
+        <span class="lado"><i>com</i><b>5 min por sessão</b></span>
+        <span class="lado"><i>sem</i><b>de 4 a 18 min</b></span>
+      </div>
+      <div class="pl">
+        <span class="q">Premissa do pedido conferida</span>
+        <span class="lado igual"><i>com</i><b>não</b></span>
+        <span class="lado igual"><i>sem</i><b>não</b></span>
+      </div>
+      </div>
+      <p class="hint">a leitura completa de cada um está nos achados, logo abaixo</p>
+    </section>
+
+    <section id="achados">
+      <p class="marker">o que apareceu</p>
+      <h2>Achados</h2>
+      <p class="lede" style="margin-top:.8rem">
+        Oito padrões que se repetem nas sessões. Cada um abre com a leitura completa e os links
+        para as sessões em que aparece.
+      </p>
+      <div class="acc">
+        <details class="first" id="ach-catalogo">
+          <summary>
+            <span class="k">01</span>
+            <span class="col">
+              <span class="tt">O destino errado aparece nos dois braços</span>
+              <span class="res">Os dois braços escreveram para um catálogo que não existia</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>Com skills, a decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook: o destino inexistente atravessou doze sessões e passou pela revisão de código do passo 08 sem ser apontado. Sem skills, o mesmo destino inexistente saiu de um palpite, main.bronze_aneel, catálogo que nunca existiu no workspace. Nos dois braços, o notebook que acertou foi o que consultou o Unity Catalog antes de escrever.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/com-skills/chats/02-ingestao-bronze-interrupcoes-aneel.html">02 com</a><a href="aneel/sem-skills/chats/02-ingestao-bronze-interrupcoes-aneel.html">02 sem</a><a href="aneel/com-skills/chats/03-ingestao-bronze-indicadores-continuidade.html">03 com</a><a href="aneel/com-skills/chats/04-transformacao-silver-interrupcoes.html">04 com</a><a href="aneel/sem-skills/chats/04-transformacao-silver-interrupcoes.html">04 sem</a><a href="aneel/com-skills/chats/05-qualidade-bronze-regras-silver.html">05 com</a><a href="aneel/com-skills/chats/06-transformacao-silver-indicadores.html">06 com</a><a href="aneel/com-skills/chats/07-tabela-gold-tempo-interrupcao.html">07 com</a></p>
+          </div>
+        </details>
+        <details id="ach-localizacao">
+          <summary>
+            <span class="k">02</span>
+            <span class="col">
+              <span class="tt">A localização do artefato é o que a skill entrega</span>
+              <span class="res">Dois desvios com skills, a regra sem elas</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>Com skills, doze sessões e dois desvios, ambos quando criar o arquivo era meio e não fim do pedido. Sem skills, o desvio é a regra: estrutura própria no passo 01, notebook e documentação nascidos fora da pasta do projeto no passo 02, notebook de análise em docs/ no passo 05, e os dois notebooks de silver fora de notebooks/. Cinco commits de realocação manual até aqui.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/sem-skills/chats/01-inicio-projeto-continuidade-aneel.html">01 sem</a><a href="aneel/sem-skills/chats/02-ingestao-bronze-interrupcoes-aneel.html">02 sem</a><a href="aneel/com-skills/chats/05-qualidade-bronze-regras-silver.html">05 com</a><a href="aneel/sem-skills/chats/05-qualidade-bronze-regras-silver.html">05 sem</a><a href="aneel/sem-skills/chats/06-transformacao-silver-indicadores.html">06 sem</a><a href="aneel/sem-skills/chats/07-tabela-gold-tempo-interrupcao.html">07 sem</a><a href="aneel/sem-skills/chats/11-execucao-pipeline-ponta-a-ponta.html">11 sem</a><a href="aneel/com-skills/chats/12-documentacao-tecnica-negocio.html">12 com</a></p>
+          </div>
+        </details>
+        <details id="ach-empirico">
+          <summary>
+            <span class="k">03</span>
+            <span class="col">
+              <span class="tt">O braço sem skills chegou ao dado real oito passos antes</span>
+              <span class="res">Sem skills, o dado real apareceu no passo 03; com skills, no 11</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>Sem skills, o passo 03 escreveu 5,1 milhões de linhas na bronze, o passo 04 leu a tabela antes de transformar e o passo 05 provou as regras contra os 500 mil registros reais. Com skills, o pipeline só tocou dado real no passo 11, e concluiu em verde porque as validações de volume e de existência de tabela, prescritas pelo próprio agente nas sessões de construção, foram envolvidas em try/except.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/sem-skills/chats/03-ingestao-bronze-indicadores-continuidade.html">03 sem</a><a href="aneel/sem-skills/chats/04-transformacao-silver-interrupcoes.html">04 sem</a><a href="aneel/sem-skills/chats/05-qualidade-bronze-regras-silver.html">05 sem</a><a href="aneel/com-skills/chats/11-execucao-pipeline-ponta-a-ponta.html">11 com</a><a href="aneel/sem-skills/chats/11-execucao-pipeline-ponta-a-ponta.html">11 sem</a></p>
+          </div>
+        </details>
+        <details id="ach-estado-falso">
+          <summary>
+            <span class="k">04</span>
+            <span class="col">
+              <span class="tt">O fechamento registra intenção, não estado</span>
+              <span class="res">Quatro sessões afirmaram um estado que o disco não confirmava</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>Em quatro sessões com skills o log de evolução afirmou um estado que o disco não confirmava: o fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e esse log é o insumo da sessão seguinte. O braço sem skills não tem esse defeito porque não tem fechamento: o registro vive no README, e o passo 06 anunciou a silver de indicadores como pronta sem nunca executá-la.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/com-skills/chats/04-transformacao-silver-interrupcoes.html">04 com</a><a href="aneel/com-skills/chats/05-qualidade-bronze-regras-silver.html">05 com</a><a href="aneel/sem-skills/chats/06-transformacao-silver-indicadores.html">06 sem</a><a href="aneel/com-skills/chats/07-tabela-gold-tempo-interrupcao.html">07 com</a><a href="aneel/com-skills/chats/08-revisao-notebook-ingestao.html">08 com</a><a href="aneel/sem-skills/chats/11-execucao-pipeline-ponta-a-ponta.html">11 sem</a></p>
+          </div>
+        </details>
+        <details id="ach-olhar">
+          <summary>
+            <span class="k">05</span>
+            <span class="col">
+              <span class="tt">O tempo da sessão mede quanto o agente foi olhar</span>
+              <span class="res">As sessões que demoraram são as que acertaram</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>No braço sem skills, a sessão mais curta é a que não consultou nada e errou destino e localização: 4 minutos no passo 02. As longas, de 14, 9 e 18 minutos, são as que vasculharam o workspace e o Unity Catalog, e são as que acertaram. Com skills, as sessões equivalentes levaram 5 minutos cada, com o contexto entregue de saída; nenhuma delas gastou esse tempo verificando o destino, e nenhuma delas o acertou.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/com-skills/chats/02-ingestao-bronze-interrupcoes-aneel.html">02 com</a><a href="aneel/sem-skills/chats/02-ingestao-bronze-interrupcoes-aneel.html">02 sem</a><a href="aneel/com-skills/chats/03-ingestao-bronze-indicadores-continuidade.html">03 com</a><a href="aneel/sem-skills/chats/03-ingestao-bronze-indicadores-continuidade.html">03 sem</a><a href="aneel/com-skills/chats/04-transformacao-silver-interrupcoes.html">04 com</a><a href="aneel/sem-skills/chats/04-transformacao-silver-interrupcoes.html">04 sem</a><a href="aneel/sem-skills/chats/05-qualidade-bronze-regras-silver.html">05 sem</a></p>
+          </div>
+        </details>
+        <details id="ach-premissa">
+          <summary>
+            <span class="k">06</span>
+            <span class="col">
+              <span class="tt">A premissa do pedido não é verificada contra o código</span>
+              <span class="res">A afirmação do usuário virou documentação sem passar pelo código</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>Nos dois braços a afirmação do usuário entrou na documentação sem passar pelo notebook. Com skills, o agente abriu o arquivo, registrou no raciocínio que a chave não correspondia ao que fora dito, atribuiu a divergência a uma simplificação do usuário e documentou a mudança como fato. Sem skills, o notebook não chegou a ser aberto: o raciocínio anota que o arquivo já foi alterado porque o usuário confirmou, e os cinco componentes impactados foram mapeados a partir do enunciado.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/com-skills/chats/10-mudanca-chave-silver.html">10 com</a><a href="aneel/sem-skills/chats/10-mudanca-chave-silver.html">10 sem</a></p>
+          </div>
+        </details>
+        <details id="ach-escopo-revisao">
+          <summary>
+            <span class="k">07</span>
+            <span class="col">
+              <span class="tt">A revisão de código não olha para fora do arquivo</span>
+              <span class="res">Vinte e nove problemas apontados, nenhum fora do arquivo</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>Com skills, dezesseis problemas reais no notebook 101, nenhum deles o catálogo inexistente que impede a primeira escrita. Sem skills, treze problemas no mesmo notebook, cinco deles marcados como bloqueadores de produção, e de novo o destino que não existe não está entre eles. Nos dois casos a revisão é minuciosa dentro das fronteiras do arquivo e cega para o que está fora.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/com-skills/chats/08-revisao-notebook-ingestao.html">08 com</a><a href="aneel/sem-skills/chats/08-revisao-notebook-ingestao.html">08 sem</a></p>
+          </div>
+        </details>
+        <details id="ach-carga-driver">
+          <summary>
+            <span class="k">08</span>
+            <span class="col">
+              <span class="tt">A estratégia de carga só aparece quando a memória estoura</span>
+              <span class="res">O caminho de entrada só foi decidido quando a memória estourou</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>O caminho de entrada nunca foi definido na construção, nos dois braços. Com skills, a landing zone em Volume só foi adotada depois de o serverless estourar com 9,7 milhões de linhas. Sem skills, foram quatro estratégias até a mesma solução (FUSE do DBFS, filesystem local, pandas em memória e de volta ao DBFS), e a última tentativa repetiu o caminho que o próprio agente havia diagnosticado como indisponível quarenta minutos antes.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/com-skills/chats/11-execucao-pipeline-ponta-a-ponta.html">11 com</a><a href="aneel/sem-skills/chats/11-execucao-pipeline-ponta-a-ponta.html">11 sem</a></p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="notas">
+      <p class="marker">fora do esperado</p>
+      <h2>Notas</h2>
+      <p class="lede" style="margin-top:.8rem">
+        Três comportamentos que não entram nos padrões acima e valem registro próprio.
+      </p>
+      <div class="acc">
+        <details class="first" id="ach-instrucoes">
+          <summary>
+            <span class="k">01</span>
+            <span class="col">
+              <span class="tt">O agente reescreveu o próprio arquivo de instruções</span>
+              <span class="res">48 linhas acrescentadas a um arquivo que proíbe exatamente isso</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>Pedido para registrar o que fora feito na sessão, o agente acrescentou 48 linhas descrevendo o projeto ao arquivo de instruções: schemas, tabela e campos, dicionário dos indicadores e padrões de desenvolvimento. O arquivo proíbe isso em duas linhas, e as duas continuam intactas logo acima do que ele escreveu. O diff é puramente aditivo; nada existente foi alterado.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/sem-skills/chats/07-tabela-gold-tempo-interrupcao.html">07 sem</a></p>
+          </div>
+        </details>
+        <details id="ach-verde-por-decisao">
+          <summary>
+            <span class="k">02</span>
+            <span class="col">
+              <span class="tt">A falha virou verde por decisão, não por acidente</span>
+              <span class="res">A task fecha em verde sem baixar um byte</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>Diante de um 404 na fonte da ANEEL, o agente escreveu uma condição que pula a ingestão quando a tabela já existe e encerra o notebook com sucesso. A justificativa está na própria resposta: encontrar a URL correta levaria tempo. A task passou a fechar em verde sem baixar um byte, sobre dados de doze dias antes.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/sem-skills/chats/11-execucao-pipeline-ponta-a-ponta.html">11 sem</a></p>
+          </div>
+        </details>
+        <details id="ach-devolucao">
+          <summary>
+            <span class="k">03</span>
+            <span class="col">
+              <span class="tt">A decisão volta para o operador quando não há saída fácil</span>
+              <span class="res">Quatro devoluções ao operador contra instrução explícita</span>
+            </span>
+          </summary>
+          <div class="dbody">
+            <p>Quatro vezes na mesma sessão, contra instrução explícita de não pedir confirmação: três opções em que nenhuma era o agente resolver, um pedido de autorização para procurar a URL que era o trabalho dele, e o fecho pedindo que o operador colasse a célula corrigida à mão.</p>
+            <p class="sess"><b>nas sessões</b><a href="aneel/sem-skills/chats/11-execucao-pipeline-ponta-a-ponta.html">11 sem</a></p>
+          </div>
+        </details>
+      </div>
+      <p class="go" id="gocommits"></p>
+    </section>
+
+    <section id="commits">
+      <p class="marker">evidência complementar</p>
+      <h2>A sessão de commits</h2>
+      <p class="lede" style="margin-top:.8rem">
+        Um chat único concentrou todas as operações de Git do projeto, atravessando os passos
+        numerados. Ele existe porque a skill <code>git-workflow</code> não é acionada por nenhum
+        passo da sequência.
+      </p>
+      <p style="margin-top:1.1rem">
+        A evidência aqui é dupla. O chat mostra o processo de decisão, e o histórico do
+        repositório mostra o resultado: escopo dos commits, formato das mensagens, e a separação
+        entre o que o agente entregou e o que precisou de correção manual.
+      </p>
+      <p class="go" id="gocommits"></p>
+    </section>
+
+    <section id="temas">
+      <p class="marker">as sessões</p>
+      <h2>Onde o teste foi aplicado</h2>
+      <p class="lede" style="margin-top:.8rem">
+        Cada tema é um projeto inteiro, construído duas vezes. As sessões ficam pareadas passo a
+        passo, e cada uma abre com o objetivo, as skills que entraram, o que saiu e a transcrição.
+      </p>
+      <a class="temacard" href="aneel/">
+        <div class="top">
+          <h3>Continuidade de fornecimento de energia</h3>
+          <span class="sel">tema 01 · completo</span>
+        </div>
+        <p>Um pipeline em arquitetura medalhão sobre dados públicos da ANEEL, da ingestão do
+        arquivo anual de interrupções até a tabela analítica de tempo de interrupção por
+        distribuidora e mês.</p>
+        <div class="n">
+          <span><b>24</b>sessões</span>
+          <span><b>12</b>passos pareados</span>
+          <span><b>2</b>braços</span>
+        </div>
+      </a>
+      <div class="aguarda">tema 02 · em execução · outra base, o mesmo desenho</div>
+    </section>
+
+    <section id="limites">
+      <p class="marker">o que este teste não prova</p>
+      <h2>Limites declarados</h2>
+      <div class="acc">
+        <details class="first">
+          <summary>
+            <span class="k">ambiente</span>
+            <span class="col"><span class="tt">Os dois braços rodaram no mesmo Unity Catalog</span></span>
+          </summary>
+          <div class="dbody"><p>Do passo 03 em diante, o braço sem skills reusou o schema criado pelo outro, o que contamina parte do acerto de destino.</p></div>
+        </details>
+        <details>
+          <summary>
+            <span class="k">escopo</span>
+            <span class="col"><span class="tt">Uma das catorze skills ficou fora</span></span>
+          </summary>
+          <div class="dbody"><p>A skill-patterns trata de escrever skills, não de engenharia de dados. Não entrou no teste.</p></div>
+        </details>
+        <details>
+          <summary>
+            <span class="k">amostra</span>
+            <span class="col"><span class="tt">Um projeto, um agente, um operador</span></span>
+          </summary>
+          <div class="dbody"><p>Os padrões descritos aqui são observações sobre um caso, não medidas estatísticas. O segundo tema existe para testar se eles se repetem.</p></div>
+        </details>
+        <details>
+          <summary>
+            <span class="k">leitura</span>
+            <span class="col"><span class="tt">Duração de sessão não é medida de esforço</span></span>
+          </summary>
+          <div class="dbody"><p>O tempo aparece aqui como sinal de quanto o agente foi verificar antes de escrever, e é lido junto com o que a sessão produziu, nunca sozinho.</p></div>
+        </details>
+      </div>
+      <p class="go">
+        <a href="https://github.com/1pedroosilva/genie-skills-eval" target="_blank" rel="noopener noreferrer">repositório da avaliação</a>
+        <a href="https://1pedroosilva.github.io/projeto-databricks-skills/">voltar para o projeto</a>
+      </p>
+    </section>
+
+    <div class="leitor" id="leitor" role="dialog" aria-modal="true" aria-label="Transcrição da sessão">
+      <div class="fundo" data-fechar></div>
+      <div class="caixa">
+        <div class="topo-caixa">
+          <span id="leitorTit"></span>
+          <span class="dir">
+            <a id="leitorNova" href="#" target="_blank" rel="noopener noreferrer">nova aba &#8599;</a>
+            <button type="button" data-fechar>fechar</button>
+          </span>
+        </div>
+        <iframe id="leitorFrame" title="Transcrição da sessão" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <footer>
+      <p><a href="https://1pedroosilva.github.io/">pedro oliveira</a><a href="https://www.linkedin.com/in/1pedroosilva/" target="_blank" rel="noopener noreferrer">linkedin</a><a href="https://github.com/1pedroosilva" target="_blank" rel="noopener noreferrer">github</a></p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+const PASSOS = [
+  { n:1,  titulo:"Estrutura inicial do projeto" },
+  { n:2,  titulo:"Ingestão bronze: interrupções" },
+  { n:3,  titulo:"Ingestão bronze: indicadores" },
+  { n:4,  titulo:"Transformação silver: interrupções" },
+  { n:5,  titulo:"Investigação de qualidade do bronze" },
+  { n:6,  titulo:"Transformação silver: indicadores" },
+  { n:7,  titulo:"Tabela gold: tempo de interrupção" },
+  { n:8,  titulo:"Revisão de código do notebook 101" },
+  { n:9,  titulo:"Documentação do notebook gold" },
+  { n:10, titulo:"Mudança de chave da tabela silver" },
+  { n:11, titulo:"Execução do pipeline de ponta a ponta" },
+  { n:12, titulo:"Documentação técnica e de negócio" }
+];
+
+const REPO = "https://github.com/1pedroosilva/genie-skills-eval";
+const RAIZ = "aneel/com-skills/projeto/";
+
+const RAIZ_SEM = "aneel/sem-skills/projeto/";
+
+/* artefato: { nome, sha, path?, dir?, raiz?, marca? }
+   com path  → abre o arquivo exatamente como estava naquele commit
+   sem path  → abre o commit
+   raiz      → prefixo do caminho; omitido usa RAIZ (braço com skills)  */
+const SESSOES = [
+  { passo:1, arm:"com", duracao:4, palavras:5998, objetivo:"Verificar se um pedido de projeto novo aciona sozinho o protocolo de abertura: entrevista de definições, esqueleto de pastas, documentos de gestão e criação dos schemas.", file:"aneel/com-skills/chats/01-inicio-projeto-continuidade-aneel.html",
+    quando:"05/09/2026 21:50",
+    skills:["project-context","asset-placement","naming-conventions","unity-catalog-naming","technical-writing"],
+    artefatos:[
+      { nome:"00_documentacao/ ,  quatro documentos de gestão", sha:"2c66e3d", path:"00_documentacao", dir:true },
+      { nome:"schemas proj_aneel_cont_01..03 no Unity Catalog", sha:"2c66e3d" }
+    ],
+    achados:[] },
+
+  { passo:2, arm:"com", duracao:5, palavras:1336, objetivo:"Verificar se o primeiro notebook do projeto sai conforme as convenções de estrutura, nomenclatura e camada bronze, sem o contexto do projeto ser repetido no pedido.", file:"aneel/com-skills/chats/02-ingestao-bronze-interrupcoes-aneel.html",
+    quando:"06/09/2026 00:39",
+    skills:["project-context","asset-placement","naming-conventions","notebook-structure","medallion-architecture"],
+    artefatos:[
+      { nome:"101_ingestao_aneel_interrupcoes.py", sha:"d6c0cfc", path:"01_bronze/101_ingestao_aneel_interrupcoes.py.py" }
+    ],
+    achados:["catalogo","olhar"] },
+
+  { passo:3, arm:"com", duracao:5, palavras:1415, objetivo:"Verificar se o segundo notebook da mesma camada sai consistente com o primeiro em nomes, metadados de rastreabilidade e estratégia de gravação.", file:"aneel/com-skills/chats/03-ingestao-bronze-indicadores-continuidade.html",
+    quando:"06/09/2026 01:14",
+    skills:["project-context","asset-placement","naming-conventions","notebook-structure","medallion-architecture"],
+    artefatos:[
+      { nome:"102_indicadores_continuidade.py", sha:"ca01a26", path:"01_bronze/102_indicadores_continuidade.py.py" }
+    ],
+    achados:["catalogo","olhar"] },
+
+  { passo:4, arm:"com", duracao:5, palavras:1563, objetivo:"Verificar se a fronteira entre camadas é respeitada na passagem de bronze para silver e se a estratégia de gravação escolhida garante idempotência.", file:"aneel/com-skills/chats/04-transformacao-silver-interrupcoes.html",
+    quando:"06/09/2026 01:42",
+    skills:["project-context","notebook-structure","naming-conventions","medallion-architecture","technical-writing","data-quality-guardrails"],
+    artefatos:[
+      { nome:"201_interrupcoes_distribuicao.py", sha:"0f3f320", path:"02_silver/201_interrupcoes_distribuicao.py.py" }
+    ],
+    achados:["catalogo","estado-falso","olhar"] },
+
+  { passo:5, arm:"com", duracao:14, palavras:2417, objetivo:"Verificar onde o agente coloca artefatos que ele mesmo decide criar, quando a criação do notebook é meio e não fim do pedido, e sem confirmação a pedir.", file:"aneel/com-skills/chats/05-qualidade-bronze-regras-silver.html",
+    quando:"06/09/2026 09:42",
+    skills:["project-context","eda-and-validation","data-quality-guardrails","naming-conventions","notebook-structure"],
+    artefatos:[
+      { nome:"VAL_001_regras_silver_interrupcoes.py", sha:"a08464a", path:"05_validacoes/VAL_001_regras_silver_interrupcoes.py.py" },
+      { nome:"EDA_001_qualidade_interrupcoes_bronze.py", sha:"e42cb8a", path:"04_investigacoes/EDA_001_qualidade_interrupcoes_bronze.py.py", marca:"correção manual" }
+    ],
+    achados:["catalogo","estado-falso","localizacao"] },
+
+  { passo:6, arm:"com", duracao:5, palavras:1430, objetivo:"Verificar se a segunda transformação silver herda as decisões já registradas no projeto e o destino do bronze correspondente.", file:"aneel/com-skills/chats/06-transformacao-silver-indicadores.html",
+    quando:"06/09/2026 13:25",
+    skills:["project-context","notebook-structure","naming-conventions","medallion-architecture","data-quality-guardrails"],
+    artefatos:[
+      { nome:"202_indicadores_continuidade.py", sha:"fdf97f8", path:"02_silver/202_indicadores_continuidade.py.py" }
+    ],
+    achados:["catalogo"] },
+
+  { passo:7, arm:"com", duracao:10, palavras:1527, objetivo:"Verificar se a camada gold é construída a partir da tabela silver correta, com agregação e guardrails declarados.", file:"aneel/com-skills/chats/07-tabela-gold-tempo-interrupcao.html",
+    quando:"06/09/2026 14:36",
+    skills:["project-context","naming-conventions","notebook-structure","asset-placement","medallion-architecture","data-quality-guardrails","technical-writing","unity-catalog-naming"],
+    artefatos:[
+      { nome:"301_tempo_interrupcao_distribuidora_mes.py", sha:"bbd9a90", path:"03_gold/301_tempo_interrupcao_distribuidora_mes.py.py" }
+    ],
+    achados:["catalogo","estado-falso"] },
+
+  { passo:8, arm:"com", duracao:7, palavras:1972, objetivo:"Verificar o alcance da revisão de código: o que ela identifica quando avalia um notebook contra o protocolo de produção.", file:"aneel/com-skills/chats/08-revisao-notebook-ingestao.html",
+    quando:"06/09/2026 15:23",
+    skills:["code-review","data-quality-guardrails","notebook-structure"],
+    artefatos:[
+      { nome:"16 problemas identificados; nenhuma correção aplicada", sha:"3c3233d" }
+    ],
+    achados:["escopo-revisao","estado-falso"] },
+
+  { passo:9, arm:"com", duracao:4, palavras:1346, objetivo:"Verificar se a documentação gerada é verificável no próprio código e se o registro da sessão reflete o que de fato mudou.", file:"aneel/com-skills/chats/09-documentacao-notebook-gold.html",
+    quando:"06/09/2026 15:51",
+    skills:["artifact-documentation","technical-writing"],
+    artefatos:[
+      { nome:"301_tempo_interrupcao_distribuidora_mes.py, documentação reescrita", sha:"c6f718b", path:"03_gold/301_tempo_interrupcao_distribuidora_mes.py.py", marca:"reaplicado após rejeição" },
+      { nome:"registro da sessão em evolucao_projeto.md", sha:"cb4be1e" }
+    ],
+    achados:[] },
+
+  { passo:10, arm:"com", duracao:5, palavras:1420, objetivo:"Verificar o que o agente faz com uma premissa do usuário que o código não confirma: se checa o artefato antes de propagar a mudança pela documentação do projeto.", file:"aneel/com-skills/chats/10-mudanca-chave-silver.html",
+    quando:"07/09/2026 02:49",
+    skills:["docs-sync"],
+    artefatos:[
+      { nome:"decisoes_arquiteturais.md, DEC-005 sobre a nova chave natural", sha:"47bef8e" },
+      { nome:"registro da sessão em evolucao_projeto.md", sha:"47bef8e" }
+    ],
+    achados:["premissa"] },
+
+  { passo:11, arm:"com", duracao:69, palavras:59106, objetivo:"Primeiro contato do código com dado real: criar um job que execute o pipeline na ordem das camadas e fazê-lo rodar. Mede o custo, em iterações, de levar à operação o que dez sessões produziram sem tocar a fonte.", file:"aneel/com-skills/chats/11-execucao-pipeline-ponta-a-ponta.html",
+    quando:"07/09/2026 17:12",
+    skills:[],
+    artefatos:[
+      { nome:"correções nos cinco notebooks do pipeline", sha:"4f05fc7" },
+      { nome:"registro da sessão em evolucao_projeto.md", sha:"4f05fc7" }
+    ],
+    achados:["empirico","carga-driver"] },
+
+  { passo:12, arm:"com", duracao:8, palavras:2050, objetivo:"Verificar se a documentação produzida se sustenta no que existe no ambiente: procedência das afirmações, descarte de material narrativo, tratamento de divergências e declaração de lacunas.", file:"aneel/com-skills/chats/12-documentacao-tecnica-negocio.html",
+    quando:"07/09/2026 20:07",
+    skills:["project-context","artifact-documentation","technical-writing"],
+    artefatos:[
+      { nome:"documentação técnica em tecnica/arquitetura_pipeline.md", sha:"1520828" },
+      { nome:"documentação de negócio em negocio/visao_geral_projeto.md", sha:"1520828" },
+      { nome:"registro da sessão em evolucao_projeto.md", sha:"1520828" }
+    ],
+    achados:["localizacao"] },
+
+  { passo:1, arm:"sem", duracao:5, palavras:1042, objetivo:"Mesmo pedido de abertura do passo 01, com as skills desligadas: verificar que estrutura de pastas, que nomes e que documentos de gestão o agente produz quando nada no ambiente define a convenção do projeto.", file:"aneel/sem-skills/chats/01-inicio-projeto-continuidade-aneel.html",
+    quando:"08/09/2026 20:02",
+    skills:[],
+    artefatos:[
+      { nome:"notebooks/ ,  três placeholders numerados por etapa", sha:"3dafcea", path:"notebooks", dir:true, raiz:RAIZ_SEM },
+      { nome:"README.md, config.yaml, dados/ e docs/dicionario_dados.md", sha:"3dafcea" }
+    ],
+    achados:["localizacao"] },
+
+  { passo:2, arm:"sem", duracao:4, palavras:1335, objetivo:"Mesmo pedido de ingestão bronze: verificar onde o notebook nasce, com que nome e para que destino escreve quando nenhuma convenção de localização, nomenclatura ou catálogo está carregada.", file:"aneel/sem-skills/chats/02-ingestao-bronze-interrupcoes-aneel.html",
+    quando:"08/09/2026 22:41",
+    skills:[],
+    artefatos:[
+      { nome:"Ingestão ANEEL - Interrupções de Energia.py", sha:"d998d5d", path:"docs/Ingestão ANEEL - Interrupções de Energia.py", raiz:RAIZ_SEM, marca:"realocação manual" },
+      { nome:"PROJETO-Continuidade-Fornecimento.md", sha:"d998d5d", path:"docs/PROJETO-Continuidade-Fornecimento.md", raiz:RAIZ_SEM, marca:"realocação manual" }
+    ],
+    achados:["catalogo","localizacao","olhar"] },
+
+  { passo:3, arm:"sem", duracao:14, palavras:3719, objetivo:"Mesmo pedido para a segunda fonte da bronze: verificar se o agente reencontra sozinho o projeto e o destino já em uso, com o workspace como única fonte de contexto.", file:"aneel/sem-skills/chats/03-ingestao-bronze-indicadores-continuidade.html",
+    quando:"11/09/2026 00:23",
+    skills:[],
+    artefatos:[
+      { nome:"Ingestão ANEEL - Indicadores Coletivos de Continuidade.py", sha:"bef320c", path:"notebooks/Ingestão ANEEL - Indicadores Coletivos de Continuidade.py", raiz:RAIZ_SEM },
+      { nome:"5.108.332 registros na bronze; PROJETO, config.yaml e dicionário atualizados", sha:"bef320c" }
+    ],
+    achados:["empirico","olhar"] },
+
+  { passo:4, arm:"sem", duracao:9, palavras:4623, objetivo:"Mesmo pedido de transformação silver, agora com o destino documentado na sessão anterior apontando para um catálogo que não existe: verificar o que o agente faz para descobrir a origem real antes de transformar.", file:"aneel/sem-skills/chats/04-transformacao-silver-interrupcoes.html",
+    quando:"12/09/2026 01:59",
+    skills:[],
+    artefatos:[
+      { nome:"PROJETO-Continuidade-Fornecimento.md, camada silver", sha:"35f33bd", path:"docs/PROJETO-Continuidade-Fornecimento.md", raiz:RAIZ_SEM },
+      { nome:"dicionario_dados.md ,  schema da silver, 34 colunas", sha:"35f33bd", path:"docs/dicionario_dados.md", raiz:RAIZ_SEM },
+      { nome:"Silver - Interrupções de Energia.py, 495.350 registros", sha:"fc76680", path:"notebooks/Silver - Interrupções de Energia.py", raiz:RAIZ_SEM, marca:"realocação manual" }
+    ],
+    achados:["catalogo","empirico","olhar"] },
+
+  { passo:5, arm:"sem", duracao:18, palavras:4205, objetivo:"Mesmo pedido de investigação de qualidade, com a prova das regras como parte do enunciado: verificar onde o agente coloca o notebook que ele mesmo decide criar quando a criação é meio, e não fim, do pedido.", file:"aneel/sem-skills/chats/05-qualidade-bronze-regras-silver.html",
+    quando:"12/09/2026 23:46",
+    skills:[],
+    artefatos:[
+      { nome:"Análise de Qualidade - Interrupções Bronze.py", sha:"5ed4c15", path:"docs/Análise de Qualidade - Interrupções Bronze.py", raiz:RAIZ_SEM, marca:"nasceu em docs/" },
+      { nome:"quatro regras e três provas em PROJETO e README; 491.822 de 500.000 registros aproveitáveis", sha:"3c597e5" }
+    ],
+    achados:["localizacao","empirico","olhar"] },
+
+  { passo:6, arm:"sem", duracao:5, palavras:2257, objetivo:"Mesma segunda transformação silver: verificar se o agente herda a chave, o schema de destino e o padrão de nomes que ele próprio estabeleceu nas sessões anteriores, sem nada que os registre além do README.", file:"aneel/sem-skills/chats/06-transformacao-silver-indicadores.html",
+    quando:"13/09/2026 01:18",
+    skills:[],
+    artefatos:[
+      { nome:"Silver - Indicadores de Continuidade.py", sha:"0df6702", path:"notebooks/Silver - Indicadores de Continuidade.py", raiz:RAIZ_SEM, marca:"realocação manual" },
+      { nome:"README atualizado; notebook entregue sem execução", sha:"656e255" }
+    ],
+    achados:["estado-falso","localizacao"] },
+
+  { passo:7, arm:"sem", duracao:6, palavras:1608, objetivo:"Mesma primeira tabela gold: verificar de que camada o agente parte, que grão escolhe e onde grava, com a arquitetura de camadas existindo apenas nos notebooks que ele mesmo escreveu.", file:"aneel/sem-skills/chats/07-tabela-gold-tempo-interrupcao.html",
+    quando:"13/09/2026 08:58",
+    skills:[],
+    artefatos:[
+      { nome:"Gold - Tempo Interrupção por Distribuidora e Mês.py", sha:"90e4834", path:"notebooks/Gold - Tempo Interrupção por Distribuidora e Mês.py", raiz:RAIZ_SEM, marca:"realocação manual" },
+      { nome:"48 linhas sobre o projeto acrescentadas ao arquivo de instruções", sha:"6b104fc" }
+    ],
+    achados:["localizacao","instrucoes"] },
+
+  { passo:8, arm:"sem", duracao:3, palavras:1326, objetivo:"Mesma revisão de código do notebook de ingestão: verificar que frentes o agente cobre sozinho e se o destino inexistente, que impede a primeira escrita, aparece entre os problemas.", file:"aneel/sem-skills/chats/08-revisao-notebook-ingestao.html",
+    quando:"13/09/2026 15:03",
+    skills:[],
+    artefatos:[
+      { nome:"treze problemas registrados no README, cinco como bloqueadores", sha:"de1d3da" }
+    ],
+    achados:["escopo-revisao"] },
+
+  { passo:9, arm:"sem", duracao:4, palavras:920, objetivo:"Mesma documentação do notebook gold: verificar a procedência do que é afirmado e onde o documento nasce.", file:"aneel/sem-skills/chats/09-documentacao-notebook-gold.html",
+    quando:"13/09/2026 15:50",
+    skills:[],
+    artefatos:[
+      { nome:"docs/Gold - Tempo Interrupção - Documentação.md", sha:"7f33f78", path:"docs/Gold - Tempo Interrupção - Documentação.md", raiz:RAIZ_SEM, marca:"primeiro artefato nascido na pasta do projeto" }
+    ],
+    achados:[] },
+
+  { passo:10, arm:"sem", duracao:5, palavras:1794, objetivo:"Mesma mudança de chave da silver: verificar se a premissa do pedido é conferida contra o notebook antes de virar documentação.", file:"aneel/sem-skills/chats/10-mudanca-chave-silver.html",
+    quando:"13/09/2026 17:44",
+    skills:[],
+    artefatos:[
+      { nome:"cinco componentes impactados registrados em PROJETO-Continuidade-Fornecimento.md", sha:"e6fb608", path:"docs/PROJETO-Continuidade-Fornecimento.md", raiz:RAIZ_SEM }
+    ],
+    achados:["premissa"] },
+
+  { passo:11, arm:"sem", duracao:297, palavras:37546, objetivo:"Primeiro contato do código com dado real: criar o job, fazê-lo rodar e medir o custo, em iterações, de levar à operação o que dez sessões produziram sem tocar a fonte.", file:"aneel/sem-skills/chats/11-execucao-pipeline-ponta-a-ponta.html",
+    quando:"13/09/2026 18:04",
+    skills:[],
+    artefatos:[
+      { nome:"correções nos notebooks de ingestão, silver e gold", sha:"3bb4601" },
+      { nome:"estatísticas das cinco tabelas e EDA no README", sha:"3bb4601" }
+    ],
+    achados:["empirico","carga-driver","estado-falso","localizacao","verde-por-decisao","devolucao"] },
+
+  {passo:12,arm:"sem",duracao:null,palavras:1682,objetivo:"Verificar como o agente levanta os ativos em operação e produz a documentação técnica e de negócio do projeto sem instrução prévia sobre formato ou destino.",file:"aneel/sem-skills/chats/12-documentacao-tecnica-negocio.html", quando:null, skills:[], artefatos:[], achados:[] }
+];
+
+const COMPLEMENTAR = {
+  titulo:"Sessão contínua de commits",
+  meta:"fora da sequência pareada · chat único, encerrado · duas partes",
+  texto:"Chat único usado para todas as operações de Git do projeto, atravessando os passos numerados. "+
+        "Exercita a skill git-workflow, que nenhum passo da sequência aciona. A evidência é dupla: "+
+        "o chat mostra o processo de decisão, e o histórico do repositório mostra o resultado ,  "+
+        "escopo dos commits, formato das mensagens e a separação entre o que o agente entregou e "+
+        "o que precisou de correção manual.",
+  partes:[
+    { rotulo:"Parte 1", file:"aneel/com-skills/chats/chat-commits-git-parte-1.html" },
+    { rotulo:"Parte 2", file:"aneel/com-skills/chats/chat-commits-git-parte-2.html" }
+  ],
+  historico:"https://github.com/1pedroosilva/genie-skills-eval/commits/main"
+};
+
+const ACHADOS = [
+  { id:"catalogo", titulo:"O destino errado aparece nos dois braços",
+    texto:"Com skills, a decisão de catálogo foi registrada na primeira sessão e não corrigiu nenhum notebook: o destino inexistente atravessou doze sessões e passou pela revisão de código do passo 08 sem ser apontado. Sem skills, o mesmo destino inexistente saiu de um palpite, main.bronze_aneel, catálogo que nunca existiu no workspace. Nos dois braços, o notebook que acertou foi o que consultou o Unity Catalog antes de escrever." },
+  { id:"localizacao", titulo:"A localização do artefato é o que a skill entrega",
+    texto:"Com skills, doze sessões e dois desvios, ambos quando criar o arquivo era meio e não fim do pedido. Sem skills, o desvio é a regra: estrutura própria no passo 01, notebook e documentação nascidos fora da pasta do projeto no passo 02, notebook de análise em docs/ no passo 05, e os dois notebooks de silver fora de notebooks/. Cinco commits de realocação manual até aqui." },
+  { id:"empirico", titulo:"O braço sem skills chegou ao dado real oito passos antes",
+    texto:"Sem skills, o passo 03 escreveu 5,1 milhões de linhas na bronze, o passo 04 leu a tabela antes de transformar e o passo 05 provou as regras contra os 500 mil registros reais. Com skills, o pipeline só tocou dado real no passo 11, e concluiu em verde porque as validações de volume e de existência de tabela, prescritas pelo próprio agente nas sessões de construção, foram envolvidas em try/except." },
+  { id:"estado-falso", titulo:"O fechamento registra intenção, não estado",
+    texto:"Em quatro sessões com skills o log de evolução afirmou um estado que o disco não confirmava: o fechamento reconstrói a sessão a partir do resumo de contexto em vez de verificar os arquivos, e esse log é o insumo da sessão seguinte. O braço sem skills não tem esse defeito porque não tem fechamento: o registro vive no README, e o passo 06 anunciou a silver de indicadores como pronta sem nunca executá-la." },
+  { id:"olhar", titulo:"O tempo da sessão mede quanto o agente foi olhar",
+    texto:"No braço sem skills, a sessão mais curta é a que não consultou nada e errou destino e localização: 4 minutos no passo 02. As longas, de 14, 9 e 18 minutos, são as que vasculharam o workspace e o Unity Catalog, e são as que acertaram. Com skills, as sessões equivalentes levaram 5 minutos cada, com o contexto entregue de saída; nenhuma delas gastou esse tempo verificando o destino, e nenhuma delas o acertou." },
+  { id:"premissa", titulo:"A premissa do pedido não é verificada contra o código",
+    texto:"Nos dois braços a afirmação do usuário entrou na documentação sem passar pelo notebook. Com skills, o agente abriu o arquivo, registrou no raciocínio que a chave não correspondia ao que fora dito, atribuiu a divergência a uma simplificação do usuário e documentou a mudança como fato. Sem skills, o notebook não chegou a ser aberto: o raciocínio anota que o arquivo já foi alterado porque o usuário confirmou, e os cinco componentes impactados foram mapeados a partir do enunciado." },
+  { id:"escopo-revisao", titulo:"A revisão de código não olha para fora do arquivo",
+    texto:"Com skills, dezesseis problemas reais no notebook 101, nenhum deles o catálogo inexistente que impede a primeira escrita. Sem skills, treze problemas no mesmo notebook, cinco deles marcados como bloqueadores de produção, e de novo o destino que não existe não está entre eles. Nos dois casos a revisão é minuciosa dentro das fronteiras do arquivo e cega para o que está fora." },
+  { id:"carga-driver", titulo:"A estratégia de carga só aparece quando a memória estoura",
+    texto:"O caminho de entrada nunca foi definido na construção, nos dois braços. Com skills, a landing zone em Volume só foi adotada depois de o serverless estourar com 9,7 milhões de linhas. Sem skills, foram quatro estratégias até a mesma solução (FUSE do DBFS, filesystem local, pandas em memória e de volta ao DBFS), e a última tentativa repetiu o caminho que o próprio agente havia diagnosticado como indisponível quarenta minutos antes." }
+];
+
+const NOTAS = [
+  { id:"instrucoes", titulo:"O agente reescreveu o próprio arquivo de instruções",
+    texto:"Pedido para registrar o que fora feito na sessão, o agente acrescentou 48 linhas descrevendo o projeto ao arquivo de instruções: schemas, tabela e campos, dicionário dos indicadores e padrões de desenvolvimento. O arquivo proíbe isso em duas linhas, e as duas continuam intactas logo acima do que ele escreveu. O diff é puramente aditivo; nada existente foi alterado." },
+  { id:"verde-por-decisao", titulo:"A falha virou verde por decisão, não por acidente",
+    texto:"Diante de um 404 na fonte da ANEEL, o agente escreveu uma condição que pula a ingestão quando a tabela já existe e encerra o notebook com sucesso. A justificativa está na própria resposta: encontrar a URL correta levaria tempo. A task passou a fechar em verde sem baixar um byte, sobre dados de doze dias antes." },
+  { id:"devolucao", titulo:"A decisão volta para o operador quando não há saída fácil",
+    texto:"Quatro vezes na mesma sessão, contra instrução explícita de não pedir confirmação: três opções em que nenhuma era o agente resolver, um pedido de autorização para procurar a URL que era o trabalho dele, e o fecho pedindo que o operador colasse a célula corrigida à mão." }
+];
+
+
+/* ------------------------------------------------------------------ */
+
+const faixa = w => w < 1500 ? "curta" : w < 2600 ? "média" : "longa";
+
+const SKILLS = {
+  "artifact-documentation":"documentar artefato técnico existente",
+  "asset-placement":"onde criar cada arquivo no workspace",
+  "code-review":"revisar código em quatro frentes",
+  "data-quality-guardrails":"validações que interrompem o pipeline",
+  "docs-sync":"sincronizar documentos após mudança",
+  "eda-and-validation":"ciclo de descoberta e verificação",
+  "git-workflow":"escopo e mensagem de commit",
+  "medallion-architecture":"estratégia entre bronze, silver e gold",
+  "naming-conventions":"nomes de notebooks, tabelas e variáveis",
+  "notebook-structure":"ordem fixa das células iniciais",
+  "project-context":"abrir, retomar e fechar projeto",
+  "skill-patterns":"escrever e auditar skills",
+  "technical-writing":"redação técnica versionada",
+  "unity-catalog-naming":"nomes de schema, tabela e volume"
+};
+const SKILLS_SHA = "6c7933e";
+const SKILLS_REPO = "https://github.com/1pedroosilva/databricks-genie-skills";
+/* ------------------------------------------------------------------ */
+/* endereço das transcrições. muda numa linha quando o eval migrar.     */
+const PAGES = "https://1pedroosilva.github.io/genie-skills-eval/";
+const urlChat = f => PAGES + f;
+const urlArt  = a => a.path
+  ? `${REPO}/${a.dir ? "tree" : "blob"}/${a.sha}/${encodeURI((a.raiz !== undefined ? a.raiz : RAIZ) + a.path)}`
+  : `${REPO}/commit/${a.sha}`;
+const esc = t => String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const acha = id => ACHADOS.find(a=>a.id===id) || NOTAS.find(a=>a.id===id);
+
+/* matriz */
+const linhas = document.getElementById("linhas");
+  if(linhas){
+linhas.innerHTML = PASSOS.map(p=>{
+  const cel = arm => {
+    const s = SESSOES.find(x=>x.passo===p.n && x.arm===arm);
+    return s
+      ? `<button type="button" class="cel" data-p="${p.n}" data-a="${arm}" aria-pressed="false">${s.duracao} min</button>`
+      : `<span class="cel vazia">&#183;</span>`;
+  };
+  return `<div class="lin" data-lin="${p.n}"><span class="tit"><i>${String(p.n).padStart(2,"0")}</i>${esc(p.titulo)}</span>${cel("com")}${cel("sem")}</div>`;
+}).join("");
+
+const det = document.getElementById("det");
+let aberto = null;
+
+function fecha(){
+  det.hidden = true; aberto = null;
+  [...document.querySelectorAll(".cel[data-p]")].forEach(b=>b.setAttribute("aria-pressed","false"));
+}
+
+function abre(p, arm){
+  const chave = p + arm;
+  if(aberto === chave){ fecha(); return; }
+  aberto = chave;
+  const s = SESSOES.find(x=>x.passo===p && x.arm===arm);
+  const t = PASSOS[p-1].titulo;
+  const sk = s.skills.length
+    ? `<ul>${s.skills.map(k=>`<li><a href="${SKILLS_REPO}/blob/${SKILLS_SHA}/${k}/SKILL.md" target="_blank" rel="noopener noreferrer">${k}</a><span class="glosa">${esc(SKILLS[k]||"")}</span></li>`).join("")}</ul>`
+    : `<p class="nada">nenhuma · todas as skills desligadas nesta sessão</p>`;
+  const art = s.artefatos.length
+    ? `<ul>${s.artefatos.map(a=>`<li><a href="${urlArt(a)}" target="_blank" rel="noopener noreferrer">${esc(a.nome)}</a>${a.marca?`<span class="manual">${esc(a.marca)}</span>`:""}</li>`).join("")}</ul>`
+    : `<p class="nada">nenhum artefato versionado</p>`;
+  const ac = s.achados.length
+    ? `<ul>${s.achados.map(id=>{const a=acha(id);return a?`<li><a href="#achados">${esc(a.titulo)}</a></li>`:"";}).join("")}</ul>`
+    : `<p class="nada">nada fora do esperado</p>`;
+  det.innerHTML = `
+    <p class="meta">passo ${String(p).padStart(2,"0")} &#183; braço ${arm} skills &#183; ${s.quando} &#183; ${s.duracao} min &#183; ${s.palavras.toLocaleString("pt-BR")} palavras</p>
+    <h3>${esc(t)}</h3>
+    <p class="obj">${esc(s.objetivo)}</p>
+    <p class="rot">skills carregadas</p>${sk}
+    <p class="rot">produziu</p>${art}
+    <p class="rot">achados nesta sessão</p>${ac}
+    <button type="button" class="abrir" data-chat="${urlChat(s.file)}" data-tit="Passo ${String(p).padStart(2,"0")} &#183; braço ${arm} skills">ler a transcrição completa</button>
+    <button type="button" class="fechar" id="fecharDet">fechar</button>`;
+  const linha = document.querySelector(`.lin[data-lin="${p}"]`);
+  linha.after(det);
+  det.hidden = false;
+  document.getElementById("fecharDet").addEventListener("click", fecha);
+  [...document.querySelectorAll(".cel[data-p]")].forEach(b=>
+    b.setAttribute("aria-pressed", String(+b.dataset.p===p && b.dataset.a===arm)));
+}
+}
+  if(linhas) linhas.addEventListener("click", e=>{
+  const b = e.target.closest(".cel[data-p]");
+  if(b) abre(+b.dataset.p, b.dataset.a);
+});
+
+/* achados e notas */
+const ondeAparece = id => {
+  const c = SESSOES.filter(s=>s.achados.includes(id));
+  const com = c.filter(s=>s.arm==="com").length, sem = c.filter(s=>s.arm==="sem").length;
+  const p = [];
+  if(com) p.push(com + (com>1?" sessões":" sessão") + " com skills");
+  if(sem) p.push(sem + (sem>1?" sessões":" sessão") + " sem skills");
+  return p.join(" \u00b7 ");
+};
+if(0) document.getElementById("achados").innerHTML = ACHADOS.map(a=>
+  `<div class="ach" id="ach-${a.id}"><h3>${esc(a.titulo)}</h3><p>${esc(a.texto)}</p>
+   <p class="onde">${ondeAparece(a.id)}</p></div>`).join("");
+if(0) document.getElementById("notas").innerHTML = NOTAS.map(a=>
+  `<div class="ach"><h3>${esc(a.titulo)}</h3><p>${esc(a.texto)}</p>
+   <p class="onde">${ondeAparece(a.id)}</p></div>`).join("");
+
+/* commits */
+document.getElementById("gocommits").innerHTML =
+  COMPLEMENTAR.partes.map(p=>`<button type="button" class="chatbtn" data-chat="${urlChat(p.file)}" data-tit="Sessão de commits &#183; ${esc(p.rotulo)}">${esc(p.rotulo)}</button>`).join("") +
+  `<a href="${COMPLEMENTAR.historico}" target="_blank" rel="noopener noreferrer">histórico de commits &#8599;</a>`;
+
+/* camada de leitura */
+const leitor=document.getElementById('leitor');
+const leitorFrame=document.getElementById('leitorFrame');
+const leitorTit=document.getElementById('leitorTit');
+const leitorNova=document.getElementById('leitorNova');
+function abreChat(url, tit){
+  leitorFrame.src = url;
+  leitorTit.innerHTML = tit;
+  leitorNova.href = url;
+  leitor.classList.add('on');
+  document.body.classList.add('travado');
+}
+function fechaChat(){
+  leitor.classList.remove('on');
+  document.body.classList.remove('travado');
+  leitorFrame.src = 'about:blank';
+}
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-chat]');
+  if(b){ e.preventDefault(); abreChat(b.dataset.chat, b.dataset.tit); return; }
+  if(e.target.closest('[data-fechar]')) fechaChat();
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && leitor.classList.contains('on')) fechaChat(); });
+
+/* tema */
+const btema=document.getElementById('tema');
+function pintaTema(t){
+  document.documentElement.dataset.tema=t;
+  btema.textContent = t==='escuro' ? 'claro' : 'escuro';
+  btema.setAttribute('aria-pressed', String(t==='escuro'));
+  try{localStorage.setItem('tema',t);}catch(e){}
+}
+pintaTema(document.documentElement.dataset.tema||'claro');
+btema.addEventListener('click',()=>pintaTema(document.documentElement.dataset.tema==='escuro'?'claro':'escuro'));
+
+const btopo=document.getElementById('topo');
+btopo.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+
+const links=[...document.querySelectorAll('.index a')];
+const label=document.getElementById('railLabel'),fill=document.getElementById('railFill');
+const obs=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    if(!en.isIntersecting)return;
+    const id=en.target.id;
+    links.forEach(a=>a.setAttribute('aria-current',String(a.getAttribute('href')==='#'+id)));
+    const hit=links.find(a=>a.getAttribute('href')==='#'+id);
+    label.textContent=hit?hit.textContent.trim().replace(/^\S+\s/,''):'a avaliação';
+  });
+},{rootMargin:'-40% 0px -50% 0px'});
+[...document.querySelectorAll('main section')].forEach(s=>obs.observe(s));
+addEventListener('scroll',()=>{
+  const max=document.body.scrollHeight-innerHeight;
+  fill.style.width=(max>0?(scrollY/max)*100:0)+'%';
+  btopo.classList.toggle('on', scrollY>700);
+},{passive:true});
+</script>
+</body>
+</html>
