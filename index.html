@@ -555,6 +555,9 @@ body.travado{overflow:hidden}
 .dbody .sess a:hover{color:var(--ink);border-bottom-color:var(--ink-soft)}
 
 /* tema */
+.index a.fora{color:var(--accent)}
+.index a.fora:hover{color:var(--ink)}
+.index li.gap{height:.9rem}
 .temacard{
   display:block;margin-top:1.5rem;padding:1.25rem 1.3rem;text-decoration:none;
   background:var(--panel);border:1px solid var(--rule);
@@ -597,11 +600,14 @@ body.travado{overflow:hidden}
     <ol>
       <li><a href="#desenho"><span class="num">··</span> o desenho</a></li>
       <li><a href="#resultado"><span class="num">··</span> o que deu</a></li>
+    <li><a href="#temas"><span class="num">··</span> as sessões</a></li>
       <li><a href="#achados"><span class="num">··</span> achados</a></li>
       <li><a href="#notas"><span class="num">··</span> notas</a></li>
       <li class="gap"></li>
-      <li><a href="#temas"><span class="num">··</span> as sessões</a></li>
+      
       <li><a href="#limites"><span class="num">··</span> limites</a></li>
+    <li class="gap"></li>
+    <li><a class="fora" href="aneel/">ver as 24 sessões &#8594;</a></li>
     </ol>
   </nav>
 
@@ -609,7 +615,7 @@ body.travado{overflow:hidden}
 
     <section class="hero" id="topo-sec">
       <a class="back" href="https://1pedroosilva.github.io/projeto-databricks-skills/">&#8592; skills para o Genie Code</a>
-      <p class="marker"><b>1.02</b> &nbsp;avaliação</p>
+      <p class="marker"><b>2.02</b> &nbsp;avaliação</p>
       <h1>O mesmo projeto, feito duas vezes</h1>
       <p class="sub">com as catorze skills ativas e com elas desligadas</p>
       <p class="stmt">
@@ -740,7 +746,32 @@ body.travado{overflow:hidden}
         <span class="lado igual"><i>sem</i><b>não</b></span>
       </div>
       </div>
-      <p class="hint">a leitura completa de cada um está nos achados, logo abaixo</p>
+      <p class="hint">cada um desses resultados sai das sessões abaixo, e a leitura completa está nos achados</p>
+    </section>
+
+    <section id="temas">
+      <p class="marker">a evidência</p>
+      <h2>Onde cada número acima foi medido</h2>
+      <p class="lede" style="margin-top:.8rem">
+        Os cinco resultados saíram das sessões abaixo. Elas estão pareadas passo a passo entre os
+        dois braços, e cada uma abre com o objetivo do teste, as skills que entraram, o que a
+        sessão produziu e a transcrição completa, incluindo o raciocínio do agente.
+      </p>
+      <a class="temacard" href="aneel/">
+        <div class="top">
+          <h3>Continuidade de fornecimento de energia</h3>
+          <span class="sel">tema 01 · completo</span>
+        </div>
+        <p>Um pipeline em arquitetura medalhão sobre dados públicos da ANEEL, da ingestão do
+        arquivo anual de interrupções até a tabela analítica de tempo de interrupção por
+        distribuidora e mês.</p>
+        <div class="n">
+          <span><b>24</b>sessões</span>
+          <span><b>12</b>passos pareados</span>
+          <span><b>2</b>braços</span>
+        </div>
+      </a>
+      <div class="aguarda">tema 02 · em execução · outra base, o mesmo desenho</div>
     </section>
 
     <section id="achados">
@@ -922,30 +953,6 @@ body.travado{overflow:hidden}
         entre o que o agente entregou e o que precisou de correção manual.
       </p>
       <p class="go" id="gocommits"></p>
-    </section>
-
-    <section id="temas">
-      <p class="marker">as sessões</p>
-      <h2>Onde o teste foi aplicado</h2>
-      <p class="lede" style="margin-top:.8rem">
-        Cada tema é um projeto inteiro, construído duas vezes. As sessões ficam pareadas passo a
-        passo, e cada uma abre com o objetivo, as skills que entraram, o que saiu e a transcrição.
-      </p>
-      <a class="temacard" href="aneel/">
-        <div class="top">
-          <h3>Continuidade de fornecimento de energia</h3>
-          <span class="sel">tema 01 · completo</span>
-        </div>
-        <p>Um pipeline em arquitetura medalhão sobre dados públicos da ANEEL, da ingestão do
-        arquivo anual de interrupções até a tabela analítica de tempo de interrupção por
-        distribuidora e mês.</p>
-        <div class="n">
-          <span><b>24</b>sessões</span>
-          <span><b>12</b>passos pareados</span>
-          <span><b>2</b>braços</span>
-        </div>
-      </a>
-      <div class="aguarda">tema 02 · em execução · outra base, o mesmo desenho</div>
     </section>
 
     <section id="limites">
