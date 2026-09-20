@@ -504,6 +504,21 @@ body.travado{overflow:hidden}
 .ach p{font-size:.95rem}
 .ach .onde{font-family:var(--mono);font-size:.62rem;color:var(--ink-soft);margin-top:.7rem}
 </style>
+
+<style>
+.trilha{
+  display:flex;flex-wrap:wrap;gap:.45rem;align-items:baseline;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;
+  margin:0 0 1.9rem;color:var(--ink-soft);
+}
+.trilha a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule)}
+.trilha a:hover{color:var(--ink);border-bottom-color:var(--ink-soft)}
+.trilha span{color:var(--rule)}
+.trilha b{color:var(--ink);font-weight:400}
+.index a.fora{color:var(--accent)}
+.index a.fora:hover{color:var(--ink)}
+.index li.gap{height:.9rem}
+</style>
 </head>
 
 <body>
@@ -525,14 +540,24 @@ body.travado{overflow:hidden}
       
       <li class="gap"></li>
       <li><a href="#commits"><span class="num">··</span> commits</a></li>
-      <li><a href="../">··  a avaliação</a></li>
+      <li class="gap"></li>
+        <li><a class="fora" href="../">&#8592; a avaliação</a></li>
+        <li><a class="fora" href="https://1pedroosilva.github.io/">&#8592; portfólio</a></li>
     </ol>
   </nav>
 
   <main>
 
     <section class="hero" id="topo-sec">
-      <a class="back" href="../">&#8592; avaliação das skills</a>
+      <p class="trilha">
+        <a href="https://1pedroosilva.github.io/">portfólio</a>
+        <span>/</span>
+        <a href="https://1pedroosilva.github.io/projeto-databricks-skills/">genie skills</a>
+        <span>/</span>
+        <a href="../">avaliação</a>
+        <span>/</span>
+        <b>aneel</b>
+      </p>
       <p class="marker"><b>tema 01</b> &nbsp;continuidade da ANEEL</p>
       <h1>Vinte e quatro sessões, passo a passo</h1>
       <p class="sub">o mesmo projeto de dados da ANEEL, com skills e sem</p>
