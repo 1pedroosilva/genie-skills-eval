@@ -1,0 +1,27 @@
+# Configuracao do Dependabot - genie-skills-eval
+# Monitora atualizacoes de dependencias para GitHub Actions.
+#
+# Ecossistema detectado a partir dos arquivos do projeto:
+#   - github-actions: este workflow e futuras actions versionadas
+#
+# Nota: o repositorio contem arquivos Python (.py notebooks) e HTML,
+# mas nenhum arquivo de manifesto de dependencias (requirements.txt,
+# pyproject.toml, etc.). Quando um manifesto for adicionado, incluir a
+# entrada "pip" neste arquivo.
+#
+# Frequencia: semanal (segunda-feira)
+# Diretorio: raiz do projeto ("/")
+
+version: 2
+
+updates:
+  # GitHub Actions - monitora as actions usadas nos workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
